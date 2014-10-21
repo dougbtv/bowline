@@ -1,37 +1,31 @@
-FROM centos:centos6
-MAINTAINER Doug Smith <info@laboratoryb.org>
+FROM centos:centos7
+MAINTAINER Doug Smith <info@laboratoryb.com>
 ENV build_date 2014-10-02
 
 RUN yum update -y
-RUN yum install kernel-headers gcc gcc-c++ cpp ncurses ncurses-devel libxml2 libxml2-devel sqlite sqlite-devel openssl-devel newt-devel kernel-devel libuuid-devel net-snmp-devel xinetd tar -y
+RUN yum install -y epel-release
+RUN yum install -y npm wget git
+RUN yum install -y docker
 
-ENV AUTOBUILD_UNIXTIME 1413824400
+RUN npm install -g forever
 
-# Download asterisk.
-# Currently Certified Asterisk 11.6 cert 6.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz
+ENV version_increment 0x00001b33f36
+RUN git clone https://github.com/dougbtv/docker-asterisk.git
 
-# gunzip asterisk
-RUN mkdir /tmp/asterisk
-RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
-WORKDIR /tmp/asterisk
+WORKDIR /docker-asterisk/tools/autobuilder
+RUN npm install
 
-# make asterisk.
-ENV rebuild_date 2014-10-07
-# Configure
-RUN ./configure --libdir=/usr/lib64
-# Remove the native build option
-RUN make menuselect.makeopts
-RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
-# Continue with a standard make.
-RUN make
-RUN make install
-RUN make samples
-WORKDIR /
+# Note this must match the --name of the "docker-in-docker" container
+# RUN export DOCKER_HOST="tcp://dind:4444"
+ENV DOCKER_HOST tcp://dind:4444
 
-RUN mkdir -p /etc/asterisk
-# ADD modules.conf /etc/asterisk/
-ADD iax.conf /etc/asterisk/
-ADD extensions.conf /etc/asterisk/
+RUN git config --global user.email "asteriskautobuilder@users.noreply.github.com"
+RUN git config --global user.name "Your friendly autobuilder"
 
-CMD asterisk -f
+ENV quick_pull 0x00000001
+WORKDIR /docker-asterisk/
+RUN git pull
+
+WORKDIR /docker-asterisk/tools/autobuilder
+
+# ENTRYPOINT [forever -e /var/log/autobuilder.log -o /var/log/autobuilder.log autobuilder.js ]
