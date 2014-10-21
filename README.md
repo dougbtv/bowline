@@ -1,1 +1,3 @@
-# An auto-builder for Asterisk docker images
+# Bowline
+
+It ties your Docker images to a build process... with a bowline.
