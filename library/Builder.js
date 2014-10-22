@@ -1,13 +1,5 @@
 module.exports = function(opts,bot) {
 
-	// Constants.
-	var ASTERISK_HOST = "downloads.asterisk.org";
-	var ASTERISK_URL = "/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz";
-	var CLONE_PATH = "/tmp/docker-asterisk/";
-	var BRANCH_NAME = "autobuild";
-	var BRANCH_MASTER = "master";
-	var LOG_DOCKER = "/tmp/autobuild.docker.log";
-
 	// Our requirements.
 	var fs = require('fs');
 	var http = require('http');
@@ -32,16 +24,36 @@ module.exports = function(opts,bot) {
 
 	var job_in_progress = false;
 
-	// Break up the repo options, for normalization in calling the github module.
-	var repo_username = opts.gitrepo.replace(/^(.+)\/.+$/,"$1");
-	var repo_name = opts.gitrepo.replace(/^.+\/(.+)$/,"$1");
+	// for Breaking up the repo options
+	var repo_username = "";
+	var repo_name = "";
+
+	// Our job
+	var job;
+
+	// The this.release we're associated with
+	this.release;
 
 	// Our properties
 	this.last_modified = new moment();	// When was the file on server last updated?
 	this.last_pullrequest = 0;
 
 	// Our virtual constructor.
-	this.instantiate = function() {
+	// Alright, let's start this job.
+	this.start = function(initial_release,callback) {
+
+		// We're passed in a this.release object.
+		this.release = initial_release;
+		console.log("!trace this.release @ Builder start: ",this.release);
+
+		// Let's set it's local variables.
+		this.release.clone_path = "/tmp/" + this.release.slug + "/";
+		this.release.log_docker = "/tmp/" + this.release.slug + ".docker.log";
+
+		// Ok, we need to do a little work on those git repo names to break it apart.
+		repo_username = this.release.git_repo.replace(/^(.+)\/.+$/,"$1");
+		repo_name = this.release.git_repo.replace(/^.+\/(.+)$/,"$1");
+
 
 		// For an update if we've asked for one.
 		if (opts.forceupdate) {
@@ -63,7 +75,7 @@ module.exports = function(opts,bot) {
 			rule.minute = 0;
 			
 
-			var j = schedule.scheduleJob(rule, function(){
+			job = schedule.scheduleJob(rule, function(){
 
 				this.logit("Checking for an update @ " + moment().format("YYYY-MM-DD HH:mm:ss"));
 
@@ -143,24 +155,24 @@ module.exports = function(opts,bot) {
 	}
 
 	var execlog = function(cmd,callback){
-		exec('echo "=>======== ' + cmd + ' (@ ' + moment().format("YYYY-MM-DD HH:mm:ss") + ')" >> ' + LOG_DOCKER,function(){
-			exec(cmd + ' >> ' + LOG_DOCKER + ' 2>&1 ',function(err,stdout,stderr){
+		exec('echo "=>======== ' + cmd + ' (@ ' + moment().format("YYYY-MM-DD HH:mm:ss") + ')" >> ' + this.release.log_docker,function(){
+			exec(cmd + ' >> ' + this.release.log_docker + ' 2>&1 ',function(err,stdout,stderr){
 				callback(err,stdout,stderr);
 			});
-		});
+		}.bind(this));
 	}
 
 	this.lastCommandLog = function(callback) {
 
-		exec('cat ' + LOG_DOCKER + ' | grep \'=>========\' | tail -n 1',function(err,stdout,stderr){
+		exec('cat ' + this.release.log_docker + ' | grep \'=>========\' | tail -n 1',function(err,stdout,stderr){
 			callback(stdout);
-		});
+		}.bind(this));
 
 	}
 
 	this.tailCommandLog = function(callback) {
 
-		exec('tail -n 3 ' + LOG_DOCKER,function(err,stdout,stderr){
+		exec('tail -n 3 ' + this.release.log_docker,function(err,stdout,stderr){
 			callback(stdout);
 		});
 
@@ -171,10 +183,10 @@ module.exports = function(opts,bot) {
 
 		async.series({
 			clear_log: function(callback) {
-				exec('> ' + LOG_DOCKER,function(err){
+				exec('> ' + this.release.log_docker,function(err){
 					callback(err);
 				});
-			},
+			}.bind(this),
 
 			docker_login: function(callback) {
 				// Uhhh, you don't wanna log this.
@@ -197,7 +209,7 @@ module.exports = function(opts,bot) {
 
 			docker_build: function(callback) {
 				this.logit("And we begin the docker build");
-				execlog('docker build -t ' + opts.docker_image + ' ' + CLONE_PATH,function(err,stdout,stderr){
+				execlog('docker build -t ' + opts.docker_image + ' ' + this.release.clone_path,function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});
 				
@@ -244,7 +256,7 @@ module.exports = function(opts,bot) {
 			}
 
 			// Let's read the log file, and post to pasteall
-			fs.readFile(LOG_DOCKER, 'utf8', function (readlogerr, logcontents) {
+			fs.readFile(this.release.log_docker, 'utf8', function (readlogerr, logcontents) {
 				if (readlogerr) throw readlogerr;
 
 				pasteall.paste(logcontents,"text",function(err,url){
@@ -305,12 +317,12 @@ module.exports = function(opts,bot) {
 	this.gitCloneAndUpdate = function(buildstamp,callback) {
 
 		// Ok, let's clone the repo, and update it.
-		branch_name = "autobuild-" + buildstamp;
+		branch_name = this.release.slug + "-" + buildstamp;
 		
 		async.series({
 			// Remove the tempdir if necessary
 			rmdir: function(callback){
-				exec("rm -Rf " + CLONE_PATH,function(err){
+				exec("rm -Rf " + this.release.clone_path,function(err){
 					callback(err);
 				});
 			}.bind(this),
@@ -335,7 +347,7 @@ module.exports = function(opts,bot) {
 			// Clone with git.
 			clone: function(callback){
 				// this.logit("Beginning git clone.");
-				var cmd_gitclone = 'git clone https://' + opts.gituser + ':' + opts.gitpassword + '@github.com/' + opts.gitrepo + ".git " + CLONE_PATH;
+				var cmd_gitclone = 'git clone https://' + opts.gituser + ':' + opts.gitpassword + '@github.com/' + this.release.git_repo + ".git " + this.release.clone_path;
 				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
 				exec(cmd_gitclone,function(err,stdout,stderr){
 					callback(err,stdout);
@@ -344,45 +356,47 @@ module.exports = function(opts,bot) {
 
 			// 1. Branch from master
 			branch: function(callback){
-				exec('git checkout -b ' + branch_name, {cwd: CLONE_PATH}, function(err,stdout){
+				exec('git checkout -b ' + branch_name, {cwd: this.release.clone_path}, function(err,stdout){
 					// console.log("!trace branch stdout: ",stdout);
 					callback(err,stdout);
 				});
-			},
+			}.bind(this),
 
 			branch_verbose: function(callback){
-				exec('git branch -v', {cwd: CLONE_PATH}, function(err,stdout){
+				exec('git branch -v', {cwd: this.release.clone_path}, function(err,stdout){
 					// console.log("!trace branch -v stdout: \n",stdout);
 					callback(err,stdout);
 				});
-			},
+			}.bind(this),
 
 			branch_verbose: function(callback){
-				exec('sed -i -e "s|AUTOBUILD_UNIXTIME [0-9]*|AUTOBUILD_UNIXTIME ' + buildstamp + '|" Dockerfile', {cwd: CLONE_PATH}, function(err,stdout){
+				exec('sed -i -e "s|AUTOBUILD_UNIXTIME [0-9]*|AUTOBUILD_UNIXTIME ' + buildstamp + '|" Dockerfile', {cwd: this.release.clone_path}, function(err,stdout){
 					// Ok, after this point, if we're not updating the clone...
 					// We exit with an error.
 					if (!opts.skipclone) {
-						callback(err,stdout);	
+						callback(err,stdout);
 					} else {
 						callback("We've skipped updating the clone.");
 					}
 
 				});
-			},
+			}.bind(this),
 
 			git_add: function(callback){
-				exec('git add Dockerfile', {cwd: CLONE_PATH}, function(err,stdout){ callback(err,stdout); });
-			},
+				exec('git add Dockerfile', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
+			}.bind(this),
 
 			git_commit: function(callback){
-				exec('git commit -m "[autobuild] Updating, new tarball found @ ' + buildstamp + '"', {cwd: CLONE_PATH}, function(err,stdout){ callback(err,stdout); });
-			},
+				exec('git commit -m "[autobuild] Updating, new tarball found @ ' + buildstamp + '"', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
+			}.bind(this),
 
 			git_push: function(callback){
-				exec('git push origin ' + branch_name, {cwd: CLONE_PATH}, function(err,stdout){ callback(err,stdout); });
-			},
+				exec('git push origin ' + branch_name, {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
+			}.bind(this),
 
 			pull_request: function(callback) {
+
+				console.log("!trace @ pull_request: " + this.release);
 
 				// console.log("!trace PLAIN REPO: |" + repo_name + "|");
 
@@ -391,7 +405,7 @@ module.exports = function(opts,bot) {
 					repo: repo_name,
 					title: "[autobuild] Updating Asterisk @ " + buildstamp,
 					body: "Your friendly builder bot here saying that we're updating @ " + buildstamp,
-					base: BRANCH_MASTER,
+					base: this.release.branch_master,
 					head: branch_name,
 				},function(err,result){
 					if (!err) {
@@ -431,7 +445,7 @@ module.exports = function(opts,bot) {
 
 	this.checkForUpdate = function(callback) {
 
-		var options = {method: 'HEAD', host: ASTERISK_HOST, port: 80, path: ASTERISK_URL};
+		var options = {method: 'HEAD', host: this.release.host, port: 80, path: this.release.url_path};
 		var req = http.request(options, function(res) {
 
 			// console.log(JSON.stringify(res.headers));
@@ -478,10 +492,8 @@ module.exports = function(opts,bot) {
 	this.logit = function(message) {
 		// Let's give a time.
 		var displaytime = new moment().format("YYYY-MM-DD HH:mm:ss");
-		console.log("[ " + displaytime + " ] " + message);
+		console.log("[ " + displaytime + " ] [" + this.release.slug + "] " + message);
 		bot.say(message);
 	}
-
-	this.instantiate();
 
 }
