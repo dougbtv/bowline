@@ -3,14 +3,22 @@ module.exports = function(mongoose) {
 		// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
-		active: Boolean,
-		method: String,
+		active: Boolean,		// Is this currently active?
+		method: String,			// Update method -- For now, just "http", other methods, later.
 
-		host: String,
-		url_path: String,
-		clone_path: String,
-		branch_name: String,
-		brach_master: String,
+		slug: String,			// An index/slug to refer to.
+
+		host: String,			// [http] What's the host to look at with http method?
+		url_path: String,		// [http] What's the path from there?
+		
+		// clone_path: String,
+		
+		branch_name: String,	// What's the NEW branch name you'd like?
+		brach_master: String,	// What's your master branch name?
+
+		docker_tag: String,		// What's the name of the docker image tag?
+		git_repo: String,		// What's the git repo?
+		
 
 	}, { collection: 'releases' });
 
