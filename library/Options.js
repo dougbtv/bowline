@@ -18,7 +18,7 @@ module.exports = function() {
 	this.loadConfig = function(callback) {
 
 		configfile = CONFIG_FILE_DEFAULT;
-		console.log("!trace config? ",configfile);
+		// console.log("!trace config? ",configfile);
 
 		fs.exists(configfile,function(exists){
 		
@@ -31,35 +31,10 @@ module.exports = function() {
 					if (!err) {
 						var configs = JSON.parse(data);
 
-						console.log("Configuration loaded successfully",configs.CONFIG_NAME);
+						console.log("Configuration loaded successfully: ",configs.CONFIG_NAME);
 
 						callback(configs);
 
-						// console.log("!trace configs: ",configs);
-
-						// -- Connect to mongo.
-
-						/*
-							mongoose.connect(configs.MONGO_CONNECT_STRING);
-
-							var db = mongoose.connection;
-							
-							db.on('error', function(){
-								log.error("mongo_connect",{server: configs.MONGO_CONNECT_STRING });
-							});
-
-							db.once('open', function callback () {
-
-								// We're connected to mongo, now.
-								log.it("mongo_connect",{server: configs.MONGO_CONNECT_STRING });
-
-								// Now that we're connected to mongo, we can continue along.
-								// The Condor object, the meat of our dealings.
-								var Condor = require("./library/Condor.js"); 
-								var condor = new Condor(mongoose,db,log,constants,configs);
-
-							});
-						*/
 
 					} else {
 						throw '!ERROR: FATAL, READING FILE FAILED: ' + err;
@@ -171,7 +146,7 @@ module.exports = function() {
 			})
 			.parse();
 
-			console.log("!trace input PRE-CONFIG: ",configs);
+			// console.log("!trace input PRE-CONFIG: ",configs);
 
 			// Alright now that we have those, let's override just what's specified.
 			Object.keys(opts).forEach(function (key) {
@@ -183,7 +158,7 @@ module.exports = function() {
 
 			});
 
-			console.log("!trace input RECONFIG: ",configs);
+			// console.log("!trace input RECONFIG: ",configs);
 
 			// Now, cycle through the required, and see if they're OK.
 			Object.keys(required).forEach(function (key) {

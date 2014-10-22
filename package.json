@@ -1,5 +1,5 @@
 {
-  "name": "asterisk-autobuilder",
+  "name": "bowline",
   "preferGlobal": true,
   "version": "0.0.1",
   "author": "Doug Smith <info@laboratoryb.org>",
@@ -20,6 +20,7 @@
   "dependencies": {
     "async": "*",
     "github": "*",
+    "mongoose": "*",
     "moment": "*",
     "pasteall": "*",
     "irc": "*",
