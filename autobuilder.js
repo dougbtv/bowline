@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 
 options.parse(function(opts){
 
-	console.log("!trace opts: ",opts);
+	// console.log("!trace opts: ",opts);
 	// -- Connect to mongo.
 
 	mongoose.connect(opts.MONGO_CONNECT_STRING);

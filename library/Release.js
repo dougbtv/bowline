@@ -1,6 +1,12 @@
 module.exports = function(mongoose) {
 
-		// Setup a schema.
+	// We instantiate builders for each specification.
+	var moment = require('moment');
+	var Builder = require("./Builder.js"); 
+	//	var builder = new Builder(opts,irc);
+
+
+	// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
 		active: Boolean,		// Is this currently active?
@@ -18,7 +24,7 @@ module.exports = function(mongoose) {
 
 		docker_tag: String,		// What's the name of the docker image tag?
 		git_repo: String,		// What's the git repo?
-		
+
 
 	}, { collection: 'releases' });
 
@@ -55,6 +61,21 @@ module.exports = function(mongoose) {
 	}, 'Invalid release method');
 
 
+	this.initializeActiveSearches = function(callback) {
+
+		Release.find({active: true},function(err,rels){
+
+			if (!err) {
+
+				console.log("!trace your active searches: ",rels);
+
+			} else {
+				callback("Mongo error, couldn't init: " + err);
+			}
+
+		});
+
+	}
 
 
 

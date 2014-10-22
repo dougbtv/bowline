@@ -5,6 +5,10 @@ module.exports = function(opts,bot,release) {
 	var Builder = require("./Builder.js"); 
 	//	var builder = new Builder(opts,irc);
 
+	release.initializeActiveSearches(function(err){
+		if (err) { throw err; }
+	});
+
 	this.ircHandler = function(text,from,message) {
 
 		// Let's parse the command.
