@@ -1,12 +1,12 @@
-module.exports = function(opts,bot,release) {
+module.exports = function(opts,bot,release,manager) {
 
 	// We instantiate builders for each specification.
 	var moment = require('moment');
 	var Builder = require("./Builder.js"); 
 	//	var builder = new Builder(opts,irc);
 
-	release.initializeActiveSearches(function(err){
-		if (err) { throw err; }
+	manager.initializeActiveSearches(function(err){
+		console.log("!trace back to Bowline handler.");
 	});
 
 	this.ircHandler = function(text,from,message) {

@@ -61,13 +61,14 @@ module.exports = function(mongoose) {
 	}, 'Invalid release method');
 
 
-	this.initializeActiveSearches = function(callback) {
+	this.getActive = function(callback) {
 
 		Release.find({active: true},function(err,rels){
 
 			if (!err) {
 
-				console.log("!trace your active searches: ",rels);
+				// console.log("!trace your active searches: ",rels);
+				callback(null,rels);
 
 			} else {
 				callback("Mongo error, couldn't init: " + err);
