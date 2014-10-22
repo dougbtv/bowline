@@ -1,4 +1,4 @@
-module.exports = function(opts,bot) {
+module.exports = function(opts,bot,release) {
 
 	// We instantiate builders for each specification.
 	var moment = require('moment');
@@ -19,6 +19,7 @@ module.exports = function(opts,bot) {
 		if (opts.authdisabled) {
 			authorized = true;
 		}
+		
 		if (message.nick == opts.irc_authuser && message.host == opts.irc_authhost) {
 			authorized = true;
 		}
@@ -31,14 +32,17 @@ module.exports = function(opts,bot) {
 					case "foo":
 						this.logit("W00t, foo command");
 						break;
+
 					case "help":
 						this.logit("I know these commands: !build !lastcmd !tail");
 						break;
+
 					case "lastcmd":
 						this.lastCommandLog(function(last){
 							this.logit("Last command: " + last);
 						}.bind(this));
 						break;
+
 					case "tail":
 						this.tailCommandLog(function(last){
 							this.logit("Log tail: " + last);
@@ -53,6 +57,7 @@ module.exports = function(opts,bot) {
 							this.logit("You're not my master, ask " + opts.irc_authuser + " to do this");
 						}
 						break;
+
 					default:
 						this.logit("Sorry, I don't know the command !" + cmd.command);
 						break;

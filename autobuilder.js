@@ -30,9 +30,12 @@ options.parse(function(opts){
 		var IRC = require('./library/IRC.js');
 		var irc = new IRC(opts);
 
+		var Release = require('./library/Release.js');
+		var release = new Release(mongoose);
+
 		// Bowline handles our matters.		
 		var Bowline = require("./library/Bowline.js"); 
-		var bowline = new Bowline(opts,irc);
+		var bowline = new Bowline(opts,irc,release);
 
 		// Connect the irc bot's listener to the builder
 		irc.bot.addListener("message", function(from, to, text, message) {
