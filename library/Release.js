@@ -3,6 +3,7 @@ module.exports = function(mongoose) {
 		// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
+		active: Boolean,
 		method: String,
 
 		host: String,
@@ -45,7 +46,7 @@ module.exports = function(mongoose) {
 
 	}, 'Invalid release method');
 
-	
+
 
 
 
