@@ -20,7 +20,7 @@ module.exports = function(mongoose) {
 		// clone_path: String,
 		
 		branch_name: String,	// What's the NEW branch name you'd like?
-		brach_master: String,	// What's your master branch name?
+		branch_master: String,	// What's your master branch name?
 
 		docker_tag: String,		// What's the name of the docker image tag?
 		git_repo: String,		// What's the git repo?
