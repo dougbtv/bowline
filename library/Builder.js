@@ -116,9 +116,14 @@ module.exports = function(opts,bot) {
 			async.series({
 				clone_and_update: function(callback){
 					// Let's update our git repository.
-					this.gitCloneAndUpdate(buildstamp,function(err){
-						callback(err);
-					});
+					if (opts.skipclone) {
+						this.logit("NOTICE: CLONE IS SKIPPED, typically for development.");
+						callback(null);
+					} else {
+						this.gitCloneAndUpdate(buildstamp,function(err){
+							callback(err);
+						});
+					}
 				
 				}.bind(this),
 
@@ -160,7 +165,7 @@ module.exports = function(opts,bot) {
 				callback(err,stdout,stderr);
 			});
 		}.bind(this));
-	}
+	}.bind(this);
 
 	this.lastCommandLog = function(callback) {
 
@@ -168,7 +173,7 @@ module.exports = function(opts,bot) {
 			callback(stdout);
 		}.bind(this));
 
-	}
+	}.bind(this);
 
 	this.tailCommandLog = function(callback) {
 
@@ -176,7 +181,7 @@ module.exports = function(opts,bot) {
 			callback(stdout);
 		});
 
-	}
+	}.bind(this);
 
 
 	this.dockerBuild = function(callback) {
