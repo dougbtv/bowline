@@ -17,6 +17,8 @@ It's goal is to:
 
 ## Bowline is still a preview
 
+There isn't an official release yet, I'm just getting the ideas down (after I built a simple original version that just did a one-off automatic build cycle for docker images)
+
 ## Inspiration
 
 I just want to have a software release happen, and then have something build the final docker image for me, so I don't have to sit there waiting for it to happen. I was originally inspired by wanting to have an up-to-date Docker image readied in a repository after an Asterisk security release (I'd rather just have them, now.)
