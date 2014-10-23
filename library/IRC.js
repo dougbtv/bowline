@@ -47,21 +47,5 @@ module.exports = function(opts) {
 		}
 	}
 
-	this.parse = function(message,callback) {
-		if (/^!/.test(message)) {
-			// That's a command
-			// Replace that bang, and split by spaces
-			var raw = message.replace(/^\!/,"");
-			var pts = raw.split(" ");
-			var command = pts.shift();
-			callback({
-				command: command,
-				args: pts,
-			});
-		} else {
-			callback(false);
-		}
-	}
-
 
 };

@@ -25,6 +25,7 @@
     "pasteall": "*",
     "irc": "*",
     "node-schedule": "*",
+    "prompt" : "*",
     "nomnom": "*"
   }
 }
