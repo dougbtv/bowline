@@ -3,11 +3,11 @@
   "preferGlobal": true,
   "version": "0.0.1",
   "author": "Doug Smith <info@laboratoryb.org>",
-  "description": "Automatically builds Asterisk into a docker container, and pushes it to dockerhub",
+  "description": "Automatically builds projects into docker containers, and pushes it to dockerhub",
   "scripts": {
-    "start": "node ./autobuilder.js"
+    "start": "node ./bowline.js"
   },
-  "main": "./autobuilder.js",
+  "main": "./bowline.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dougbtv/docker-asterisk"
