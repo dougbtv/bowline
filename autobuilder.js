@@ -1,5 +1,15 @@
-// An autobuilder for building asterisk into a docker image, and pushing it to dockerhub.
+// ----------------------------------------------------------------------------------------
+//    ______     ______     __     __     __         __     __   __     ______    
+//   /\  == \   /\  __ \   /\ \  _ \ \   /\ \       /\ \   /\ "-.\ \   /\  ___\   
+//   \ \  __<   \ \ \/\ \  \ \ \/ ".\ \  \ \ \____  \ \ \  \ \ \-.  \  \ \  __\   
+//    \ \_____\  \ \_____\  \ \__/".~\_\  \ \_____\  \ \_\  \ \_\\"\_\  \ \_____\ 
+//     \/_____/   \/_____/   \/_/   \/_/   \/_____/   \/_/   \/_/ \/_/   \/_____/ 
+//                                                                             
+// ----------------------------------------------------------------------------------------
+// An autobuilder for building a project into a docker image, and pushing it to dockerhub.
+// "It ties your Docker image to a build process"
 // @dougbtv 10/11/2014
+// ----------------------------------------------------------------------------------------
 
 // Parse our options with nomnom. We centralize this here.
 var Options = require("./library/Options.js");
