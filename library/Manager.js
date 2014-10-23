@@ -46,5 +46,22 @@ module.exports = function(opts,bot,release) {
 
 	}
 
+	this.listJobs = function(callback) {
+
+		var joblist = [];
+
+		// Pull out all the slugs.
+		Object.keys(jobs).forEach(function (key) {
+			joblist.push({
+				slug: key,
+				in_progress: jobs[key].in_progress,
+				last_check: jobs[key].last_check,
+			});
+		});
+
+		callback(joblist);
+
+	}
+
 
 }

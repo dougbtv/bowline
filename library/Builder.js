@@ -22,7 +22,8 @@ module.exports = function(opts,bot) {
 		password: opts.gitpassword
 	});
 
-	var job_in_progress = false;
+	// Is there a build in progress?
+	this.in_progress = false;
 
 	// for Breaking up the repo options
 	var repo_username = "";
@@ -103,10 +104,10 @@ module.exports = function(opts,bot) {
 
 	this.performUpdate = function() {
 
-		if (!job_in_progress) {
+		if (!this.in_progress) {
 
 			// Set that we have a running job.
-			job_in_progress = true;
+			this.in_progress = true;
 
 			// Ok, let's handle a new build.
 			// Steps:
@@ -150,7 +151,7 @@ module.exports = function(opts,bot) {
 
 			},function(err,result){
 				// We're done with this running job.
-				job_in_progress = false;
+				this.in_progress = false;
 				if (!err) {
 					this.logit("Looking good -- appears we have a successful build!");
 				} else {

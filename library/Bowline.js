@@ -2,8 +2,6 @@ module.exports = function(opts,bot,release,manager) {
 
 	// We instantiate builders for each specification.
 	var moment = require('moment');
-	var Builder = require("./Builder.js"); 
-	//	var builder = new Builder(opts,irc);
 
 	var prompt = require('prompt');
 	var readline = require('readline');
@@ -50,6 +48,14 @@ module.exports = function(opts,bot,release,manager) {
 			case "help":
 				this.logit("I know these commands: !build !lastcmd !tail");
 				break;
+
+			// List the current jobs
+			case "list":
+				manager.listJobs(function(jobs){
+					console.log("!trace joblist: ",jobs);
+				});
+				break;
+
 
 			case "lastcmd":
 				this.lastCommandLog(function(last){
