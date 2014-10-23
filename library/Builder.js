@@ -34,6 +34,9 @@ module.exports = function(opts,bot) {
 	// The this.release we're associated with
 	this.release;
 
+	// When did we last check?
+	this.last_check = false;
+
 	// Our properties
 	this.last_modified = new moment();	// When was the file on server last updated?
 	this.last_pullrequest = 0;
@@ -72,10 +75,13 @@ module.exports = function(opts,bot) {
 			// that runs every other unit.
 			var rule = new schedule.RecurrenceRule();
 			// rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
-			rule.minute = 0;
+			rule.minute = this.release.check_minutes;
 			
 
 			job = schedule.scheduleJob(rule, function(){
+
+				// Update the last time we checked.
+				this.last_check = new moment();
 
 				this.logit("Checking for an update @ " + moment().format("YYYY-MM-DD HH:mm:ss"));
 
