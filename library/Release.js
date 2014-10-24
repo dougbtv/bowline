@@ -24,6 +24,7 @@ module.exports = function(mongoose) {
 
 		docker_tag: String,		// What's the name of the docker image tag?
 		git_repo: String,		// What's the git repo?
+		git_path: String,		// What's the git repo?
 
 
 	}, { collection: 'releases' });

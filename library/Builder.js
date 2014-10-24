@@ -10,6 +10,9 @@ module.exports = function(opts,bot) {
 	var exec = require('child_process').exec;
 	var GitHubApi = require("github");
 
+	// Our constants
+	var AUTOBUILD_ENVVAR = "AUTOBUILD_UNIXTIME";
+
 	var github = new GitHubApi({
 		// required
 		version: "3.0.0",
@@ -99,6 +102,51 @@ module.exports = function(opts,bot) {
 
 		}.bind(this));
 
+
+	}.bind(this);
+
+	this.verifyRelease = function(callback) {
+
+		// Alright, so, let's check that this release is OK.
+		async.series({
+
+			clone: function(callback) {
+
+				this.gitClone(function(err){
+					callback(err);
+				});
+
+			}.bind(this),
+
+			check_dockerfile_exists: function(callback) {
+
+				var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
+				var checkpath = this.release.clone_path + relative_gitpath;
+
+				// Ok, see if the file exists.
+				fs.exists(checkpath, function(exists){
+					if (exists) {
+						callback(null);
+					} else {
+						callback("Dockerfile path is wrong, didn't find " + this.release.git_path);
+					}
+				});
+
+			}.bind(this),
+
+		},function(err,result){
+
+			if (!err) {
+
+				console.log("!trace done with verifyRelease, success.");
+				callback(null,true);
+
+			} else {
+				console.log("!trace done with verifyRelease, err: " + err);
+				callback("Couldn't verify release: " + err);
+			}
+
+		});
 
 	}.bind(this);
 
@@ -408,7 +456,9 @@ module.exports = function(opts,bot) {
 			}.bind(this),
 
 			branch_verbose: function(callback){
-				exec('sed -i -e "s|AUTOBUILD_UNIXTIME [0-9]*|AUTOBUILD_UNIXTIME ' + buildstamp + '|" Dockerfile', {cwd: this.release.clone_path}, function(err,stdout){
+
+				var cmd_sed = 'sed -i -e "s|.*' + AUTOBUILD_ENVVAR + '.*|ENV ' + AUTOBUILD_ENVVAR + ' ' + buildstamp + '|" Dockerfile';
+				exec(cmd_sed, {cwd: this.release.clone_path}, function(err,stdout){
 					// Ok, after this point, if we're not updating the clone...
 					// We exit with an error.
 					if (!opts.skipclone) {-
@@ -418,6 +468,7 @@ module.exports = function(opts,bot) {
 					}
 
 				});
+
 			}.bind(this),
 
 			git_add: function(callback){

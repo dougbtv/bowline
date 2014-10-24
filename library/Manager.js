@@ -74,6 +74,21 @@ module.exports = function(opts,bot,release) {
 
 	}
 
+
+	// Call a way to verify the releases.
+	this.verifyRelease = function(findslug,callback) {
+
+		this.jobExists(findslug,function(exists){
+			if (exists) {
+				jobs[findslug].verifyRelease(function(err){
+					callback(null);
+				});
+			}
+		});
+
+	}
+
+
 	this.listJobs = function(callback) {
 
 		var joblist = [];

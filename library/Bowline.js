@@ -58,7 +58,18 @@ module.exports = function(opts,bot,release,manager) {
 
 			// Test if a git repo has the correct dockerfile, etc
 			case "test":
-
+				this.requireSlug(cmd,function(err,slug){
+					if (!err) {
+						this.logit("Checking out the requirements for '" + slug + "' (could take a second)");
+						manager.verifyRelease(slug,function(err){
+							if (!err) {
+								this.logit("Great, the '" + slug + "' release looks clean for a build.");
+							} else {
+								this.logit("Bummer dude '" + slug + "' release is too dirty for a build, errored with: '" + err + "'");								
+							}
+						}.bind(this));
+					}
+				}.bind(this));
 				break;
 
 			case "lastcmd":
@@ -75,25 +86,13 @@ module.exports = function(opts,bot,release,manager) {
 
 			case "build":
 				if (authorized) {
-					// Ok, we need to look at the slug.
-					if (cmd.args.length) {
-						
-						var slug = cmd.args[0];
-						// Ok, check if it exists.
-						manager.jobExists(slug,function(found){
-							if (found) {
-
-								this.logit("No prob, I'm kicking off an update for you.");
-								manager.startUpdate(slug,function(){});
-
-							} else {
-								console.log("Sorry I can't find '" + slug + "' as a job.");
-							}
-						}.bind(this));
-					} else {
-						this.logit("Sorry, !build requires your release slug as a parameter, e.g. '!build foo'");	
-					}
-					// this.performUpdate();
+					this.requireSlug(cmd,function(err,slug){
+						if (!err) {
+							this.logit("No prob, I'm kicking off an update for you.");
+							manager.startUpdate(slug,function(){});
+						}
+					}.bind(this));
+					
 				} else {
 					this.logit("You're not my master, ask " + opts.irc_authuser + " to do this");
 				}
@@ -110,6 +109,29 @@ module.exports = function(opts,bot,release,manager) {
 
 		callback();
 
+	}
+
+	this.requireSlug = function(cmd,callback) {
+		// Ok, we need to look at the slug.
+		if (cmd.args.length) {
+			
+			var slug = cmd.args[0];
+			// Ok, check if it exists.
+			manager.jobExists(slug,function(found){
+				if (found) {
+
+					callback(null,slug);
+
+				} else {
+					console.log("Sorry I can't find '" + slug + "' as a job.");
+					callback(true);
+				}
+			}.bind(this));
+		} else {
+			this.logit("Sorry, !" + cmd.command + " requires your release slug as a parameter, e.g. '!" + cmd.command + " foo'");	
+			callback(true);
+		}
+		// this.performUpdate();
 	}
 
 	this.ircHandler = function(text,from,message) {
