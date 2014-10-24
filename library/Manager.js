@@ -46,6 +46,34 @@ module.exports = function(opts,bot,release) {
 
 	}
 
+	this.jobExists = function(findslug,callback) {
+		
+		var found = false;
+
+		// Pull out all the slugs.
+		Object.keys(jobs).forEach(function (key) {
+			if (key == findslug) {
+				found = true;
+			}
+		});
+
+		callback(found);
+
+	}
+
+	this.startUpdate = function(findslug,callback) {
+
+		this.jobExists(findslug,function(exists){
+			if (exists) {
+				// Great, let's start that update.
+				jobs[findslug].performUpdate();
+			}
+		});
+
+		callback();
+
+	}
+
 	this.listJobs = function(callback) {
 
 		var joblist = [];

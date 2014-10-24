@@ -121,13 +121,22 @@ module.exports = function(opts,bot) {
 			var buildstamp = new moment().unix();
 
 			async.series({
-				clone_and_update: function(callback){
+
+				clone: function(callback) {
+
+					this.gitClone(function(err){
+						callback(err);
+					});
+
+				}.bind(this),
+
+				update_clone: function(callback){
 					// Let's update our git repository.
 					if (opts.skipclone) {
-						this.logit("NOTICE: CLONE IS SKIPPED, typically for development.");
+						this.logit("NOTICE: CLONE (which is really modify and branch) IS SKIPPED, typically for development.");
 						callback(null);
 					} else {
-						this.gitCloneAndUpdate(buildstamp,function(err){
+						this.gitModifyAndBranch(buildstamp,function(err){
 							callback(err);
 						});
 					}
@@ -326,12 +335,10 @@ module.exports = function(opts,bot) {
 		
 	}
 
-	this.gitCloneAndUpdate = function(buildstamp,callback) {
+	this.gitClone = function(callback) {
 
-		// Ok, let's clone the repo, and update it.
-		branch_name = this.release.slug + "-" + buildstamp;
-		
 		async.series({
+
 			// Remove the tempdir if necessary
 			rmdir: function(callback){
 				exec("rm -Rf " + this.release.clone_path,function(err){
@@ -366,6 +373,25 @@ module.exports = function(opts,bot) {
 				});
 			}.bind(this),
 
+		},function(err,results){
+
+			if (err) {
+				this.logit("!ERROR: Clone failed " + err);
+			}
+
+			callback(err);
+
+		});
+		
+	}
+
+	this.gitModifyAndBranch = function(buildstamp,callback) {
+
+		// Ok, let's clone the repo, and update it.
+		branch_name = this.release.slug + "-" + buildstamp;
+		
+		async.series({
+			
 			// 1. Branch from master
 			branch: function(callback){
 				exec('git checkout -b ' + branch_name, {cwd: this.release.clone_path}, function(err,stdout){
@@ -385,7 +411,7 @@ module.exports = function(opts,bot) {
 				exec('sed -i -e "s|AUTOBUILD_UNIXTIME [0-9]*|AUTOBUILD_UNIXTIME ' + buildstamp + '|" Dockerfile', {cwd: this.release.clone_path}, function(err,stdout){
 					// Ok, after this point, if we're not updating the clone...
 					// We exit with an error.
-					if (!opts.skipclone) {
+					if (!opts.skipclone) {-
 						callback(err,stdout);
 					} else {
 						callback("We've skipped updating the clone.");
@@ -399,7 +425,7 @@ module.exports = function(opts,bot) {
 			}.bind(this),
 
 			git_commit: function(callback){
-				exec('git commit -m "[autobuild] Updating, new tarball found @ ' + buildstamp + '"', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
+				exec('git commit -m "[autobuild] Updating @ ' + buildstamp + '"', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
 			}.bind(this),
 
 			git_push: function(callback){

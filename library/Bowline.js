@@ -56,6 +56,10 @@ module.exports = function(opts,bot,release,manager) {
 				});
 				break;
 
+			// Test if a git repo has the correct dockerfile, etc
+			case "test":
+
+				break;
 
 			case "lastcmd":
 				this.lastCommandLog(function(last){
@@ -71,8 +75,25 @@ module.exports = function(opts,bot,release,manager) {
 
 			case "build":
 				if (authorized) {
-					this.logit("No prob, I'm kicking off an update for you.");
-					this.performUpdate();
+					// Ok, we need to look at the slug.
+					if (cmd.args.length) {
+						
+						var slug = cmd.args[0];
+						// Ok, check if it exists.
+						manager.jobExists(slug,function(found){
+							if (found) {
+
+								this.logit("No prob, I'm kicking off an update for you.");
+								manager.startUpdate(slug,function(){});
+
+							} else {
+								console.log("Sorry I can't find '" + slug + "' as a job.");
+							}
+						}.bind(this));
+					} else {
+						this.logit("Sorry, !build requires your release slug as a parameter, e.g. '!build foo'");	
+					}
+					// this.performUpdate();
 				} else {
 					this.logit("You're not my master, ask " + opts.irc_authuser + " to do this");
 				}
