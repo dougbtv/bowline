@@ -14,7 +14,7 @@ module.exports = function(opts,bot,release) {
 				// Alright, we're going to create a Builder for each job, and track the job.
 				if (rels.length) {
 
-					for (var i = 0; i < rels.length; rels++) {
+					for (var i = 0; i < rels.length; i++) {
 
 						var rel = rels[i];
 

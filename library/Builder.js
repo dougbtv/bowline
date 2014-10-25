@@ -320,8 +320,11 @@ module.exports = function(opts,bot) {
 			}.bind(this),
 
 			docker_build: function(callback) {
+				var relative_gitpath = this.release.git_path.replace(/^\/(.+)Dockerfile$/,"$1");
+				var path_dockerfile = this.release.clone_path + relative_gitpath;
+
 				this.logit("And we begin the docker build");
-				execlog('docker build -t ' + this.release.docker_tag + ' ' + this.release.clone_path,function(err,stdout,stderr){
+				execlog('docker build -t ' + this.release.docker_tag + ' ' + path_dockerfile,function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});
 				
