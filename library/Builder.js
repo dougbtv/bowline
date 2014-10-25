@@ -471,7 +471,11 @@ module.exports = function(opts,bot) {
 				var cmd_gitclone = 'git clone https://' + opts.gituser + ':' + opts.gitpassword + '@github.com/' + this.release.git_repo + ".git " + this.release.clone_path;
 				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
 				exec(cmd_gitclone,function(err,stdout,stderr){
-					callback(err,stdout);
+					if (err) {
+						callback("Git clone failed");
+					} else {
+						callback(err,stdout);	
+					}
 				});
 			}.bind(this),
 
@@ -483,7 +487,7 @@ module.exports = function(opts,bot) {
 
 			callback(err);
 
-		});
+		}.bind(this));
 		
 	}
 
