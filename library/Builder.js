@@ -3,6 +3,7 @@ module.exports = function(opts,bot) {
 	// Our requirements.
 	var fs = require('fs');
 	var http = require('http');
+	var request = require("request");
 	var moment = require('moment');
 	var async = require('async');
 	var schedule = require('node-schedule');
@@ -126,6 +127,36 @@ module.exports = function(opts,bot) {
 
 			// Alright, so, let's check that this release is OK.
 			async.series({
+
+				repo_exists: function(callback) {
+
+					request({
+						uri: "https://api.github.com/repos/" + this.release.git_repo,
+						method: "GET",
+						timeout: 10000,
+						headers: { 
+							'User-Agent': 'Bowline Autobuilder Bot',
+						}
+					}, function(err, response, body) {						
+
+						if (!err) {
+
+							var apireturns = JSON.parse(body);
+
+							if (typeof apireturns.name != 'undefined') {
+								// Great, looks good.
+								callback(null);
+							} else {
+								callback("Sorry the github repo doesn't exist: '" + this.release.git_repo + "'");
+							}
+
+						} else {
+							callback("Ack http error talking to github api when trying to repo_exists");
+						}
+
+					}.bind(this));
+
+				}.bind(this),
 
 				clone: function(callback) {
 

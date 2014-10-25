@@ -26,6 +26,7 @@
     "irc": "*",
     "node-schedule": "*",
     "prompt" : "*",
+    "request" : "*",
     "nomnom": "*"
   }
 }
