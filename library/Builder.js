@@ -46,9 +46,11 @@ module.exports = function(opts,bot) {
 	this.last_pullrequest = 0;
 
 	// Our virtual constructor.
-	// Alright, let's start this job.
-	this.start = function(initial_release,callback) {
-
+	// We can also start(), but that kicks off a job.
+	// ...sometimes we might want to pick out things a la carte
+	// (say, testing when you save a new release.)
+	this.instantiate = function(initial_release) {
+		
 		// We're passed in a this.release object.
 		this.release = initial_release;
 		console.log("!trace this.release @ Builder start: ",this.release);
@@ -66,7 +68,17 @@ module.exports = function(opts,bot) {
 		if (opts.forceupdate) {
 			this.last_modified = new moment().subtract(20, "years");
 			this.logit("Forcing an update on start, set date to: ",this.last_modified.toDate());
-		} 
+		}
+
+		return;
+
+	}
+
+	// Alright, let's start this job.
+	this.start = function(initial_release,callback) {
+
+		// First instantiate with the passed in release.
+		this.instantiate(initial_release);
 
 		// Check for update once, then, once it's updated, schedule the job to recur.
 		this.checkForUpdate(function(initialupdate){
@@ -102,51 +114,58 @@ module.exports = function(opts,bot) {
 
 		}.bind(this));
 
-
 	}.bind(this);
 
 	this.verifyRelease = function(callback) {
 
-		// Alright, so, let's check that this release is OK.
-		async.series({
+		if (!this.in_progress) {
 
-			clone: function(callback) {
+			// Alright, so, let's check that this release is OK.
+			async.series({
 
-				this.gitClone(function(err){
-					callback(err);
-				});
+				clone: function(callback) {
 
-			}.bind(this),
+					this.gitClone(function(err){
+						callback(err);
+					});
 
-			check_dockerfile_exists: function(callback) {
+				}.bind(this),
 
-				var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
-				var checkpath = this.release.clone_path + relative_gitpath;
+				check_dockerfile_exists: function(callback) {
 
-				// Ok, see if the file exists.
-				fs.exists(checkpath, function(exists){
-					if (exists) {
-						callback(null);
-					} else {
-						callback("Dockerfile path is wrong, didn't find " + this.release.git_path);
-					}
-				});
+					var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
+					var checkpath = this.release.clone_path + relative_gitpath;
 
-			}.bind(this),
+					// Ok, see if the file exists.
+					fs.exists(checkpath, function(exists){
+						if (exists) {
+							callback(null);
+						} else {
+							callback("Dockerfile path is wrong, didn't find " + this.release.git_path);
+						}
+					});
 
-		},function(err,result){
+				}.bind(this),
 
-			if (!err) {
+			},function(err,result){
 
-				console.log("!trace done with verifyRelease, success.");
-				callback(null,true);
+				if (!err) {
 
-			} else {
-				console.log("!trace done with verifyRelease, err: " + err);
-				callback("Couldn't verify release: " + err);
-			}
+					console.log("!trace done with verifyRelease, success.");
+					callback(null,true);
 
-		});
+				} else {
+					console.log("!trace done with verifyRelease, err: " + err);
+					callback("Couldn't verify release: " + err);
+				}
+
+			});
+
+		} else {
+
+			callback("Sorry, you can't test a release while a build is in progress");
+
+		}
 
 	}.bind(this);
 
