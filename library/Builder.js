@@ -526,7 +526,7 @@ module.exports = function(opts,bot) {
 			}.bind(this),
 
 			git_add: function(callback){
-				exec('git add Dockerfile', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
+				exec('git add --all', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
 			}.bind(this),
 
 			git_commit: function(callback){
