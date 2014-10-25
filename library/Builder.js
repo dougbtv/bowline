@@ -202,16 +202,18 @@ module.exports = function(opts,bot) {
 
 				}.bind(this),
 
+				rmdir: function(callback){
+					exec("rm -Rf " + this.release.clone_path,function(err){
+						callback(err);
+					});
+				}.bind(this),
+
 			},function(err,result){
 
 				if (!err) {
-
-					console.log("!trace done with verifyRelease, success.");
 					callback(null,true);
-
 				} else {
-					console.log("!trace done with verifyRelease, err: " + err);
-					callback("Couldn't verify release: " + err);
+					callback(err);
 				}
 
 			});
