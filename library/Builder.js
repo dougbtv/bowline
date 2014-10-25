@@ -118,6 +118,10 @@ module.exports = function(opts,bot) {
 
 	this.verifyRelease = function(callback) {
 
+		// We'll need these paths.
+		var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
+		var path_dockerfile = this.release.clone_path + relative_gitpath;
+
 		if (!this.in_progress) {
 
 			// Alright, so, let's check that this release is OK.
@@ -133,15 +137,35 @@ module.exports = function(opts,bot) {
 
 				check_dockerfile_exists: function(callback) {
 
-					var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
-					var checkpath = this.release.clone_path + relative_gitpath;
-
 					// Ok, see if the file exists.
-					fs.exists(checkpath, function(exists){
+					fs.exists(path_dockerfile, function(exists){
 						if (exists) {
-							callback(null);
+							callback(null,path_dockerfile);
 						} else {
 							callback("Dockerfile path is wrong, didn't find " + this.release.git_path);
+						}
+					}.bind(this));
+
+				}.bind(this),
+
+				has_env_var: function(callback) {
+
+					// Ok, check that it has the env var.
+					// AUTOBUILD_ENVVAR
+					// console.log("!trace path_dockerfile: ",path_dockerfile);
+
+					fs.readFile(path_dockerfile, 'utf8', function (err, filecontents) {
+						if (!err) {
+
+							// Ok let's check that they have the environment variable.
+							if (filecontents.indexOf(AUTOBUILD_ENVVAR) > -1) {
+								callback(null);
+							} else {
+								callback("Your dockerfile needs to container the environment variable '" + AUTOBUILD_ENVVAR + "'");
+							}
+
+						} else {
+							callback("Damn, couldn't read the dockerfile when looking for environment variable.");
 						}
 					});
 
@@ -290,14 +314,14 @@ module.exports = function(opts,bot) {
 
 			docker_pull: function(callback) {
 				this.logit("Beginning docker pull");
-				execlog('docker pull ' + opts.docker_image,function(err,stdout,stderr){
+				execlog('docker pull ' + this.release.docker_tag,function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});
 			}.bind(this),
 
 			docker_build: function(callback) {
 				this.logit("And we begin the docker build");
-				execlog('docker build -t ' + opts.docker_image + ' ' + this.release.clone_path,function(err,stdout,stderr){
+				execlog('docker build -t ' + this.release.docker_tag + ' ' + this.release.clone_path,function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});
 				
@@ -328,10 +352,15 @@ module.exports = function(opts,bot) {
 			}.bind(this),
 			
 			docker_push: function(callback) {
-				this.logit("And we've started pushing it");
-				execlog('docker push ' + opts.docker_image,function(err,stdout,stderr){
-					callback(err,{stdout: stdout, stderr: stderr});
-				});
+				if (!opts.skipdockerpush) {
+					this.logit("And we've started pushing it");
+					execlog('docker push ' + this.release.docker_tag,function(err,stdout,stderr){
+						callback(err,{stdout: stdout, stderr: stderr});
+					});
+				} else {
+					this.logit("NOTICE: No docker push (by options)");
+					callback(null);
+				}
 			}.bind(this),
 
 			
@@ -347,32 +376,35 @@ module.exports = function(opts,bot) {
 			fs.readFile(this.release.log_docker, 'utf8', function (readlogerr, logcontents) {
 				if (readlogerr) throw readlogerr;
 
-				pasteall.paste(logcontents,"text",function(err,url){
-					if (!err) {
-						this.logit("Build results posted @ " + url);
+				if (!opts.skipdockerpush) {
+					pasteall.paste(logcontents,"text",function(err,url){
+						if (!err) {
+							this.logit("Build results posted @ " + url);
 
-						// last_pullrequest
-						if (!opts.skipclone) {
-							github.issues.createComment({
-								user: repo_username,
-								repo: repo_name,
-								body: "Build complete, log posted @ " + url,
-								number: this.last_pullrequest,
-							},function(err,result){
-								if (err) {
-									console.log("Oooops, somehow the github issue comment failed: " + err);
-								}
-								// console.log("!trace PULL REQUEST err/result: ",err,result);
-								// callback(err,result);
-							}.bind(this));
+							// last_pullrequest
+							if (!opts.skipclone) {
+								github.issues.createComment({
+									user: repo_username,
+									repo: repo_name,
+									body: "Build complete, log posted @ " + url,
+									number: this.last_pullrequest,
+								},function(err,result){
+									if (err) {
+										console.log("Oooops, somehow the github issue comment failed: " + err);
+									}
+									// console.log("!trace PULL REQUEST err/result: ",err,result);
+									// callback(err,result);
+								}.bind(this));
+							} else {
+								// callback(null);					
+							}
+
 						} else {
-							// callback(null);					
+							this.logit("pasteall errored: " + err);
 						}
-
-					} else {
-						this.logit("pasteall errored: " + err);
-					}
-				}.bind(this));
+					}.bind(this));
+				}
+				
 
 			}.bind(this));
 			

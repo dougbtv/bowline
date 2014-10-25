@@ -23,5 +23,6 @@
 	"authdisabled": false,
 	"skipclone": false,
 	"skipbuild": false,
+	"skipdockerpush": false,
 	"forceupdate": false
 }

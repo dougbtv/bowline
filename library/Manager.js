@@ -81,7 +81,7 @@ module.exports = function(opts,bot,release) {
 		this.jobExists(findslug,function(exists){
 			if (exists) {
 				jobs[findslug].verifyRelease(function(err){
-					callback(null);
+					callback(err);
 				});
 			}
 		});

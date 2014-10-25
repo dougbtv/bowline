@@ -19,13 +19,12 @@ module.exports = function(mongoose) {
 		
 		check_minutes: [Number], // At which minutes on the clock do we check?
 
+		git_repo: String,		// What's the git repo?
+		git_path: String,		// This is the path to the dockerfile in the git repo
 		branch_name: String,	// What's the NEW branch name you'd like?
 		branch_master: String,	// What's your master branch name?
-
+		
 		docker_tag: String,		// What's the name of the docker image tag?
-		git_repo: String,		// What's the git repo?
-		git_path: String,		// What's the git repo?
-
 
 	}, { collection: 'releases' });
 
@@ -60,6 +59,14 @@ module.exports = function(mongoose) {
 	  return /http|http|http/.test(value);
 
 	}, 'Invalid release method');
+
+	// Check out the docker path for validation
+	Release.schema.path('docker_tag').validate(function (value) {
+
+		var re = new RegExp("[a-zA-Z0-9\:\\/\-_.]");
+		return re.test(value);
+
+	}, 'Docker tag must match [a-zA-Z0-9:/-_.]');
 
 	// the check minutes must be a list, and all values must be between 0 and 59.
 	Release.schema.path('check_minutes').validate(function (value) {

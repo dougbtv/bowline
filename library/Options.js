@@ -138,7 +138,11 @@ module.exports = function() {
 			})
 			.option('skipbuild', {
 				flag: true,
-				help: 'Skip updating the github repo.'
+				help: 'Skip building docker files'
+			})
+			.option('skipdockerpush', {
+				flag: true,
+				help: 'Do not push to dockerhub'
 			})
 			.option('forceupdate', {
 				flag: true,
