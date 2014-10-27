@@ -29,6 +29,7 @@
     "request" : "*",
     "bunyan": "*",
     "bcrypt": "*",
+    "restify": "*",
     "nodemailer": "*",
     "node-uuid": "*",
     "nomnom": "*"
