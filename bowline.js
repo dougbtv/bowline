@@ -59,6 +59,7 @@ options.parse(function(opts){
 
 		var RestServer = require("./library/restServer.js"); 
 		var restserver = new RestServer(log,opts,bowline);
+	    restserver.serverStart();
 
 		// Connect the irc bot's listener to the builder
 		irc.bot.addListener("message", function(from, to, text, message) {

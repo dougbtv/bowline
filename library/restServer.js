@@ -39,7 +39,6 @@ module.exports = function(log, opts, bowline) {
 			}
 		);
 
-
 		// Method call at the bottom of this class.
 	
 		server.get('/api/foo', this.testFunction);

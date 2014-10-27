@@ -56,8 +56,6 @@ module.exports = function(log, opts, mongoose) {
 				user.resetkey = this.uniqueHash();
 				user.email = email;
 				user.active = false;
-				user.admin = false;
-				user.operator = false;
 				user.indate = new Date();
 				
 				user.save(function(err){
@@ -159,8 +157,6 @@ module.exports = function(log, opts, mongoose) {
 						this.createSession(email,function(sessionid){
 							callback({
 								sessionid: sessionid,
-								admin: user.admin,
-								operator: user.operator,
 								fulluser: user,
 							});
 						});
