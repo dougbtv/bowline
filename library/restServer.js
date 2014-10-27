@@ -1,4 +1,4 @@
-module.exports = function(log, opts, bowline) {
+module.exports = function(log, opts, bowline, user) {
 
 	// --------------------------------------------------------------------
 	// -- myConstructor : Throws the constructor into a method.
@@ -78,7 +78,7 @@ module.exports = function(log, opts, bowline) {
 
 			var input = req.params;
 
-			bowline.user.validateSession(input.session,function(isvalid){
+			user.validateSession(input.session,function(isvalid){
 
 				res.contentType = 'json';
 
@@ -115,7 +115,7 @@ module.exports = function(log, opts, bowline) {
 
 		var input = req.params;
 
-		bowline.user.validateSession(input.session,function(validpack){
+		user.validateSession(input.session,function(validpack){
 
 			res.contentType = 'json';
 			res.send({valid: validpack.isvalid, fulluser: validpack.fulluser});
@@ -132,7 +132,7 @@ module.exports = function(log, opts, bowline) {
 		// log.trace("user login params: ",input);
 
 		// Now check it with the user module.
-		bowline.user.authenticate(input.email,input.password,function(auth){
+		user.authenticate(input.email,input.password,function(auth){
 
 			res.contentType = 'json';
 
@@ -161,7 +161,7 @@ module.exports = function(log, opts, bowline) {
 		var input = req.params;
 
 		// Ok, make a request to the user object.
-		bowline.user.setPassword(input.email.trim(),input.password,input.resetkey,function(auth){
+		user.setPassword(input.email.trim(),input.password,input.resetkey,function(auth){
 
 			res.contentType = 'json';
 			res.send(auth);
@@ -175,7 +175,7 @@ module.exports = function(log, opts, bowline) {
 		var input = req.params;
 
 		// Ok, make a request to the user object.
-		bowline.user.forgotPassword(input.email.trim(),function(err){
+		user.forgotPassword(input.email.trim(),function(err){
 
 			var sendjson = {};
 
@@ -196,14 +196,8 @@ module.exports = function(log, opts, bowline) {
 		var input = req.params;
 
 		// Ok, make a request to the user object.
-		bowline.user.registerUser(
+		user.registerUser(
 			input.user.email.trim(),
-			input.user.firstname.trim(),
-			input.user.lastname.trim(),
-			input.user.operator_request,
-			input.user.operator_request_message,
-			input.user.request_coursename,
-			input.user.request_courselocation,
 			function(err){
 
 			var sendjson = {};

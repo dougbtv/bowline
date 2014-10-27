@@ -58,7 +58,7 @@ options.parse(function(opts){
 		var bowline = new Bowline(opts,irc,release,manager);
 
 		var RestServer = require("./library/restServer.js"); 
-		var restserver = new RestServer(log,opts,bowline);
+		var restserver = new RestServer(log,opts,bowline,user);
 	    restserver.serverStart();
 
 		// Connect the irc bot's listener to the builder

@@ -42,6 +42,9 @@ module.exports = function(log, opts, mongoose) {
 				"&email=" + encodeURIComponent(this.email);
 		});
 
+	// Compile it to a model.
+	var User = mongoose.model('User', userSchema);
+
 	this.registerUser = function(email,callback) {
 
 		// Ok, see if the user exists.
