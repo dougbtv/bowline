@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc overview
- * @name wwwApp
+ * @name bowlineApp
  * @description
- * # wwwApp
+ * # bowlineApp
  *
  * Main module of the application.
  */
 angular
-  .module('wwwApp', [
+  .module('bowlineApp', [
     'ngAnimate',
     'ngCookies',
     'ngResource',
