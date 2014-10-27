@@ -4,6 +4,7 @@
     "MONGO_OPTIONS": {},
     "MONGOOSE_DEBUG": false,
     "EMAIL_ENABLED": false,
+    "SERVER_PORT": 8000,
 	"gituser": "asteriskautobuilder",
 	"gitpassword": "aaaaaaaaaaaaaaaaa",
 	"docker_user": "dougbtv",
