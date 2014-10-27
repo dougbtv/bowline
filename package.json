@@ -10,7 +10,7 @@
   "main": "./bowline.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dougbtv/docker-asterisk"
+    "url": "https://github.com/dougbtv/bowline"
   },
   "keywords": [
     "docker",
