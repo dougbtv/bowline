@@ -3,6 +3,7 @@
     "MONGO_CONNECT_STRING": "mongodb://localhost/bowline",
     "MONGO_OPTIONS": {},
     "MONGOOSE_DEBUG": false,
+    "EMAIL_ENABLED": false,
 	"gituser": "asteriskautobuilder",
 	"gitpassword": "aaaaaaaaaaaaaaaaa",
 	"docker_user": "dougbtv",

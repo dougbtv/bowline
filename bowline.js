@@ -35,6 +35,9 @@ options.parse(function(opts){
 		// We're connected to mongo, now.
 		console.log("mongo_connect",{server: opts.MONGO_CONNECT_STRING });
 
+		var Log = require('./library/Log.js');
+		var log = new Log(opts);
+
 		// Now that we're connected to mongo, we can continue along.
 		// The Condor object, the meat of our dealings.
 		var IRC = require('./library/IRC.js');
@@ -42,6 +45,9 @@ options.parse(function(opts){
 
 		var Release = require('./library/Release.js');
 		var release = new Release(mongoose);
+
+		var User = require('./library/User.js');
+		var user = new User(log,opts,mongoose);
 
 		// Bowline handles our matters.		
 		var Manager = require("./library/Manager.js"); 
