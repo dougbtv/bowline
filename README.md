@@ -23,7 +23,7 @@ There isn't an official release yet, I'm just getting the ideas down (after I bu
 
 I just want to have a software release happen, and then have something build the final docker image for me, so I don't have to sit there waiting for it to happen. I was originally inspired by wanting to have an up-to-date Docker image readied in a repository after an Asterisk security release (I'd rather just have them, now.)
 
-The name is inspired by the nautical theme of Docker to begin with, however The logo is inspired by (The Ashley Book of Knots)[http://en.wikipedia.org/wiki/The_Ashley_Book_of_Knots]
+The name is inspired by the nautical theme of Docker to begin with. Additionally, I have a penchant for knots and it seemed to lend itself to the concept. Plus the bowline is a rather useful and nearly ubiquitous in the world of knots. The logo is original (and is also open source and available in the clone). The logo is inspired by [The Ashley Book of Knots](http://en.wikipedia.org/wiki/The_Ashley_Book_of_Knots), which depicts how the bowline is tied and specifically (the arrows in the logo) how the knot is "faired" (how it's made neat and tied tightly).
 
 ## License
 
