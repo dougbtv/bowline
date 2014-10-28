@@ -52,6 +52,27 @@ bowlineApp.controller('bowlineMainController',
 	['$scope', '$location', '$http', '$cookies', '$route', '$interval','loginModule', 'ENV', 
 	function($scope, $location, $http, $cookies, $route, $interval, login, ENV) {
 
+		$scope.loggedin = login.status;
+
+		$scope.$on("loginStatus",function(event,status){
+			// console.log('hey, loginStatus has changed!', status);
+			$scope.loggedin = status;
+		});
+
+		$scope.navClass = function (page) {
+	
+			// Get the route.
+			var currentRoute = $location.path().substring(1) || 'home';
+
+			// Set the onPage if it's wrong.
+			if (currentRoute != $scope.onPage) {
+				$scope.onPage = currentRoute;
+			}
+
+			
+			return page === currentRoute ? 'active' : '';
+		};
+
 		// always validate the session
 		login.validateSession(function(){});	
 
