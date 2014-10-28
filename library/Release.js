@@ -110,6 +110,23 @@ module.exports = function(mongoose) {
 
 	}
 
+	this.getReleases = function(callback) {
+
+		// TODO: This will be filtered in the future.
+		Release.find({},function(err,rels){
+		
+			if (!err) {
+
+				callback(rels);
+
+			} else {
+				callback("Mongo error, couldn't getReleases: " + err);
+			}
+
+		});
+
+	}
+
 
 
 }

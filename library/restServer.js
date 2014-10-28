@@ -1,4 +1,4 @@
-module.exports = function(log, opts, bowline, user) {
+module.exports = function(log, opts, bowline, user, release) {
 
 	// --------------------------------------------------------------------
 	// -- myConstructor : Throws the constructor into a method.
@@ -40,8 +40,14 @@ module.exports = function(log, opts, bowline, user) {
 			}
 		);
 
-		// Method call at the bottom of this class.
-	
+		// Release methods
+		
+		server.get('/api/getReleases', this.getReleases);
+		server.post('/api/getReleases', this.getReleases);
+		server.head('/api/getReleases', this.getReleases);
+
+		// infamous test method.
+
 		server.get('/api/foo', this.testFunction);
 		server.post('/api/foo', this.testFunction);
 		server.head('/api/foo', this.testFunction);
@@ -100,16 +106,16 @@ module.exports = function(log, opts, bowline, user) {
 
 	*/
 
-	// -------------- Add a match message.
-	/*
-		$http.post('/api/addMatchMessage', {
-			matchid: message._id,
-			mode: mode,
-			messagetext: message.update_message,
-			session: login.sessionpack
-		})
-	*/
+	this.getReleases = function(req, res, next) {
 
+		var input = req.params;
+
+		release.getReleases(function(rels){
+			res.contentType = 'json';
+			res.send(rels);
+		});
+
+	}
 	
 
 	this.validateSession = function(req, res, next) {
