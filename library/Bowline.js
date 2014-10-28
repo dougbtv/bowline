@@ -3,40 +3,44 @@ module.exports = function(opts,bot,release,manager) {
 	// We instantiate builders for each specification.
 	var moment = require('moment');
 
-	var prompt = require('prompt');
-	var readline = require('readline');
+	if (opts.cli) {
 
-	manager.initializeActiveSearches(function(err){
-		console.log("!trace back to Bowline handler.");
-	});
+		var prompt = require('prompt');
+		var readline = require('readline');
 
-	// Create our readline interface.
-	rl = readline.createInterface(process.stdin, process.stdout);
+		manager.initializeActiveSearches(function(err){
+			console.log("!trace back to Bowline handler.");
+		});
 
-	// Set the prompt, and launch it.
-	rl.setPrompt('bowline cli> '.cyan);
-	rl.prompt();
+		// Create our readline interface.
+		rl = readline.createInterface(process.stdin, process.stdout);
 
-	// Act on the line input from the readline.
-	rl.on('line', function(line) {
+		// Set the prompt, and launch it.
+		rl.setPrompt('bowline cli> '.cyan);
+		rl.prompt();
 
-		// parse the CLI input.
-		this.parseRaw(line.trim(),function(cmd){
+		// Act on the line input from the readline.
+		rl.on('line', function(line) {
 
-			this.commandHandler(cmd,true,function(){
-				// And start again.
-				rl.prompt();	
-			});
+			// parse the CLI input.
+			this.parseRaw(line.trim(),function(cmd){
+
+				this.commandHandler(cmd,true,function(){
+					// And start again.
+					rl.prompt();	
+				});
+
+			}.bind(this));
+
+		}.bind(this)).on('close', function() {
+
+			// console.log('Have a great day!');
+			console.log("\n");
+			process.exit(0);
 
 		}.bind(this));
 
-	}.bind(this)).on('close', function() {
-
-		// console.log('Have a great day!');
-		console.log("\n");
-		process.exit(0);
-
-	}.bind(this));
+	}
 
 	this.commandHandler = function(cmd,authorized,callback) {
 

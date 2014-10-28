@@ -148,6 +148,11 @@ module.exports = function() {
 				flag: true,
 				help: 'Force an update automatically.'
 			})
+			.option('cli', {
+				abbr: 'c',
+				flag: true,
+				help: 'Enable the CLI'
+			})
 			.parse();
 
 			// console.log("!trace input PRE-CONFIG: ",configs);

@@ -26,5 +26,6 @@
 	"skipclone": false,
 	"skipbuild": false,
 	"skipdockerpush": false,
+	"cli": true,
 	"forceupdate": false
 }
