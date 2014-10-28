@@ -8,7 +8,7 @@
  * Controller of the bowlineApp
  */
 angular.module('bowlineApp')
-  .controller('AboutCtrl', function ($scope) {
+  .controller('docsController', function ($scope) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',

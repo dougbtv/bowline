@@ -30,9 +30,9 @@ var bowlineApp = angular
 			templateUrl: 'views/main.html',
 			controller: 'MainCtrl'
 		})
-		.when('/about', {
-			templateUrl: 'views/about.html',
-			controller: 'AboutCtrl'
+		.when('/docs', {
+			templateUrl: 'views/docs.html',
+			controller: 'docsController'
 		})
 		.when('/login', {
 			templateUrl: 'views/login.html',
