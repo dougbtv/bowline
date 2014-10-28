@@ -18,7 +18,7 @@ angular.module('bowlineApp')
 
 	var markdown = {
 		"readme": 'README.md',
-		"started": 'README.md',
+		"started": 'docs/GettingStarted.md',
 	};
 
 	$scope.mode = "readme";
