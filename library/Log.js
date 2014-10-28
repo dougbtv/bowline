@@ -1,15 +1,33 @@
 module.exports = function(opts) {
 
+	var PrettyStream = require('bunyan-prettystream');
+
+	var mystreams = "";
+
+	// In dev, just spit pretty json.
+	var prettyStdOut = new PrettyStream();
+	prettyStdOut.pipe(process.stdout);
+	mystreams = [{
+		level: 'debug',
+		type: 'raw',
+		stream: prettyStdOut
+	}];
+
+	/*
+	// in production you'll want this...
+
+
+	mystreams = [{
+		stream: process.stdout
+	}];
+	*/
+
 	var bunyan = require('bunyan');
 	var log = bunyan.createLogger({
 		name: "condor",
-		streams: [
-			{
-				stream: process.stdout
-			},
-		]
+		streams: mystreams,
 	});
-	
+
 	// Use moment for formatting the date.
 	var moment = require('moment');
 

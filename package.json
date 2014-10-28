@@ -32,6 +32,7 @@
     "restify": "*",
     "nodemailer": "*",
     "node-uuid": "*",
+    "bunyan-prettystream": "*",
     "nomnom": "*"
   }
 }
