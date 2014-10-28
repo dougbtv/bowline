@@ -38,6 +38,10 @@ var bowlineApp = angular
 			templateUrl: 'views/login.html',
 			controller: 'loginController'
 		})
+		.when('/console', {
+			templateUrl: 'views/console.html',
+			controller: 'consoleController'
+		})
 		.when('/register', {
 			templateUrl: 'views/register.html',
 			controller: 'registerController'

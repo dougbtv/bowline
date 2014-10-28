@@ -7,8 +7,9 @@
  * # AboutCtrl
  * Controller of the bowlineApp
  */
-angular.module('bowlineApp')
-  .controller('docsController', function ($scope) {
+
+bowlineApp.controller('docsController', ['$scope', '$location', '$http', 'loginModule', 'ENV', function($scope,$location,$http,login,ENV) {
+
 
   	var REPO = 'dougbtv/bowline';
 
@@ -41,4 +42,4 @@ angular.module('bowlineApp')
 		}
 	}
 
-  });
+}]);
