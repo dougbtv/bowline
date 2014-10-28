@@ -46,3 +46,13 @@ var bowlineApp = angular
 			redirectTo: '/'
 		});
 });
+
+
+bowlineApp.controller('bowlineMainController', 
+	['$scope', '$location', '$http', '$cookies', '$route', '$interval','loginModule', 'ENV', 
+	function($scope, $location, $http, $cookies, $route, $interval, login, ENV) {
+
+		// always validate the session
+		login.validateSession(function(){});	
+
+	}]);

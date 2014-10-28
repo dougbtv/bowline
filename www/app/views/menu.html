@@ -1,0 +1,13 @@
+<ul class="nav nav-pills pull-right">
+	
+	<li ng-class="navClass('home')"><a ng-href="#">Home</a></li>
+	<li ng-class="navClass('about')"><a ng-href="#/about">About</a></li>
+	<li ng-class="navClass('contact')"><a ng-href="#">Contact</a></li>
+
+	<li ng-class="navClass('profile')" ng-show="loggedin"><a ng-href="#/profile">My Stuff</a></li>
+	
+	<li ng-class="navClass('login')" ng-hide="loggedin"><a ng-href="#/login">Login</a></li>
+	<li ng-class="navClass('register')" ng-hide="loggedin"><a ng-href="#/register">Register</a></li>
+
+</ul>
+<h3 class="text-muted">bowline</h3>
