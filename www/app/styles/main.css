@@ -7,6 +7,27 @@ body {
   margin-bottom: 20px;
 }
 
+.jumbotron {
+  text-align: center;
+}
+
+.marketing .col-lg-4 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.marketing h2 {
+  font-weight: normal;
+}
+.marketing .col-lg-4 p {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.bigicon {
+    font-size: 65px;
+}
+
+
   /*
 
   Thank you to the kind person that made this snippet: <link href="/css/sticky-footer-navbar.css" rel="stylesheet">
