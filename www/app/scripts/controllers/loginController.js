@@ -12,23 +12,12 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 
 	this.username = '';
 	this.session = '';
-	this.proxy = '';
 	this.sessionpack = {
 		username: '',
 		session: '',
-		proxy: '',
 	};
 	this.status = false;	// What's the login status?
-	this.admin = false;		// Are we an admin?
-	this.operator = false;	// Are we a course operator?
-	this.demo = false;	// Are we a demo user?
-	this.trueadmin = false; // A property that doesn't get changed based on proxiness.
-
-	// More user details.
-	this.firstname = '';
-	this.lastname = '';
-
-
+	
 	// A centralized way to broadcast the login status.
 	this.broadcastLoginStatus = function(status) {
 
@@ -54,11 +43,11 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 			.success(function(data) {
 				
 				// Ok.... callback with the result.
-				// console.log("!trace LOGIN AJAX: ",data);
+				console.log("!trace LOGIN AJAX: ",data);
 
 				if (data.session) {
 					
-					this.setLoggedIn(loginform.email,data.session,data.admin,data.operator,data.fulluser,function(){
+					this.setLoggedIn(loginform.email,data.session,function(){
 						broadcastLoginStatus(true);
 						callback(true);
 					});
@@ -95,9 +84,8 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 		if ($store.get('username')) {
 			if ($store.get('session')) {
 				
-				// console.log("!trace page load cookie check: ",$store.get('username'),$store.get('session'),$store.get('proxy'));
 				// Ok, now call up the API.
-				$http.post(ENV.api_url + '/api/validateSession', { session: { username: $store.get('username'), session: $store.get('session'), proxy: $store.get('proxy') } })
+				$http.post(ENV.api_url + '/api/validateSession', { session: { username: $store.get('username'), session: $store.get('session') } })
 					.success(function(data){
 
 						// console.log("!trace return from validateSession? ",data);
@@ -106,29 +94,11 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 						if (data.valid) {
 
 							// Great!
-							this.setLoggedIn($store.get('username'),$store.get('session'),userprops.admin,userprops.operator,data.fulluser,function(){
-								// then set the proxy privileges, if you have to.
-								if ($store.get('proxy')) {
-									
-									// Set the session pack.
-									this.setSessionPack();
-									// Also set this proxy property.
-									this.proxy = $store.get('proxy');
-									// And now set the privs.
-									this.setProxyPrivileges($store.get('username'),function(err){
-										if (err) {
-											console.log("!ERROR: Had trouble setting proxy privs for: ".$store.get('username'));
-										}
-									});
-
-									broadcastLoginStatus(true);
-									callback(true);
-
-								} else {
-
-									broadcastLoginStatus(true);
-									callback(true);
-								}
+							this.setLoggedIn($store.get('username'),$store.get('session'),function(){
+							
+								broadcastLoginStatus(true);
+								callback(true);
+							
 							}.bind(this));
 
 						} else {
@@ -160,40 +130,7 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 
 	};
 
-	this.setProxyPrivileges = function(email,callback) {
-
-
-		$http.post(ENV.api_url + '/api/checkProxyUser', { email: email, session: this.sessionpack})	
-			.success(function(user) {
-				
-				// Set that proxy list.
-				// console.log("!trace the check proxy user return: ",user);
-				if (user) {
-
-					// Don't need to huck it in the cookie.
-
-					// And keep our object properties.
-					this.admin = user.admin;
-					this.operator = user.operator;
-					this.demo = user.demo;
-					this.firstname = user.details.firstname;
-					this.lastname = user.details.lastname;
-
-				} else {
-					// That didn't work for us. Set that we encountered an error.
-					callback(true);
-				}
-				
-			}.bind(this))
-			.error(function(data) {
-
-				console.log("!ERROR: Dag, didn't get an API return from checkProxyUser in login module");			
-
-			});
-
-	};
-
-	this.setLoggedIn = function(email,session,admin,operator,fulluser,callback) {
+	this.setLoggedIn = function(email,session,callback) {
 
 		// Keep that login status.
 		this.status = true;
@@ -202,24 +139,11 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 		// Now set our session cookie.
 		$store.set('session',session);
 		$store.set('username',email);
-		$store.set('userprops_admin',admin);
-		$store.set('userprops_operator',operator);
 
 		// And keep our object properties.
 		this.username = email;
 		this.session = session;
-		this.admin = admin;
-		this.trueadmin = admin;
-		this.operator = operator;
-		this.demo = fulluser.demo;
-
-		// console.log("!trace FULLUSER: ",fulluser);
-
-		if (typeof fulluser != 'undefined') {
-			this.firstname = fulluser.details.firstname;
-			this.lastname = fulluser.details.lastname;
-		}
-
+		
 		// We pack some of these together for a handy "session pack"
 		this.setSessionPack();
 
@@ -240,7 +164,6 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 		this.sessionpack = {
 			username: $store.get('username'),
 			session: $store.get('session'),
-			proxy: $store.get('proxy'),
 		};
 	};
 
@@ -252,55 +175,14 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 		// Rest everything.
 		$store.set('session','');
 		$store.set('username','');
-		$store.set('proxy','');
-		$store.set('userprops_admin',false);
-		$store.set('userprops_operator',false);
-
+		
 		this.username = '';
 		this.session = '';
-		this.proxy = '';
-		this.admin = false;
-		this.trueadmin = false;
-		this.operator = false;
-
+		
 		broadcastLoginStatus(false);
 		callback();
 
 	};
-
-	this.clearProxy = function() {
-
-		// Reset the username.
-		$store.set('username',$store.get('proxy'));
-
-		// Clear the proxy.
-		$store.set('proxy','');
-
-		// That should be all.
-
-	};
-
-	this.setProxy = function(to_user) {
-		// Ok, set the proxied user.
-		if (!this.proxy) {
-			console.log("!trace SETTING PROXY");
-			// We keep their username.
-			this.proxy = this.username;
-			$store.set('proxy',this.username);
-		}
-
-		// Now, change the username.
-		this.username = to_user;
-		$store.set('username',to_user);
-
-		// And reset the session pack.
-		this.setSessionPack();
-
-
-
-	};
-
-
 
 }
 

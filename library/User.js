@@ -15,7 +15,7 @@ module.exports = function(log, opts, mongoose) {
 	var Mail = require('./Mail.js');
 	var mail = new Mail(log,opts);
 
-	var URL_SET_PASSWORD = "http://localhost/change/this";
+	var URL_SET_PASSWORD = "http://localhost:9000/#/register";
 
 	// -----------------------------------
 	// Mongo schema ----------------------
@@ -35,12 +35,27 @@ module.exports = function(log, opts, mongoose) {
 
 	}, { collection: 'users' });
 
+	// Elegant little way to hide properties when transforming to object.
+	// http://mongoosejs.com/docs/api.html#document_Document-toObject
+	// (do a find for "hide", both on that doc, and here. To see it in action)
+	if (!userSchema.options.toObject) userSchema.options.toObject = {};	
+
+	userSchema.options.toObject.transform = function (doc, ret, options) {
+		if (options.hide) {
+			options.hide.split(' ').forEach(function (prop) {
+				delete ret[prop];
+			});
+		}
+	};
+
+
 	userSchema.virtual('resetURL')
 		.get(function () {
 			return URL_SET_PASSWORD + 
 				"?resetpass=" + encodeURIComponent(this.resetkey) + 
 				"&email=" + encodeURIComponent(this.email);
 		});
+
 
 	// Compile it to a model.
 	var User = mongoose.model('User', userSchema);
@@ -399,9 +414,7 @@ module.exports = function(log, opts, mongoose) {
 						this.createSession(email,function(sessionid){
 							callback({
 								sessionid: sessionid,
-								admin: user.admin,
-								operator: user.operator,
-								fulluser: user,
+								fulluser: user.toObject({ hide: 'secret resetkey resetURL', transform: true, virtuals: true }),
 							});
 						});
 

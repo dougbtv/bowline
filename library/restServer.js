@@ -139,7 +139,7 @@ module.exports = function(log, opts, bowline, user) {
 			if (auth) {
 
 				// Great, send it back to 'em.
-				res.send({session: auth.sessionid, demo: auth.demo, admin: auth.admin, operator: auth.operator, fulluser: auth.fulluser});
+				res.send({session: auth.sessionid, fulluser: auth.fulluser});
 
 
 			} else {
