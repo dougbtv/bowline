@@ -201,7 +201,6 @@ module.exports = function(log, opts, mongoose) {
 		return uuid.v4();
 	}
 
-
 	this.createPasswordHash = function(password,callback) {
 
 		// generate a salt
@@ -397,36 +396,41 @@ module.exports = function(log, opts, mongoose) {
 				// Compare it using bcrypt.
 				bcrypt.compare(password, user.secret, function(err, isMatch) {
 					if (err) {
+						
 						log.error("bcrypt_compare",{err: err});
 						callback(err);
-					}
-
-					if (isMatch) {
-
-						// Give them a session id.
-						// This way we don't store their password in the cookie.
-						// It will get reset with each authentication.
-						log.it("login",{
-							success: true,
-							email: email,	
-						});
-
-						this.createSession(email,function(sessionid){
-							callback({
-								sessionid: sessionid,
-								fulluser: user.toObject({ hide: 'secret resetkey resetURL', transform: true, virtuals: true }),
-							});
-						});
 
 					} else {
-						log.it("login",{
-							success: false,
-							email: email,	
-						});
 
-						// log.it("!Warning: Password auth failed for %s with password: %s",email,password);
-						// Nope that didn't work.
-						callback(false);
+						if (isMatch) {
+
+							// Give them a session id.
+							// This way we don't store their password in the cookie.
+							// It will get reset with each authentication.
+							log.it("login",{
+								success: true,
+								email: email,	
+							});
+
+							this.createSession(email,function(sessionid){
+								callback({
+									sessionid: sessionid,
+									fulluser: user.toObject({ hide: 'secret resetkey resetURL', transform: true, virtuals: true }),
+								});
+							});
+
+						} else {
+							log.it("login",{
+								success: false,
+								email: email,	
+							});
+
+							// log.it("!Warning: Password auth failed for %s with password: %s",email,password);
+							// Nope that didn't work.
+							callback(false);
+						}
+
+
 					}
 
 				}.bind(this));

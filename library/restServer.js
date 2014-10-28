@@ -24,6 +24,7 @@ module.exports = function(log, opts, bowline, user) {
 			// We wanna see that crash in development
 			// console.log("!tracerround API ERROR: ",err.stack);
 			// console.log("!trace uncaughtException route: ",route);
+			
 			res.send(500, err);
 			// return next();
 		});
