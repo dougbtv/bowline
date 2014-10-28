@@ -1,5 +1,46 @@
-the knots
+<h2>Knots</h2>
+
+<p>"Knots" make up each individual project that's being built by Bowline. Here you can get a preview of the currently running jobs. Right now, all knots are public. However, the intention of making them private in the future is here. Additionally, only the creator of a knot may manage it.</p>
 
 <div ng-show="error" class="alert alert-danger" role="alert">
 	<strong>Oh snap!</strong> We experienced an error: {{ error }}
+</div>
+
+	<div class="col-md-12">
+	<table class="table">
+
+	<thead>
+		<tr>
+			<th>Docker Tag</th>
+			<th>Git Repo</th>
+			<th>Method</th>
+			<th>Last Check</th>
+			<th>Running?</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<!--
+<tr >
+	-->
+		<tr data-toggle="collapse" data-target="#{{ rel._id }}" class="accordion-toggle ahover" ng-repeat-start="rel in releases">
+			<td>{{rel.docker_tag}}</td>
+			<td>{{rel.git_repo}}</td>
+			<td>{{rel.method}}</td>
+			<td>foo</td>
+			<td>yesfoo</td>
+		</tr>
+	
+		<tr ng-repeat-end>
+			<td colspan="5" class="hiddenRow">
+				<div class="accordion-body collapse" id="{{ rel._id }}">
+					... further content here.
+				</div>
+			</td>
+		</tr>
+	      
+   	</tbody>
+
+  </table>
+</div>
 </div>
