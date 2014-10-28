@@ -9,9 +9,36 @@
  */
 angular.module('bowlineApp')
   .controller('docsController', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+
+  	var REPO = 'dougbtv/bowline';
+
+	Flatdoc.run({
+		fetcher: Flatdoc.github(REPO, 'README.md')
+	});
+
+	var markdown = {
+		"readme": 'README.md',
+		"started": 'README.md',
+	};
+
+	$scope.mode = "readme";
+
+	$scope.clickDocs = function(mode) {
+
+		$scope.mode = mode;
+
+		Flatdoc.run({
+			fetcher: Flatdoc.github(REPO, markdown[mode])
+		});
+
+	}
+
+	$scope.docsTab = function(mode) {
+		if (mode == $scope.mode) {
+			return "active";
+		} else {
+			return "";
+		}
+	}
+
   });

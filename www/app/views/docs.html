@@ -1,1 +1,8 @@
-<p>This is the docs view.</p>
+<ul class="nav nav-tabs" role="tablist">
+	<li ng-class="docsTab('readme')"><a class="ahover" ng-click="clickDocs('readme')">Readme</a></li>
+	<li ng-class="docsTab('started')"><a class="ahover" ng-click="clickDocs('started')">Getting Started</a></li>
+	<li ng-class="docsTab('other')"><a class="ahover" ng-click="clickDocs('other')">other</a></li>
+</ul>
+<div role='flatdoc'>
+    <div role='flatdoc-content'></div>
+</div>
