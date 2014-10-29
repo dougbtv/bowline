@@ -1,0 +1,1 @@
+{ "__v" : 0, "_id" : { "$oid" : "5450535adcdd085f33876571" }, "active" : true, "email" : "doug@smith.com", "indate" : { "$date" : 1414550362237 }, "resetkey" : "e5456730-1c35-4241-a1a4-b28582493845", "secret" : "$2a$10$NI/v3JCbhupTlQZSXaHdteA6OqHCkgcgKjTb9amQHJvgdBDZuWqW6", "session_expires" : { "$date" : 1415158777960 }, "session_id" : "b54fbb2d-4ef1-46c1-8722-6f1363575ce8" }
