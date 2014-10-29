@@ -331,56 +331,22 @@ module.exports = function(log, opts, mongoose) {
 
 	}
 
-	this.validateAdminSession = function(sessionpack,callback) {
-
-		var email = sessionpack.username;
-		var sessionid = sessionpack.session;
-		var proxy = sessionpack.proxy;
-
-		// Set to the proxy root when necessary.
-		if (proxy) {
-			email = proxy;
-		}
-
-		// Ok, let's look for a result.
-		var searchpack = {
-			email: email,
-			session_id: sessionid,
-			admin: true,
-		};
-
-		// console.log("!trace valid admin searchpack: ",searchpack);
-
-		// go through the general validator with our searchpack.
-		this.userValidator(searchpack,function(valid){
-			if (!valid) {
-				log.warn("validate_session",{note: "Admin validation failed", searchpack: searchpack});
-			}
-			callback(valid);
-		});
-
-	}
-
 	this.validateSession = function(sessionpack,callback) {
 
 		var email = sessionpack.username;
 		var sessionid = sessionpack.session;
-		var proxy = sessionpack.proxy;
-
+		
 		// Ok, let's look for a result.
 		var searchpack = {email: email, session_id: sessionid};
-
-		// We validate for the proxy when it's set, however! That means they must also be an admin.
-		if (proxy) {
-			searchpack.email = proxy;
-			searchpack.admin = true;
-		}
 
 		// go through the general validator with our searchpack.
 		this.userValidator(searchpack,function(valid){
 			if (!valid) {
 				log.warn("validate_session",{note: "Vanilla user validation failed", searchpack: searchpack});
 			}
+			
+			console.log("!trace valid pack??? ",valid);
+
 			callback(valid);
 		});
 

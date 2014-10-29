@@ -50,6 +50,12 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		server.post('/api/getSingleRelease', this.getSingleRelease);
 		server.head('/api/getSingleRelease', this.getSingleRelease);
 
+		server.get('/api/stopJob', this.stopJob);
+		server.post('/api/stopJob', this.stopJob);
+		server.head('/api/stopJob', this.stopJob);
+
+
+
 		// infamous test method.
 
 		server.get('/api/foo', this.testFunction);
@@ -109,6 +115,43 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 
 	*/
+
+	this.isJobOwner = function(releaseid,session,callback) {
+
+		user.validateSession(session,function(isvalid){
+
+			if (isvalid) {
+
+				// See if it's their job.
+				callback(true);
+
+
+			} else {
+				callback(false);
+				res.send({error: "Invalid credentials"});
+			}
+
+		});
+	}
+
+	this.stopJob = function(req, res, next) {
+
+		var input = req.params;
+
+		this.isJobOwner(input.id,input.session,function(jobowner){
+			if (jobowner) {
+				res.send({});
+			}
+		});
+
+		/*
+		release.stopJob({_id: input.id},function(rels){
+			res.contentType = 'json';
+			res.send(rels[0]);
+		});
+		*/
+
+	}
 
 	this.getReleases = function(req, res, next) {
 

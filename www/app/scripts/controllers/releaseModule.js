@@ -36,6 +36,22 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	}
 
+	this.stopJob = function(id,callback){
+
+		$http.post(ENV.api_url + '/api/stopJob', { id: id, session: login.sessionpack })
+			.success(function(data){
+
+				// console.log("!trace getReleases data",data);
+				callback(null,data);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with stopJob from API");
+
+			}.bind(this));
+
+	}
+
 }
 
 bowlineApp.factory('releaseModule', ["$rootScope", "$http", "$timeout", 'loginModule', 'ENV', function($rootScope,$http,$timeout,login,ENV) {
