@@ -15,7 +15,7 @@
 			<th>Git Repo</th>
 			<th>Method</th>
 			<th>Last Check</th>
-			<th>Running?</th>
+			<th class="text-center">Running?</th>
 		</tr>
 	</thead>
 
@@ -27,14 +27,30 @@
 			<td>{{rel.docker_tag}}</td>
 			<td>{{rel.git_repo}}</td>
 			<td>{{rel.method}}</td>
-			<td>foo</td>
-			<td>yesfoo</td>
+			<td>
+				<span ng-show="rel.job.last_check">{{rel.job.check_ago}}<span>
+				<span ng-hide="rel.job.last_check">Never<span>
+			</td>
+			<td class="text-center">
+				<span ng-show="rel.job.active"><i class="fa fa-check-circle icon-status-green"></i></span>
+				<span ng-show="rel.job.error"><i class="fa fa-times-circle icon-status-red"></i></span>
+			</td>
+
 		</tr>
 	
 		<tr ng-repeat-end>
 			<td colspan="5" class="hiddenRow">
 				<div class="accordion-body collapse" id="{{ rel._id }}">
-					... further content here.
+						
+						<div ng-show="rel.job.error" class="alert alert-danger col-md-6" role="alert">
+							<i class="fa fa-times-circle icon-status-red"></i> 
+							<strong>Uh oh.</strong> {{ rel.job.error }}
+						</div>
+
+						<div ng-hide="rel.job.error">
+							(other info)
+						</div>
+					
 				</div>
 			</td>
 		</tr>

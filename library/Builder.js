@@ -39,6 +39,12 @@ module.exports = function(opts,bot) {
 	// The this.release we're associated with
 	this.release;
 
+	// We can't start until we're validated.
+	this.started = false;
+
+	// What's the last error?
+	this.last_error = false;
+
 	// When did we last check?
 	this.last_check = false;
 
@@ -81,37 +87,51 @@ module.exports = function(opts,bot) {
 		// First instantiate with the passed in release.
 		this.instantiate(initial_release);
 
-		// Check for update once, then, once it's updated, schedule the job to recur.
-		this.checkForUpdate(function(initialupdate){
+		this.verifyRelease(function(err){
+			if (!err) {
+				this.started = true;
 
-			if (initialupdate) {
-				this.performUpdate();
-			}
+				// Check for update once, then, once it's updated, schedule the job to recur.
+				this.checkForUpdate(function(initialupdate){
 
-			// Create a range
-			// that runs every other unit.
-			var rule = new schedule.RecurrenceRule();
-			// rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
-			rule.minute = this.release.check_minutes;
-			
-
-			job = schedule.scheduleJob(rule, function(){
-
-				// Update the last time we checked.
-				this.last_check = new moment();
-
-				this.logit("Checking for an update @ " + moment().format("YYYY-MM-DD HH:mm:ss"));
-
-				this.checkForUpdate(function(updated){
-
-					if (updated) {
-						// Ok, kick it off!
+					if (initialupdate) {
 						this.performUpdate();
 					}
 
+					// Create a range
+					// that runs every other unit.
+					var rule = new schedule.RecurrenceRule();
+					// rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+					rule.minute = this.release.check_minutes;
+					
+
+					job = schedule.scheduleJob(rule, function(){
+
+						// Update the last time we checked.
+						this.last_check = new moment();
+
+						this.logit("Checking for an update @ " + moment().format("YYYY-MM-DD HH:mm:ss"));
+
+						this.checkForUpdate(function(updated){
+
+							if (updated) {
+								// Ok, kick it off!
+								this.performUpdate();
+							}
+
+						}.bind(this));
+					
+					}.bind(this));
+
 				}.bind(this));
-			
-			}.bind(this));
+
+			} else {
+
+				// There's an error verifying this release.
+				console.log("!trace verifying error: ",err);
+				this.last_error = err;
+
+			}
 
 		}.bind(this));
 
@@ -134,6 +154,11 @@ module.exports = function(opts,bot) {
 						uri: "https://api.github.com/repos/" + this.release.git_repo,
 						method: "GET",
 						timeout: 10000,
+						auth: {
+							user: opts.gituser,
+							pass: opts.gitpassword,
+						
+						},
 						headers: { 
 							'User-Agent': 'Bowline Autobuilder Bot',
 						}

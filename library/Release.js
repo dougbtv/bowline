@@ -30,6 +30,7 @@ module.exports = function(mongoose,manager) {
 		job: {
 			active: Boolean,
 			last_check: Date,
+			error: String,
 		},		// Here's our associate job.
 
 	}, { collection: 'releases' });

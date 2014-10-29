@@ -36,6 +36,16 @@ body {
     padding: 0 !important;
 }
 
+.icon-status-green {
+    color: #52CC29;
+    font-size: 20px;
+}
+
+.icon-status-red {
+    color: #993300;
+    font-size: 20px;
+}
+
   /*
 
   Thank you to the kind person that made this snippet: <link href="/css/sticky-footer-navbar.css" rel="stylesheet">
