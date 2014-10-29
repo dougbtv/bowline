@@ -100,7 +100,12 @@
 			<td>{{rel.git_repo}}</td>
 			<td>{{rel.method}}</td>
 			<td>
-				{{ ago(rel.job.last_check) }}
+				<span ng-show="rel.job.exists">
+					{{ ago(rel.job.last_check) }}
+				</span>
+				<span ng-hide="rel.job.exists">
+					-
+				</span>
 			</td>
 			<td class="text-center">
 				<button type="button" class="btn btn-sm btn-info" ng-click="showDetails(rel._id)">Details</button>
@@ -108,6 +113,7 @@
 			<td class="text-center">
 				<span ng-show="rel.job.active"><i class="fa fa-check-circle icon-status-green"></i></span>
 				<span ng-show="rel.job.error"><i class="fa fa-times-circle icon-status-red"></i></span>
+				<span ng-hide="rel.job.exists"><i class="fa fa-pause icon-status-grey"></i></span>
 			</td>
 
 		</tr>
