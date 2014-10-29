@@ -1,22 +1,18 @@
 bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', 'ENV', function($scope,$location,$http,login,release,ENV) {
 
-  	console.log("!trace knots controller");
-
-    $scope.params = $location.search();
+  	$scope.params = $location.search();
 
     if ($scope.params.details) {
+
+      $scope.is_owner = false;
 
       release.getSingleRelease($scope.params.details,function(err,single){
 
         if (!err) {
 
-          // Associate a moment with each rel.
-          if (single.job.last_check) {
-            single.job.check_ago = new moment(single.job.last_check).fromNow();
-          }
-
           $scope.single = single;
           console.log("!trace checking single release: ",single);
+          console.log("!trace checking single owner: ",login.fulluser);
 
         } else {
           $scope.error = err;
@@ -31,14 +27,6 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
         if (!err) {
 
-          for (var i = 0; i < rels.length; i++) {
-            // Associate a moment with each rel.
-            if (rels[i].job.last_check) {
-              rels[i].job.check_ago = new moment(rels[i].job.last_check).fromNow();
-            }
-
-          }
-
           $scope.releases = rels;
           console.log("!trace checking releases: ",rels);
         } else {
@@ -48,6 +36,15 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
       });
 
+    }
+
+    $scope.ago = function(indate) {
+      if (indate) {
+        return new moment(indate).fromNow();
+      } else {
+        return "Never";
+      }
+      
     }
 
     // Ok bring up the details link.

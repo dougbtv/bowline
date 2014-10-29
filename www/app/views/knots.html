@@ -1,5 +1,56 @@
 <span ng-show="params.details">
-	details
+	<h2>{{single.docker_tag}}</h2>
+	
+	<div ng-show="single.job.error" class="row">
+		<div class="alert alert-danger" role="alert">
+			<i class="fa fa-times-circle icon-status-red"></i> 
+			<strong>Uh oh.</strong> {{ single.job.error }}
+		</div>
+	</div>
+
+	<div class="row" style="display: table;">
+
+		<div class="col-md-5">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Status</h3>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<strong>Control job: </strong>
+						</div>
+						<div class="col-sm-6">
+							<button ng-show="single.job.active" type="button" class="btn btn-sm btn-danger" ng-click="showDetails(rel._id)">Stop Job</button>
+						</div>
+					</div>
+					<strong>Last Update: </strong>{{ ago(single.job.last_check) }} <br />
+				</div>
+			</div>
+			
+		</div>
+
+		<div class="col-md-7">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Properties <i class="fa fa-edit pull-right"></i></h3>
+
+				</div>
+				<div class="panel-body">
+					
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon">Github Repo</span>
+						<input type="text" class="form-control" placeholder="username/repo">
+					</div>
+
+				</div>
+			</div>
+			
+		</div>
+
+
+
+	</div>
 </span>
 
 <span ng-hide="params.details">
@@ -21,7 +72,7 @@
 			<th>Method</th>
 			<th>Last Check</th>
 			<th class="text-center">Get Details</th>
-			<th class="text-center">Running?</th>
+			<th class="text-center">Status</th>
 		</tr>
 	</thead>
 
@@ -34,8 +85,7 @@
 			<td>{{rel.git_repo}}</td>
 			<td>{{rel.method}}</td>
 			<td>
-				<span ng-show="rel.job.last_check">{{rel.job.check_ago}}<span>
-				<span ng-hide="rel.job.last_check">Never<span>
+				{{ ago(rel.job.last_check) }}
 			</td>
 			<td class="text-center">
 				<button type="button" class="btn btn-sm btn-info" ng-click="showDetails(rel._id)">Details</button>

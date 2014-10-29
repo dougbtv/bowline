@@ -16,6 +16,7 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 		username: '',
 		session: '',
 	};
+	this.fulluser = {};
 	this.status = false;	// What's the login status?
 	
 	// A centralized way to broadcast the login status.
@@ -48,9 +49,10 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 				if (data.session) {
 					
 					this.setLoggedIn(loginform.email,data.session,function(){
+						this.fulluser = data.fulluser;
 						broadcastLoginStatus(true);
 						callback(true);
-					});
+					}.bind(this));
 
 				} else {
 
@@ -96,6 +98,7 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 							// Great!
 							this.setLoggedIn($store.get('username'),$store.get('session'),function(){
 							
+								this.fulluser = data.fulluser;
 								broadcastLoginStatus(true);
 								callback(true);
 							

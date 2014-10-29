@@ -127,7 +127,6 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 		release.getReleases({_id: input.id},function(rels){
 			res.contentType = 'json';
-			console.log("!trace rels:::::::::::::::: ",rels);
 			res.send(rels[0]);
 		});
 

@@ -10,6 +10,8 @@ module.exports = function(mongoose,manager) {
 	// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
+		owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Who owns this?
+
 		active: Boolean,		// Is this currently active?
 		method: String,			// Update method -- For now, just "http", other methods, later.
 
@@ -27,11 +29,13 @@ module.exports = function(mongoose,manager) {
 		
 		docker_tag: String,		// What's the name of the docker image tag?
 
-		job: {
-			active: Boolean,
-			last_check: Date,
-			error: String,
-		},		// Here's our associate job.
+		job: {					// Here's our associate job.
+			exists: Boolean,	// Is there a job at all?
+			active: Boolean,	// Is the job checking for updates?
+			last_check: Date,	// When did it last check?
+			error: String,		// Is there an error?
+			in_progress: Boolean, // Is a build in progress?
+		},
 
 	}, { collection: 'releases' });
 
@@ -129,7 +133,7 @@ module.exports = function(mongoose,manager) {
 			filter = {};
 		}
 
-		console.log("!trace filter : ",filter);
+		// console.log("!trace filter : ",filter);
 
 		// TODO: This will be filtered in the future.
 		Release.find(filter,function(err,rels){

@@ -56,8 +56,10 @@ module.exports = function(opts,bot,release) {
 			if (exists) {
 				// Great, let's start that update.
 				props = {
+					exists: true,
 					active: eachjob.started,
 					error: eachjob.last_error,
+					in_progress: eachjob.in_progress,
 				};
 
 				// See if it's been checked.
@@ -69,6 +71,7 @@ module.exports = function(opts,bot,release) {
 
 			} else {
 				callback(null,{
+					exists: false,
 					active: false,
 				});
 			}

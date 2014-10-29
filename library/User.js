@@ -310,7 +310,8 @@ module.exports = function(log, opts, mongoose) {
 				if (now.unix() <= user.session_expires) {
 
 					// looks good!
-					callback({ isvalid: true, fulluser: user.toObject({virtuals: true})});
+
+					callback({ isvalid: true, fulluser: user.toObject({ hide: 'secret resetkey resetURL', transform: true, virtuals: true })});
 
 				} else {
 

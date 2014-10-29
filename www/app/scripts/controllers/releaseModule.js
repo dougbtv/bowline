@@ -25,7 +25,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 		$http.post(ENV.api_url + '/api/getSingleRelease', { id: id, session: login.sessionpack })
 			.success(function(data){
 
-				console.log("!trace getReleases data",data);
+				// console.log("!trace getReleases data",data);
 				callback(null,data);
 
 			}.bind(this)).error(function(data){
