@@ -53,7 +53,7 @@ options.parse(function(opts){
 
 		// Bowline handles our matters.		
 		var Manager = require("./library/Manager.js"); 
-		var manager = new Manager(opts,irc,release);
+		var manager = new Manager(opts,irc,release,log);
 
 		// inject that into release, too.
 		release.inject(manager);

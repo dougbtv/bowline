@@ -41,8 +41,13 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 		$http.post(ENV.api_url + '/api/stopJob', { id: id, session: login.sessionpack })
 			.success(function(data){
 
-				// console.log("!trace getReleases data",data);
-				callback(null,data);
+				var err = null;
+				if (data.error) {
+					err = data.error;
+				}
+
+				// console.log("!trace stopJob data",data);
+				callback(err,data);
 
 			}.bind(this)).error(function(data){
 

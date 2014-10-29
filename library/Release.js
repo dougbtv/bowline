@@ -109,6 +109,25 @@ module.exports = function(mongoose,manager) {
 		manager = in_manager;
 	}
 
+	this.isOwner = function(userid,releaseid,callback) {
+		Release.findOne({
+			owner: userid,
+			_id: releaseid
+		},function(err,rel){
+			if (!err) {
+
+
+				if (rel) {
+					callback(null,true);
+				} else {
+					callback(null,false);
+				}
+
+			} else {
+				callback("Mongo error, couldn't check isOwner: " + err);
+			}
+		});
+	}
 
 	this.getActive = function(callback) {
 
@@ -159,6 +178,22 @@ module.exports = function(mongoose,manager) {
 				callback("Mongo error, couldn't getReleases: " + err);
 			}
 
+		});
+
+	}
+
+	this.getSlug = function(releaseid,callback) {
+
+		Release.findOne({_id: releaseid},function(err,rel){
+			if (!err) {
+				if (rel) {
+					callback(null,rel.slug);
+				} else {
+					callback("Release, couldn't getSlug for id: " + releaseid);	
+				}
+			} else {
+				callback("Mongo error, couldn't getSlug: " + err);	
+			}
 		});
 
 	}

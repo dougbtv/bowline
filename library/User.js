@@ -340,14 +340,14 @@ module.exports = function(log, opts, mongoose) {
 		var searchpack = {email: email, session_id: sessionid};
 
 		// go through the general validator with our searchpack.
-		this.userValidator(searchpack,function(valid){
-			if (!valid) {
+		this.userValidator(searchpack,function(validpack){
+			if (!validpack.isvalid) {
 				log.warn("validate_session",{note: "Vanilla user validation failed", searchpack: searchpack});
 			}
 			
-			console.log("!trace valid pack??? ",valid);
+			console.log("!trace valid pack??? ",validpack);
 
-			callback(valid);
+			callback(validpack);
 		});
 
 	}

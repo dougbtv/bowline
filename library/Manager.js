@@ -1,4 +1,4 @@
-module.exports = function(opts,bot,release) {
+module.exports = function(opts,bot,release,log) {
 
 	var Builder = require("./Builder.js"); 
 
@@ -76,6 +76,32 @@ module.exports = function(opts,bot,release) {
 				});
 			}
 		});
+
+	}
+
+	this.stopJob = function(releaseid,callback) {
+
+		release.getSlug(releaseid,function(err,findslug){
+			
+			if (!err) {
+
+				// Now let's find that job.
+				this.jobExists(findslug,function(exists){
+					if (exists) {
+						// Great, let's start that update.
+						delete jobs[findslug];
+						callback(null);
+					} else {
+						callback("no job found for slug: " + findslug);
+					}
+				});
+
+			} else {
+				log.warn("jobStop_noslug",{releaseid: releaseid});
+				callback("error no slug for id " + releaseid);
+			}
+
+		}.bind(this));
 
 	}
 

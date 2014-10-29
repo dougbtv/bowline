@@ -116,15 +116,18 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 	*/
 
-	this.isJobOwner = function(releaseid,session,callback) {
+	this.isJobOwner = function(releaseid,session,res,callback) {
 
-		user.validateSession(session,function(isvalid){
+		user.validateSession(session,function(validpack){
 
-			if (isvalid) {
+			if (validpack.isvalid) {
 
-				// See if it's their job.
-				callback(true);
-
+				release.isOwner(validpack.fulluser._id,releaseid,function(err,owner){
+					callback(owner);
+					if (!owner) {
+						res.send({error: "Invalid credentials, tisk tsk [attempt logged]"});
+					}
+				});
 
 			} else {
 				callback(false);
@@ -138,20 +141,16 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 		var input = req.params;
 
-		this.isJobOwner(input.id,input.session,function(jobowner){
+		this.isJobOwner(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
-				res.send({});
+				manager.stopJob(input.id,function(err){
+					res.contentType = 'json';
+					res.send({});
+				});
 			}
 		});
 
-		/*
-		release.stopJob({_id: input.id},function(rels){
-			res.contentType = 'json';
-			res.send(rels[0]);
-		});
-		*/
-
-	}
+	}.bind(this);
 
 	this.getReleases = function(req, res, next) {
 

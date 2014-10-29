@@ -62,7 +62,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 				if (!err) {
 
 					$scope.releases = rels;
-					console.log("!trace checking releases: ",rels);
+					// console.log("!trace checking releases: ",rels);
 				} else {
 					$scope.error = err;
 				}
