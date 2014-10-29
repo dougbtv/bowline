@@ -43,22 +43,27 @@ options.parse(function(opts){
 		var IRC = require('./library/IRC.js');
 		var irc = new IRC(opts);
 
-		var Release = require('./library/Release.js');
-		var release = new Release(mongoose);
-
+		// Our users, for login/management purposes.
 		var User = require('./library/User.js');
 		var user = new User(log,opts,mongoose);
+
+		// Defines a "knot"
+		var Release = require('./library/Release.js');
+		var release = new Release(mongoose);
 
 		// Bowline handles our matters.		
 		var Manager = require("./library/Manager.js"); 
 		var manager = new Manager(opts,irc,release);
+
+		// inject that into release, too.
+		release.inject(manager);
 
 		// Bowline handles our matters.		
 		var Bowline = require("./library/Bowline.js"); 
 		var bowline = new Bowline(opts,irc,release,manager);
 
 		var RestServer = require("./library/restServer.js"); 
-		var restserver = new RestServer(log,opts,bowline,user,release);
+		var restserver = new RestServer(log,opts,bowline,user,release,manager);
 	    restserver.serverStart();
 
 		// Connect the irc bot's listener to the builder

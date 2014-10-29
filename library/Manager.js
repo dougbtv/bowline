@@ -46,6 +46,32 @@ module.exports = function(opts,bot,release) {
 
 	}
 
+	// Let's compile a list of properties about this job.
+	this.jobProperties = function(findslug,callback) {
+
+		this.jobExists(findslug,function(exists){
+			if (exists) {
+				// Great, let's start that update.
+				props = {
+					active: true,
+				};
+
+				// See if it's been checked.
+				if (jobs[findslug].last_check) {
+					props.last_check = jobs[findslug].last_check.toDate();
+				}
+
+				callback(null,props);
+				
+			} else {
+				callback(null,{
+					active: false,
+				});
+			}
+		});
+
+	}
+
 	this.jobExists = function(findslug,callback) {
 		
 		var found = false;

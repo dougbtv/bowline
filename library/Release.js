@@ -1,7 +1,8 @@
-module.exports = function(mongoose) {
+module.exports = function(mongoose,manager) {
 
 	// We instantiate builders for each specification.
 	var moment = require('moment');
+	var async = require('async');
 	var Builder = require("./Builder.js"); 
 	//	var builder = new Builder(opts,irc);
 
@@ -25,6 +26,11 @@ module.exports = function(mongoose) {
 		branch_master: String,	// What's your master branch name?
 		
 		docker_tag: String,		// What's the name of the docker image tag?
+
+		job: {
+			active: Boolean,
+			last_check: Date,
+		},		// Here's our associate job.
 
 	}, { collection: 'releases' });
 
@@ -92,6 +98,12 @@ module.exports = function(mongoose) {
 
 	}, 'check_minutes must have at least one value, and all values must be between 0 and 59');
 
+	// Allow a dependency to be injected after instantiation.
+	// ...for now we need the manager.
+	this.inject = function(in_manager) {
+		manager = in_manager;
+	}
+
 
 	this.getActive = function(callback) {
 
@@ -117,7 +129,20 @@ module.exports = function(mongoose) {
 		
 			if (!err) {
 
-				callback(rels);
+				async.map(rels, function(item,callback){
+
+					manager.jobProperties(item.slug,function(err,props){
+						// console.log("!trace jobProperties: ",props);
+						item.job = props;
+						callback(err,item);
+					});
+
+				}, function(err, results){
+				    // results is now an array of stats for each file
+				    callback(results);
+
+				});
+
 
 			} else {
 				callback("Mongo error, couldn't getReleases: " + err);

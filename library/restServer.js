@@ -1,4 +1,4 @@
-module.exports = function(log, opts, bowline, user, release) {
+module.exports = function(log, opts, bowline, user, release, manager) {
 
 	// --------------------------------------------------------------------
 	// -- myConstructor : Throws the constructor into a method.

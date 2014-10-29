@@ -3,14 +3,17 @@ module.exports = function(opts,bot,release,manager) {
 	// We instantiate builders for each specification.
 	var moment = require('moment');
 
+	// always init searches on start.
+	manager.initializeActiveSearches(function(err){
+		console.log("!trace back to Bowline handler.");
+	});
+
+
+	// start up a cli if need be
 	if (opts.cli) {
 
 		var prompt = require('prompt');
 		var readline = require('readline');
-
-		manager.initializeActiveSearches(function(err){
-			console.log("!trace back to Bowline handler.");
-		});
 
 		// Create our readline interface.
 		rl = readline.createInterface(process.stdin, process.stdout);
