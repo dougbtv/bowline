@@ -20,7 +20,7 @@
 			<th>Git Repo</th>
 			<th>Method</th>
 			<th>Last Check</th>
-			<th>Get Details</th>
+			<th class="text-center">Get Details</th>
 			<th class="text-center">Running?</th>
 		</tr>
 	</thead>
@@ -37,7 +37,7 @@
 				<span ng-show="rel.job.last_check">{{rel.job.check_ago}}<span>
 				<span ng-hide="rel.job.last_check">Never<span>
 			</td>
-			<td>
+			<td class="text-center">
 				<button type="button" class="btn btn-sm btn-info" ng-click="showDetails(rel._id)">Details</button>
 			</td>
 			<td class="text-center">

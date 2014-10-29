@@ -46,6 +46,10 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		server.post('/api/getReleases', this.getReleases);
 		server.head('/api/getReleases', this.getReleases);
 
+		server.get('/api/getSingleRelease', this.getSingleRelease);
+		server.post('/api/getSingleRelease', this.getSingleRelease);
+		server.head('/api/getSingleRelease', this.getSingleRelease);
+
 		// infamous test method.
 
 		server.get('/api/foo', this.testFunction);
@@ -110,13 +114,24 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 		var input = req.params;
 
-		release.getReleases(function(rels){
+		release.getReleases(false,function(rels){
 			res.contentType = 'json';
 			res.send(rels);
 		});
 
 	}
-	
+
+	this.getSingleRelease = function(req, res, next) {
+
+		var input = req.params;
+
+		release.getReleases({_id: input.id},function(rels){
+			res.contentType = 'json';
+			console.log("!trace rels:::::::::::::::: ",rels);
+			res.send(rels[0]);
+		});
+
+	}
 
 	this.validateSession = function(req, res, next) {
 

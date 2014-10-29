@@ -6,7 +6,24 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
     if ($scope.params.details) {
 
+      release.getSingleRelease($scope.params.details,function(err,single){
 
+        if (!err) {
+
+          // Associate a moment with each rel.
+          if (single.job.last_check) {
+            single.job.check_ago = new moment(single.job.last_check).fromNow();
+          }
+
+          $scope.single = single;
+          console.log("!trace checking single release: ",single);
+
+        } else {
+          $scope.error = err;
+        }
+        
+
+      });
 
     } else {
 

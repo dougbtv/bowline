@@ -123,10 +123,16 @@ module.exports = function(mongoose,manager) {
 
 	}
 
-	this.getReleases = function(callback) {
+	this.getReleases = function(filter,callback) {
+
+		if (!filter) {
+			filter = {};
+		}
+
+		console.log("!trace filter : ",filter);
 
 		// TODO: This will be filtered in the future.
-		Release.find({},function(err,rels){
+		Release.find(filter,function(err,rels){
 		
 			if (!err) {
 
