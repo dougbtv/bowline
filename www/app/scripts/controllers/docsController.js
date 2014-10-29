@@ -34,14 +34,14 @@ bowlineApp.controller('docsController', ['$scope', '$location', '$http', 'loginM
 			fetcher: Flatdoc.github(REPO, markdown[mode])
 		});
 
-	}
+	};
 
 	$scope.docsTab = function(mode) {
-		if (mode == $scope.mode) {
+		if (mode === $scope.mode) {
 			return "active";
 		} else {
 			return "";
 		}
-	}
+	};
 
 }]);

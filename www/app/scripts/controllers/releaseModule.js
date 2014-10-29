@@ -18,7 +18,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 			}.bind(this));
 
-	}
+	};
 
 	// This just gets all releases.
 	this.getSingleRelease = function(id,callback) {
@@ -35,7 +35,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 			}.bind(this));
 
-	}
+	};
 
 	this.stopJob = function(id,callback){
 
@@ -56,7 +56,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 			}.bind(this));
 
-	}
+	};
 
 }
 

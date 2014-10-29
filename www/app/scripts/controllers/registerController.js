@@ -1,4 +1,6 @@
 /* global bowlineApp */
+/* global $ */
+
 bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$timeout', '$interval', '$cookies', 'loginModule', 'ENV', 
 	function($scope,$location,$http,$timeout,$interval,$cookies,login,ENV) {
 
@@ -31,7 +33,7 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 
 	$scope.showTerms = function() {
 		$scope.show_terms = !$scope.show_terms;
-	}
+	};
 
 	$scope.forgotPassword = function() {
 
@@ -65,7 +67,6 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 		} else {
 			// Let 'em know that's not a real email address.
 			$scope.user.error_email = true;
-			is_error = true;
 		}
 
 	};
@@ -131,7 +132,7 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 	
 		// First check if any value was actually set
 		if (typeof email === 'undefined') { return false; }
-		if (email.length === 0) return false;
+		if (email.length === 0) { return false; }
 		// Now validate the email format using Regex
 		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
 		return re.test(email);

@@ -1,4 +1,5 @@
 /* global bowlineApp */
+/* global moment */
 
 bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', 'ENV', function($scope,$location,$http,login,release,ENV) {
 
@@ -28,28 +29,28 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 			});
 
-		}
+		};
 
 		$scope.stopJob = function(id) {
 			console.log("!trace stopJob id: ",id);
 			release.stopJob(id,function(err){
 				$scope.getSingleRelease();
 			});
-		}
+		};
 
 		$scope.ago = function(indate) {
 			if (indate) {
-				return new moment(indate).fromNow();
+				return moment(indate).fromNow();
 			} else {
 				return "Never";
 			}
 			
-		}
+		};
 
 		// Ok bring up the details link.
 		$scope.showDetails = function(id) {
 			$location.search('details', id);
-		}
+		};
 
 		// And instantiate.
 

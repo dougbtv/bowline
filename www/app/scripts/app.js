@@ -73,7 +73,7 @@ bowlineApp.controller('bowlineMainController',
 			var currentRoute = $location.path().substring(1) || 'home';
 
 			// Set the onPage if it's wrong.
-			if (currentRoute != $scope.onPage) {
+			if (currentRoute !== $scope.onPage) {
 				$scope.onPage = currentRoute;
 			}
 

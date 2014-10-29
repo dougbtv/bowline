@@ -12,6 +12,6 @@ bowlineApp.directive('menu', function(){
 			
 			
 		}],
-	}
+	};
 
-})
+});
