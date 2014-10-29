@@ -11,8 +11,11 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
         if (!err) {
 
           $scope.single = single;
-          console.log("!trace checking single release: ",single);
-          console.log("!trace checking single owner: ",login.fulluser);
+          // console.log("!trace checking single release owner: ",single.owner,login.fulluser._id,(single.owner == login.fulluser._id));
+          
+          if (single.owner == login.fulluser._id) {
+            $scope.is_owner = true;
+          }
 
         } else {
           $scope.error = err;

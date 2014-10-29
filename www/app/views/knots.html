@@ -15,16 +15,31 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">Status</h3>
 				</div>
+
 				<div class="panel-body">
-					<div class="row">
-						<div class="col-sm-6">
-							<strong>Control job: </strong>
-						</div>
-						<div class="col-sm-6">
-							<button ng-show="single.job.active" type="button" class="btn btn-sm btn-danger" ng-click="showDetails(rel._id)">Stop Job</button>
-						</div>
-					</div>
-					<strong>Last Update: </strong>{{ ago(single.job.last_check) }} <br />
+				
+
+					<table class="table table-striped">
+						<tbody>
+							<tr ng-show="is_owner">
+								<td><strong>Control job</strong></td>
+								<td>
+									<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="showDetails(rel._id)">Stop Job</button>
+								</td>
+							</tr>
+
+							<tr>
+								<td>
+									<strong>Last Update: </strong>
+								</td>
+								<td>
+									{{ ago(single.job.last_check) }} 
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				
+					
 				</div>
 			</div>
 			
