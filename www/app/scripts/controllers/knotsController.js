@@ -1,3 +1,5 @@
+/* global bowlineApp */
+
 bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', 'ENV', function($scope,$location,$http,login,release,ENV) {
 
 		$scope.params = $location.search();

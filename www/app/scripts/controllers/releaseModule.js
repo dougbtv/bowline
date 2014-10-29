@@ -1,3 +1,4 @@
+/* global bowlineApp */
 function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	console.log("!trace releaseModule instantiated, login status: ",login.status);

@@ -1,3 +1,4 @@
+/* global bowlineApp */
 bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$timeout', '$interval', '$cookies', 'loginModule', 'ENV', 
 	function($scope,$location,$http,$timeout,$interval,$cookies,login,ENV) {
 

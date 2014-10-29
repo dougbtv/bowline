@@ -1,3 +1,4 @@
+/* global bowlineApp */
 // --------------------------------------
 // ------ The login module.
 // Setup as a factory / service.

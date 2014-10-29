@@ -1,3 +1,5 @@
+/* global Flatdoc */
+/* global bowlineApp */
 'use strict';
 
 /**

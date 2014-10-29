@@ -1,3 +1,4 @@
+/* global bowlineApp */
 'use strict';
 
 /**

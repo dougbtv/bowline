@@ -1,3 +1,4 @@
+/* global bowlineApp */
 bowlineApp.directive('menu', function(){
 
 	return {
