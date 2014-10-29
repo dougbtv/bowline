@@ -2,25 +2,40 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
   	console.log("!trace knots controller");
 
-  	release.getReleases(function(err,rels){
+    $scope.params = $location.search();
 
-  		if (!err) {
+    if ($scope.params.details) {
 
-        for (var i = 0; i < rels.length; i++) {
-          // Associate a moment with each rel.
-          if (rels[i].job.last_check) {
-            rels[i].job.check_ago = new moment(rels[i].job.last_check).fromNow();
+
+
+    } else {
+
+      release.getReleases(function(err,rels){
+
+        if (!err) {
+
+          for (var i = 0; i < rels.length; i++) {
+            // Associate a moment with each rel.
+            if (rels[i].job.last_check) {
+              rels[i].job.check_ago = new moment(rels[i].job.last_check).fromNow();
+            }
+
           }
 
+          $scope.releases = rels;
+          console.log("!trace checking releases: ",rels);
+        } else {
+          $scope.error = err;
         }
+        
 
-  			$scope.releases = rels;
-  			console.log("!trace checking releases: ",rels);
-  		} else {
-  			$scope.error = err;
-  		}
-  		
+      });
 
-  	})
+    }
+
+    // Ok bring up the details link.
+    $scope.showDetails = function(id) {
+      $location.search('details', id);
+    }
 
 }]);

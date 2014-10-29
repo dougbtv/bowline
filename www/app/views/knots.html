@@ -1,3 +1,8 @@
+<span ng-show="params.details">
+	details
+</span>
+
+<span ng-hide="params.details">
 <h2>Knots</h2>
 
 <p>"Knots" make up each individual project that's being built by Bowline. Here you can get a preview of the currently running jobs. Right now, all knots are public. However, the intention of making them private in the future is here. Additionally, only the creator of a knot may manage it.</p>
@@ -7,7 +12,7 @@
 </div>
 
 	<div class="col-md-12">
-	<table class="table">
+	<table class="table table-striped">
 
 	<thead>
 		<tr>
@@ -15,6 +20,7 @@
 			<th>Git Repo</th>
 			<th>Method</th>
 			<th>Last Check</th>
+			<th>Get Details</th>
 			<th class="text-center">Running?</th>
 		</tr>
 	</thead>
@@ -23,13 +29,16 @@
 		<!--
 <tr >
 	-->
-		<tr data-toggle="collapse" data-target="#{{ rel._id }}" class="accordion-toggle ahover" ng-repeat-start="rel in releases">
+		<tr data-toggle="collapse" data-target="#{{ rel._id }}" ng-repeat="rel in releases">
 			<td>{{rel.docker_tag}}</td>
 			<td>{{rel.git_repo}}</td>
 			<td>{{rel.method}}</td>
 			<td>
 				<span ng-show="rel.job.last_check">{{rel.job.check_ago}}<span>
 				<span ng-hide="rel.job.last_check">Never<span>
+			</td>
+			<td>
+				<button type="button" class="btn btn-sm btn-info" ng-click="showDetails(rel._id)">Details</button>
 			</td>
 			<td class="text-center">
 				<span ng-show="rel.job.active"><i class="fa fa-check-circle icon-status-green"></i></span>
@@ -38,6 +47,7 @@
 
 		</tr>
 	
+		<!-- 
 		<tr ng-repeat-end>
 			<td colspan="5" class="hiddenRow">
 				<div class="accordion-body collapse" id="{{ rel._id }}">
@@ -54,9 +64,11 @@
 				</div>
 			</td>
 		</tr>
+		-->
 	      
    	</tbody>
 
   </table>
 </div>
 </div>
+</span>
