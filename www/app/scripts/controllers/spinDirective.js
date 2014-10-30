@@ -1,12 +1,12 @@
 /* global bowlineApp, Spinner */
 
-bowlineApp.directive('myLoadingSpinner', function() {
+bowlineApp.directive('spinner', function() {
 	return {
 		restrict: 'A',
 		replace: true,
 		transclude: true,
 		scope: {
-			loading: '=myLoadingSpinner'
+			loading: '=spinner'
 		},
 		template: '<div style="position: relative;"><div ng-show="loading" class="my-loading-spinner-container" style="margin-top: 8px;"></div><div ng-hide="loading" ng-transclude></div></div>',
 		
