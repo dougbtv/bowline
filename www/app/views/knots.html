@@ -25,13 +25,7 @@
 								<td><strong>Control job</strong></td>
 								<td class="text-center">
 
-									<span ng-show="loading">
-										<div style="position: relative; margin-top: 8px;">
-											<div id="spinneroo"></div>
-										</div>
-									</span>
-
-									<span ng-hide="loading">
+									<div my-loading-spinner="loading">
 
 										<button ng-hide="single.job.exists" type="button" class="btn btn-xs btn-info" ng-click="startJob(single._id)">
 											Start Job
@@ -44,7 +38,7 @@
 										<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">
 											Re-Validate Job
 										</button>
-									</span>
+									</div>
 
 								</td>
 							</tr>
