@@ -136,8 +136,8 @@ module.exports = function(opts,bot,release,log) {
 	this.validateJob = function(releaseid,callback) {
 
 		release.getSlug(releaseid,function(err,findslug){
-			
-			this.validateJob(findslug,function(err,validated){
+
+			this.verifyRelease(findslug,function(err,validated){
 				callback(err,validated);
 			});
 

@@ -2,13 +2,6 @@
 <span ng-show="params.details">
 	<h2>{{single.docker_tag}}</h2>
 	
-	<div ng-show="single.job.error" class="row">
-		<div class="alert alert-danger" role="alert">
-			<i class="fa fa-times-circle icon-status-red"></i> 
-			<strong>Uh oh.</strong> {{ single.job.error }}
-		</div>
-	</div>
-
 	<div class="row" style="display: table;">
 
 		<div class="col-md-5">
@@ -19,6 +12,12 @@
 
 				<div class="panel-body">
 				
+					<div ng-show="single.job.error">
+						<div class="alert alert-danger" role="alert">
+							<i class="fa fa-times-circle icon-status-red"></i> 
+							<strong>Uh oh.</strong> {{ single.job.error }}
+						</div>
+					</div>
 
 					<table class="table table-striped">
 						<tbody>

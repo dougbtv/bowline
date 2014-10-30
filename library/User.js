@@ -345,7 +345,7 @@ module.exports = function(log, opts, mongoose) {
 				log.warn("validate_session",{note: "Vanilla user validation failed", searchpack: searchpack});
 			}
 			
-			console.log("!trace valid pack??? ",validpack);
+			// console.log("!trace valid pack??? ",validpack);
 
 			callback(validpack);
 		});

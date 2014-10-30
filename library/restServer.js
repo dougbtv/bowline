@@ -54,7 +54,9 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		server.post('/api/stopJob', this.stopJob);
 		server.head('/api/stopJob', this.stopJob);
 
-
+		server.get('/api/validateJob', this.validateJob);
+		server.post('/api/validateJob', this.validateJob);
+		server.head('/api/validateJob', this.validateJob);
 
 		// infamous test method.
 
