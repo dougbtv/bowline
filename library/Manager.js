@@ -23,7 +23,7 @@ module.exports = function(opts,bot,release,log) {
 						// We need a slug for this job.
 						jobs[rel.slug] = new Builder(opts,bot);
 						jobs[rel.slug].start(rel,function(){
-							console.log("!trace release " + rel.slug + "started");
+							
 						});
 
 					}
@@ -68,7 +68,7 @@ module.exports = function(opts,bot,release,log) {
 					props.last_check = eachjob.last_check.toDate();
 				}
 
-				console.log("!trace job props??? ",props);
+				// console.log("!trace job props??? ",props);
 
 				callback(null,props);
 
