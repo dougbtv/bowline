@@ -1,4 +1,4 @@
-/* global bowlineApp, moment, spinner */
+/* global bowlineApp, moment, Spinner */
 
 bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', 'ENV', function($scope,$location,$http,login,release,ENV) {
 
@@ -6,8 +6,8 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		  lines: 11, // The number of lines to draw
 		  length: 2, // The length of each line
 		  width: 3, // The line thickness
-		  radius: 6, // The radius of the inner circle
 		  corners: 1, // Corner roundness (0..1)
+		  radius: 6, // The radius of the inner circle
 		  rotate: 0, // The rotation offset
 		  direction: 1, // 1: clockwise, -1: counterclockwise
 		  color: '#000', // #rgb or #rrggbb or array of colors
@@ -74,11 +74,11 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		$scope.enableForm = function() {
 			$scope.form_edit = true;
-		}
+		};
 
 		$scope.formEnabled = function() {
 			return !$scope.form_edit;
-		}
+		};
 
 		$scope.validateJob = function(id) {
 			$scope.loading = true;
