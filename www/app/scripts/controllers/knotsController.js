@@ -6,6 +6,8 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		$scope.params = $location.search();
 		$scope.is_owner = false;
 
+		$scope.loading = true;
+
 		$scope.getSingleRelease = function() {
 
 			$scope.is_owner = false;
@@ -25,6 +27,8 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 				} else {
 					$scope.error = err;
 				}
+
+				$scope.loading = false;
 				
 
 			});
@@ -32,6 +36,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		};
 
 		$scope.validateJob = function(id) {
+			$scope.loading = true;
 			// console.log("!trace validateJob id: ",id);
 			release.validateJob(id,function(err){
 				$scope.getSingleRelease();
@@ -39,14 +44,15 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		};
 
 		$scope.startJob = function(id) {
+			$scope.loading = true;
 			// console.log("!trace startJob id: ",id);
 			release.startJob(id,function(err){
-				console.log("!trace START JOB CAME BACK");
 				$scope.getSingleRelease();
 			});
 		};
 
 		$scope.stopJob = function(id) {
+			$scope.loading = true;
 			// console.log("!trace stopJob id: ",id);
 			release.stopJob(id,function(err){
 				$scope.getSingleRelease();

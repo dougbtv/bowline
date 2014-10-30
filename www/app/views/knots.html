@@ -13,7 +13,7 @@
 				<div class="panel-body">
 				
 					<div ng-show="single.job.error">
-						<div class="alert alert-danger" role="alert">
+						<div class="alert alert-danger" ng-hide="loading" role="alert">
 							<i class="fa fa-times-circle icon-status-red"></i> 
 							<strong>Uh oh.</strong> {{ single.job.error }}
 						</div>
@@ -23,18 +23,26 @@
 						<tbody>
 							<tr ng-show="is_owner">
 								<td><strong>Control job</strong></td>
-								<td>
-									<button ng-hide="single.job.exists" type="button" class="btn btn-xs btn-info" ng-click="startJob(single._id)">
-										Start Job
-									</button>
-									
-									<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="stopJob(single._id)">
-										Stop Job
-									</button>
-									
-									<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">
-										Re-Validate Job
-									</button>
+								<td class="text-center">
+
+									<span ng-show="loading">
+										<img src="images/spinner.gif" />
+									</span>
+
+									<span ng-hide="loading">
+
+										<button ng-hide="single.job.exists" type="button" class="btn btn-xs btn-info" ng-click="startJob(single._id)">
+											Start Job
+										</button>
+										
+										<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="stopJob(single._id)">
+											Stop Job
+										</button>
+										
+										<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">
+											Re-Validate Job
+										</button>
+									</span>
 
 								</td>
 							</tr>
@@ -43,8 +51,13 @@
 								<td>
 									<strong>Last Check: </strong>
 								</td>
-								<td>
-									{{ ago(single.job.last_check) }} 
+								<td class="text-center">
+									<span ng-show="single.job.active">
+										{{ ago(single.job.last_check) }} 
+									</span>
+									<span ng-hide="single.job.active">
+										-
+									</span>
 								</td>
 							</tr>
 						</tbody>
