@@ -24,8 +24,18 @@
 							<tr ng-show="is_owner">
 								<td><strong>Control job</strong></td>
 								<td>
-									<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="stopJob(single._id)">Stop Job</button>
-									<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">Re-Validate Job</button>
+									<button ng-hide="single.job.exists" type="button" class="btn btn-xs btn-info" ng-click="startJob(single._id)">
+										Start Job
+									</button>
+									
+									<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="stopJob(single._id)">
+										Stop Job
+									</button>
+									
+									<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">
+										Re-Validate Job
+									</button>
+
 								</td>
 							</tr>
 

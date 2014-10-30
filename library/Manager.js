@@ -79,6 +79,32 @@ module.exports = function(opts,bot,release,log) {
 
 	}
 
+	this.startJob = function(releaseid,callback) {
+
+		release.getSlug(releaseid,function(err,findslug){
+			
+			if (!err) {
+
+				// Now let's find that job.
+				this.jobExists(findslug,function(exists){
+					if (!exists) {
+						// Great, let's create this job.
+						jobs[findslug] = new Builder(opts,bot);
+						callback(null);
+					} else {
+						callback("You can't start a job that already exists: " + findslug);
+					}
+				});
+
+			} else {
+				log.warn("jobStop_noslug",{releaseid: releaseid});
+				callback("error no slug for id " + releaseid);
+			}
+
+		}.bind(this));
+
+	}
+
 	this.stopJob = function(releaseid,callback) {
 
 		release.getSlug(releaseid,function(err,findslug){

@@ -38,6 +38,13 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			});
 		};
 
+		$scope.startJob = function(id) {
+			// console.log("!trace startJob id: ",id);
+			release.startJob(id,function(err){
+				$scope.getSingleRelease();
+			});
+		};
+
 		$scope.stopJob = function(id) {
 			// console.log("!trace stopJob id: ",id);
 			release.stopJob(id,function(err){

@@ -54,6 +54,10 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		server.post('/api/stopJob', this.stopJob);
 		server.head('/api/stopJob', this.stopJob);
 
+		server.get('/api/startJob', this.startJob);
+		server.post('/api/startJob', this.startJob);
+		server.head('/api/startJob', this.startJob);
+
 		server.get('/api/validateJob', this.validateJob);
 		server.post('/api/validateJob', this.validateJob);
 		server.head('/api/validateJob', this.validateJob);
@@ -118,7 +122,7 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 	*/
 
-	this.isJobOwner = function(releaseid,session,res,callback) {
+	this.ownsRelease = function(releaseid,session,res,callback) {
 
 		user.validateSession(session,function(validpack){
 
@@ -143,7 +147,7 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 		var input = req.params;
 
-		this.isJobOwner(input.id,input.session,res,function(jobowner){
+		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
 				manager.validateJob(input.id,function(err,validated){
 					res.contentType = 'json';
@@ -159,11 +163,26 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 	}.bind(this);
 
+	this.startJob = function(req, res, next) {
+
+		var input = req.params;
+
+		this.ownsRelease(input.id,input.session,res,function(jobowner){
+			if (jobowner) {
+				manager.startJob(input.id,function(err){
+					res.contentType = 'json';
+					res.send({});
+				});
+			}
+		});
+
+	}.bind(this);
+
 	this.stopJob = function(req, res, next) {
 
 		var input = req.params;
 
-		this.isJobOwner(input.id,input.session,res,function(jobowner){
+		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
 				manager.stopJob(input.id,function(err){
 					res.contentType = 'json';
