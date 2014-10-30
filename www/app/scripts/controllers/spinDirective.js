@@ -1,5 +1,8 @@
 /* global bowlineApp, Spinner */
 
+// Rather nice article:
+// http://ankursethi.in/2013/07/loading-spinners-with-angularjs-and-spin-js/
+
 bowlineApp.directive('spinner', function() {
 	return {
 		restrict: 'A',
