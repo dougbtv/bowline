@@ -1,7 +1,27 @@
-/* global bowlineApp */
-/* global moment */
+/* global bowlineApp, moment, spinner */
 
 bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', 'ENV', function($scope,$location,$http,login,release,ENV) {
+
+		var opts = {
+		  lines: 11, // The number of lines to draw
+		  length: 2, // The length of each line
+		  width: 3, // The line thickness
+		  radius: 6, // The radius of the inner circle
+		  corners: 1, // Corner roundness (0..1)
+		  rotate: 0, // The rotation offset
+		  direction: 1, // 1: clockwise, -1: counterclockwise
+		  color: '#000', // #rgb or #rrggbb or array of colors
+		  speed: 0.8, // Rounds per second
+		  trail: 40, // Afterglow percentage
+		  shadow: false, // Whether to render a shadow
+		  hwaccel: false, // Whether to use hardware acceleration
+		  className: 'spinner', // The CSS class to assign to the spinner
+		  zIndex: 2e9, // The z-index (defaults to 2000000000)
+		  top: '50%', // Top position relative to parent
+		  left: '50%' // Left position relative to parent
+		};
+		var target = document.getElementById('spinneroo');
+		var spinner = new Spinner(opts).spin(target);
 
 		$scope.params = $location.search();
 		$scope.is_owner = false;
@@ -36,7 +56,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 					// selects are a bummer, let's take the enumerated type of method and make it a reference to method.
 					for (var i = 0; i < $scope.methods.length; i++) {
 						if ($scope.methods[i] == $scope.single.method) {
-							console.log("!trace HIT THAT METHOD");
+							// console.log("!trace HIT THAT METHOD");
 							$scope.selected_method = $scope.methods[i];
 						}
 					}
