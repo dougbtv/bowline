@@ -41,6 +41,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		$scope.startJob = function(id) {
 			// console.log("!trace startJob id: ",id);
 			release.startJob(id,function(err){
+				console.log("!trace START JOB CAME BACK");
 				$scope.getSingleRelease();
 			});
 		};
@@ -56,7 +57,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			if (indate) {
 				return moment(indate).fromNow();
 			} else {
-				return "Never";
+				return "Pending";
 			}
 			
 		};

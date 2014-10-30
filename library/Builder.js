@@ -89,7 +89,11 @@ module.exports = function(opts,bot) {
 
 		this.verifyRelease(function(err){
 			if (!err) {
+
 				this.started = true;
+
+				callback(null);
+				
 
 				// Check for update once, then, once it's updated, schedule the job to recur.
 				this.checkForUpdate(function(initialupdate){
@@ -130,6 +134,7 @@ module.exports = function(opts,bot) {
 				// There's an error verifying this release.
 				console.log("!trace verifying error: ",err);
 				this.last_error = err;
+				callback(err);
 
 			}
 

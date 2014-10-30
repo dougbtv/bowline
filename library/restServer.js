@@ -170,6 +170,7 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
 				manager.startJob(input.id,function(err){
+					console.log("!trace START JOB IS BACK");
 					res.contentType = 'json';
 					res.send({});
 				});
@@ -209,6 +210,7 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		var input = req.params;
 
 		release.getReleases({_id: input.id},function(rels){
+			// console.log("!trace rels from single release",rels);
 			res.contentType = 'json';
 			res.send(rels[0]);
 		});

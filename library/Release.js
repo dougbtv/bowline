@@ -162,8 +162,8 @@ module.exports = function(mongoose,manager) {
 				async.map(rels, function(item,callback){
 
 					manager.jobProperties(item.slug,function(err,props){
-						// console.log("!trace jobProperties: ",props);
 						item.job = props;
+						// console.log("!trace jobProperties full: ",item);
 						callback(err,item);
 					});
 

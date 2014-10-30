@@ -50,10 +50,11 @@ module.exports = function(opts,bot,release,log) {
 	this.jobProperties = function(findslug,callback) {
 
 		this.jobExists(findslug,function(exists){
-
-			eachjob = jobs[findslug];
-
+			
 			if (exists) {
+
+				eachjob = jobs[findslug];
+
 				// Great, let's start that update.
 				props = {
 					exists: true,
@@ -66,6 +67,8 @@ module.exports = function(opts,bot,release,log) {
 				if (eachjob.last_check) {
 					props.last_check = eachjob.last_check.toDate();
 				}
+
+				console.log("!trace job props??? ",props);
 
 				callback(null,props);
 
@@ -89,8 +92,16 @@ module.exports = function(opts,bot,release,log) {
 				this.jobExists(findslug,function(exists){
 					if (!exists) {
 						// Great, let's create this job.
-						jobs[findslug] = new Builder(opts,bot);
-						callback(null);
+						release.getReleases({_id: releaseid},function(rels){
+
+							jobs[findslug] = new Builder(opts,bot);
+							jobs[findslug].start(rels[0],function(){
+								console.log("!trace GOOOOOOD RELEASE CAME BACK");
+								callback(null);
+							});
+
+						});
+						
 					} else {
 						callback("You can't start a job that already exists: " + findslug);
 					}
