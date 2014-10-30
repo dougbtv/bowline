@@ -6,7 +6,16 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		$scope.params = $location.search();
 		$scope.is_owner = false;
 
+		$scope.form_edit = false;
+
 		$scope.loading = true;
+
+		$scope.methods = [
+			'foo',
+			'http',
+		];
+
+		$scope.selected_method = $scope.methods[0];
 
 		$scope.getSingleRelease = function() {
 
@@ -24,6 +33,14 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 						$scope.is_owner = true;
 					}
 
+					// selects are a bummer, let's take the enumerated type of method and make it a reference to method.
+					for (var i = 0; i < $scope.methods.length; i++) {
+						if ($scope.methods[i] == $scope.single.method) {
+							console.log("!trace HIT THAT METHOD");
+							$scope.selected_method = $scope.methods[i];
+						}
+					}
+
 				} else {
 					$scope.error = err;
 				}
@@ -34,6 +51,14 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			});
 
 		};
+
+		$scope.enableForm = function() {
+			$scope.form_edit = true;
+		}
+
+		$scope.formEnabled = function() {
+			return !$scope.form_edit;
+		}
 
 		$scope.validateJob = function(id) {
 			$scope.loading = true;

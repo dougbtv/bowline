@@ -2,7 +2,7 @@
 <span ng-show="params.details">
 	<h2>{{single.docker_tag}}</h2>
 	
-	<div class="row" style="display: table;">
+	<div class="row">
 
 		<div class="col-md-5">
 			<div class="panel panel-primary">
@@ -77,32 +77,31 @@
 				</div>
 				<div class="panel-body">
 
+
 					
-					<div class="input-group input-group-sm" style="padding-bottom: 8px;">
-						<span class="input-group-addon addon-color">Nickname</span>
-						
-					</div>
-
-					<div class="input-group input-group-sm" style="padding-bottom: 8px;">
-						<span class="input-group-addon addon-color">Github Repo</span>
-					</div>
-
 					<table class="table table-striped">
 						<tbody>
 							<tr>
-								<td>Nickname</td>
+								<td class="vert-align">Nickname</td>
 								<td>
 									<input ng-model="single.slug" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="nickname">
 								</td>
 							</tr>
 
 							<tr>
-								<td>Github Repo</td>
+								<td class="vert-align">Github Repo</td>
 								<td>
 									<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
 								</td>
 							</tr>
 
+							<tr>
+								<td class="vert-align">Method</td>
+								<td>
+									 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
+									 </select>
+								</td>
+							</tr>
 
 
 						</tbody>

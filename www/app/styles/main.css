@@ -51,6 +51,14 @@ body {
     font-size: 20px;
 }
 
+.addon-color {
+  background-color: #d9edf7;
+}
+
+.table tbody>tr>td.vert-align{
+    vertical-align: middle;
+}
+
   /*
 
   Thank you to the kind person that made this snippet: <link href="/css/sticky-footer-navbar.css" rel="stylesheet">
