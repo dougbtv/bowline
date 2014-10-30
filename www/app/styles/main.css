@@ -59,6 +59,15 @@ body {
     vertical-align: middle;
 }
 
+/* ---------------------------- validator */
+
+.validator-error {
+  font-size: 17px;
+  color: #CC0000;
+}
+
+/* ---------------------------- end validator */
+
   /*
 
   Thank you to the kind person that made this snippet: <link href="/css/sticky-footer-navbar.css" rel="stylesheet">

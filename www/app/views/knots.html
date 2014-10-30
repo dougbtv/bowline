@@ -79,23 +79,77 @@
 						<tbody>
 							<tr>
 								<td class="vert-align">Nickname</td>
+								<td class="vert-align text-center">
+									<validator variable="single.slug">
+								</td>
 								<td>
 									<input ng-model="single.slug" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="nickname">
 								</td>
 							</tr>
 
 							<tr>
+								<td class="vert-align">Docker tag</td>
+								<td class="vert-align text-center">foo</td>
+								<td>
+									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+								</td>
+							</tr>
+
+
+							<tr>
 								<td class="vert-align">Github Repo</td>
+								<td class="vert-align text-center">foo</td>
 								<td>
 									<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
 								</td>
 							</tr>
 
 							<tr>
+								<td class="vert-align">Git Path</td>
+								<td class="vert-align text-center">foo</td>
+								<td>
+									<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
+								</td>
+							</tr>
+
+							<tr>
 								<td class="vert-align">Method</td>
+								<td class="vert-align text-center">foo</td>
 								<td>
 									 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
 									 </select>
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">HTTP Host</td>
+								<td class="vert-align text-center">foo</td>
+								<td>
+									<input ng-model="single.host" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="some.domain.com">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">HTTP Path</td>
+								<td class="vert-align text-center">foo</td>
+								<td>
+									<input ng-model="single.url_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/via/http/to/file.tar.gz">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">Master Branch</td>
+								<td class="vert-align text-center">foo</td>
+								<td>
+									<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">New Branch Name (prefix)</td>
+								<td class="vert-align text-center">foo</td>
+								<td>
+									<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
 								</td>
 							</tr>
 

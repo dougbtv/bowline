@@ -19,6 +19,7 @@ var bowlineApp = angular
 		'ngRoute',
 		'ngSanitize',
 		'ngTouch',
+		'ui.bootstrap',
 		'config',
 		'LocalStorageModule'
 	])
