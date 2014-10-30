@@ -31,6 +31,13 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		};
 
+		$scope.validateJob = function(id) {
+			console.log("!trace validateJob id: ",id);
+			release.validateJob(id,function(err){
+				$scope.getSingleRelease();
+			});
+		};
+
 		$scope.stopJob = function(id) {
 			console.log("!trace stopJob id: ",id);
 			release.stopJob(id,function(err){

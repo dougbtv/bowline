@@ -137,6 +137,26 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		});
 	}
 
+	this.validateJob = function(req, res, next) {
+
+		var input = req.params;
+
+		this.isJobOwner(input.id,input.session,res,function(jobowner){
+			if (jobowner) {
+				manager.validateJob(input.id,function(err,validated){
+					res.contentType = 'json';
+					if (err) {
+						res.send({error: err});
+					} else {
+						res.send({validated: validated});
+					}
+					
+				});
+			}
+		});
+
+	}.bind(this);
+
 	this.stopJob = function(req, res, next) {
 
 		var input = req.params;

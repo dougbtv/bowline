@@ -37,6 +37,27 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	};
 
+	this.validateJob = function(id,callback){
+
+		$http.post(ENV.api_url + '/api/validateJob', { id: id, session: login.sessionpack })
+			.success(function(data){
+
+				var err = null;
+				if (data.error) {
+					err = data.error;
+				}
+
+				// console.log("!trace validateJob data",data);
+				callback(err,data);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with validateJob from API");
+
+			}.bind(this));
+
+	};
+
 	this.stopJob = function(id,callback){
 
 		$http.post(ENV.api_url + '/api/stopJob', { id: id, session: login.sessionpack })
