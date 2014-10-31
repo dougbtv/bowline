@@ -66,6 +66,12 @@ body {
   color: #CC0000;
 }
 
+.validator-required {
+  font-size: 17px;
+  color: #E6B800;
+}
+
+
 /* ---------------------------- end validator */
 
   /*

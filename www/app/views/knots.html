@@ -80,7 +80,7 @@
 							<tr>
 								<td class="vert-align">Nickname</td>
 								<td class="vert-align text-center">
-									<validator variable="single.slug">
+									<validator variable="single.slug" regex="'^[\\w\S]+$'" required='true' message="'Use just letters, numbers and underscores'">
 								</td>
 								<td>
 									<input ng-model="single.slug" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="nickname">
@@ -89,7 +89,9 @@
 
 							<tr>
 								<td class="vert-align">Docker tag</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.docker_tag" regex="'^[\\w\S]{4}[\\/]?[\\w\S\\/\:]*[\\w\S]$'" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
+								</td>
 								<td>
 									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
 								</td>
@@ -98,7 +100,9 @@
 
 							<tr>
 								<td class="vert-align">Github Repo</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.git_repo" regex="'^[\\w\\-]+\\/[\\w\\-]+$'" required='true' message="'Github Name/Repo format'">
+								</td>
 								<td>
 									<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
 								</td>
@@ -106,7 +110,9 @@
 
 							<tr>
 								<td class="vert-align">Git Path</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.git_path" regex="'^[\\w\\/\\.\\-\\@\\~]+$'" required='true' message="'Use a normal filename, that is just weird'">
+								</td>
 								<td>
 									<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
 								</td>
@@ -114,7 +120,9 @@
 
 							<tr>
 								<td class="vert-align">Method</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									&nbsp;
+								</td>
 								<td>
 									 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
 									 </select>
@@ -123,7 +131,9 @@
 
 							<tr>
 								<td class="vert-align">HTTP Host</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.host" regex="'^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$'" required='true' message="'A domain name, please'">
+								</td>
 								<td>
 									<input ng-model="single.host" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="some.domain.com">
 								</td>
@@ -131,7 +141,9 @@
 
 							<tr>
 								<td class="vert-align">HTTP Path</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.url_path" required='true' message="'No regex'">
+								</td>
 								<td>
 									<input ng-model="single.url_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/via/http/to/file.tar.gz">
 								</td>
@@ -139,7 +151,9 @@
 
 							<tr>
 								<td class="vert-align">Master Branch</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.branch_master" required='true' >
+								</td>
 								<td>
 									<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
 								</td>
@@ -147,9 +161,11 @@
 
 							<tr>
 								<td class="vert-align">New Branch Name (prefix)</td>
-								<td class="vert-align text-center">foo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.branch_name" required='true'>
+								</td>
 								<td>
-									<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
+									<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="newly created branch names">
 								</td>
 							</tr>
 
