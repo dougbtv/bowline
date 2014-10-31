@@ -95,7 +95,7 @@
 								<td class="vert-align text-center">
 									<validator variable="single.docker_tag" regex="'^[\\w\S]{4}[\\/]?[\\w\S\\/\:]*[\\w\S]$'" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
 								</td>
-								<td style="width: 60%;" class="vert-align text-center">
+								<td class="vert-align text-center col-sm-6">
 									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
 								</td>
 							</tr>
@@ -150,17 +150,22 @@
 										</div>
 										
 									</div>
-									<hr ng-show="!formEnabled()" />
 									
-									<div class="col-sm-12">
-										<span ng-repeat="minute in single.check_minutes" style="margin: 5px;">
-											<span class="label label-info">{{padZero(minute)}}
-												<span> 
-													<i ng-show="showCloseMinute()" ng-click="deleteMinute(minute)" class="fa fa-close ahover"></i>
+									<!-- hackish! work-around labels get fucked up on edit. show two versions. -->
+									<div class="row" style="margin-left: 0px;">
+										<div ng-repeat="minute in single.check_minutes" class="col-md-2" style="margin:4px; padding:4px;">
+											<span class="label label-info">
+												<span style="margin: 3px;">
+													{{padZero(minute)}}
+													<span ng-show="showCloseMinute()"> 
+														<i ng-click="deleteMinute(minute)" style="" class="fa fa-close ahover"></i>
+													</span>
 												</span>
 											</span>
+
 										</div>
 									</div>
+								
 
 								</td>
 							</tr>

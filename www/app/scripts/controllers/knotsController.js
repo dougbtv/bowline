@@ -1,6 +1,6 @@
 /* global bowlineApp, moment, Spinner */
 
-bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', 'ENV', function($scope,$location,$http,login,release,ENV) {
+bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$location,$http,login,release,$timeout,ENV) {
 
 
 		$scope.params = $location.search();
@@ -116,6 +116,16 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		}
 
 		$scope.enableForm = function() {
+
+			// hack for re-draw
+			var keep = $scope.single.check_minutes;
+			$scope.single.check_minutes = [];
+			$timeout(function(){
+				$scope.single.check_minutes = keep;	
+			},100);
+			
+			
+
 			$scope.form_edit = true;
 		};
 
