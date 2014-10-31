@@ -73,7 +73,10 @@
 				</div>
 				<div class="panel-body">
 
-
+					<div ng-show="!formEnabled()" spinner="loading" class="pull-right" style="padding-bottom: 10px;">
+						<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>
+						<button type="button" class="btn btn-sm btn-default" ng-click="cancelChanges()">Cancel Changes</button>
+					</div>
 					
 					<table class="table table-striped">
 						<tbody>
@@ -118,6 +121,7 @@
 									</div>
 									<hr ng-show="!formEnabled()" />
 									
+									<div class="col-sm-12">
 										<span ng-repeat="minute in single.check_minutes" style="margin: 5px;">
 											<span class="label label-info">{{padZero(minute)}}
 												<span> 
@@ -125,7 +129,8 @@
 												</span>
 											</span>
 										</div>
-									
+									</div>
+
 								</td>
 							</tr>
 
@@ -205,11 +210,6 @@
 						</tbody>
 					</table>
 
-
-					<div ng-show="!formEnabled()" spinner="loading" class="">
-						<button type="button" class="btn btn-sm btn-info" ng-click="saveRelease()">Save</button>
-						<button type="button" class="btn btn-sm btn-info" ng-click="cancelChanges()">Cancel Changes</button>
-					</div>
 
 				</div>
 			</div>
