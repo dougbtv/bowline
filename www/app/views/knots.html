@@ -101,6 +101,37 @@
 							</tr>
 
 							<tr>
+								<td class="vert-align">Github Repo</td>
+								<td class="vert-align text-center">
+									<validator variable="single.git_repo" regex="'^[\\w\\-]+\\/[\\w\\-]+$'" required='true' message="'Github Name/Repo format'">
+								</td>
+								<td>
+									<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">Git Path</td>
+								<td class="vert-align text-center">
+									<validator variable="single.git_path" regex="'^[\\w\\/\\.\\-\\@\\~]+$'" required='true' message="'Use a normal filename, that is just weird'">
+								</td>
+								<td>
+									<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">Method</td>
+								<td class="vert-align text-center">
+									&nbsp;
+								</td>
+								<td>
+									 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
+									 </select>
+								</td>
+							</tr>
+
+							<tr ng-show="selected_method == 'http'">
 								<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
 								<td class="vert-align text-center">
 									&nbsp;
@@ -134,39 +165,7 @@
 								</td>
 							</tr>
 
-
-							<tr>
-								<td class="vert-align">Github Repo</td>
-								<td class="vert-align text-center">
-									<validator variable="single.git_repo" regex="'^[\\w\\-]+\\/[\\w\\-]+$'" required='true' message="'Github Name/Repo format'">
-								</td>
-								<td>
-									<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Git Path</td>
-								<td class="vert-align text-center">
-									<validator variable="single.git_path" regex="'^[\\w\\/\\.\\-\\@\\~]+$'" required='true' message="'Use a normal filename, that is just weird'">
-								</td>
-								<td>
-									<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Method</td>
-								<td class="vert-align text-center">
-									&nbsp;
-								</td>
-								<td>
-									 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
-									 </select>
-								</td>
-							</tr>
-
-							<tr>
+							<tr ng-show="selected_method == 'http'">
 								<td class="vert-align">HTTP Host</td>
 								<td class="vert-align text-center">
 									<validator variable="single.host" regex="'^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$'" required='true' message="'A domain name, please'">
@@ -176,7 +175,7 @@
 								</td>
 							</tr>
 
-							<tr>
+							<tr ng-show="selected_method == 'http'">
 								<td class="vert-align">HTTP Path</td>
 								<td class="vert-align text-center">
 									<validator variable="single.url_path" required='true' message="'No regex'">

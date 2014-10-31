@@ -81,7 +81,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 					$scope.single.check_minutes = uniqueArray;
 
 					// Now sort it.
-					$scope.single.check_minutes.sort();
+					$scope.single.check_minutes.sort(function(a, b){return a-b});
 
 				}
 			}
@@ -103,7 +103,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			$scope.single.check_minutes = keeper;
 
 			// Now sort it.
-			$scope.single.check_minutes.sort();
+			$scope.single.check_minutes.sort(function(a, b){return a-b});
 
 		}
 
