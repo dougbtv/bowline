@@ -52,6 +52,63 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		};
 
+		$scope.addMinute = function(minute) {
+
+			// reset input field.
+			$scope.enter_minute = "";
+
+			// operate only if non empty.
+			if (minute != '') {
+				// operate only if minute on the clock
+				if (/^([0-5][0-9]|[0-9])$/.test(minute)) {
+					// ok, let's push it in the array.
+					// dedupe it.
+					// and sort it.
+					$scope.single.check_minutes.push(parseInt(minute));
+
+					// Now make it unique.
+					var uniqueArray = $scope.single.check_minutes.filter(function(item, pos) {
+					    return $scope.single.check_minutes.indexOf(item) == pos;
+					});
+
+					// And set it.
+					$scope.single.check_minutes = uniqueArray;
+
+					// Now sort it.
+					$scope.single.check_minutes.sort();
+
+				}
+			}
+
+		}
+
+		$scope.deleteMinute = function(minute) {
+
+			// Keep everything but this minute.
+
+			var keeper = [];
+
+			for (var i = 0; i < $scope.single.check_minutes.length; i++) {
+				if ($scope.single.check_minutes[i] != minute) {
+					keeper.push($scope.single.check_minutes[i]);
+				}
+			}
+
+			$scope.single.check_minutes = keeper;
+
+			// Now sort it.
+			$scope.single.check_minutes.sort();
+
+		}
+
+		$scope.showCloseMinute = function() {
+			return ($scope.is_owner && $scope.form_edit);
+		}
+
+		$scope.padZero = function(n) {
+		    return (n < 10) ? ("0" + n) : n;
+		}
+
 		$scope.enableForm = function() {
 			$scope.form_edit = true;
 		};

@@ -93,7 +93,33 @@
 									<validator variable="single.docker_tag" regex="'^[\\w\S]{4}[\\/]?[\\w\S\\/\:]*[\\w\S]$'" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
 								</td>
 								<td>
-									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
+								</td>
+							</tr>
+
+							<tr>
+								<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
+								<td class="vert-align text-center">
+									&nbsp;
+								</td>
+								<td>
+									<div class="row" ng-show="!formEnabled()">
+										<div class="col-sm-4">
+											<input ng-model="enter_minute" type="text" class="form-control" placeholder="">
+										</div>
+										<div class="col-sm-7">
+											<button type="button" class="btn btn-sm btn-info" ng-click="addMinute(enter_minute)">Add Minute</button>
+											<validator variable="enter_minute" emptyok="true" regex="'^([0-5][0-9]|[0-9])$'" message="'Minutes on the clock dial only'">
+										</div>
+										<div class="col-sm-1">
+											
+										</div>
+										
+									</div>
+									<hr ng-show="!formEnabled()" />
+									
+									<span ng-repeat="minute in single.check_minutes" style="margin: 4px;" class="label label-info">{{padZero(minute)}}<span> <i ng-show="showCloseMinute()" ng-click="deleteMinute(minute)" class="fa fa-close ahover"></i></span></span>
+
 								</td>
 							</tr>
 
