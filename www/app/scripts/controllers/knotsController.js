@@ -52,6 +52,12 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		};
 
+		$scope.cancelChanges = function() {
+			$scope.loading = true;
+			$scope.form_edit = false;
+			$scope.getSingleRelease();
+		}
+
 		$scope.addMinute = function(minute) {
 
 			// reset input field.

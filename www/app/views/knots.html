@@ -92,7 +92,7 @@
 								<td class="vert-align text-center">
 									<validator variable="single.docker_tag" regex="'^[\\w\S]{4}[\\/]?[\\w\S\\/\:]*[\\w\S]$'" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
 								</td>
-								<td>
+								<td style="width: 60%;" class="vert-align text-center">
 									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
 								</td>
 							</tr>
@@ -105,7 +105,7 @@
 								<td>
 									<div class="row" ng-show="!formEnabled()">
 										<div class="col-sm-4">
-											<input ng-model="enter_minute" type="text" class="form-control" placeholder="">
+											<input ng-model="enter_minute" ng-enter="addMinute(enter_minute)" type="text" class="form-control" placeholder="">
 										</div>
 										<div class="col-sm-7">
 											<button type="button" class="btn btn-sm btn-info" ng-click="addMinute(enter_minute)">Add Minute</button>
@@ -118,8 +118,14 @@
 									</div>
 									<hr ng-show="!formEnabled()" />
 									
-									<span ng-repeat="minute in single.check_minutes" style="margin: 4px;" class="label label-info">{{padZero(minute)}}<span> <i ng-show="showCloseMinute()" ng-click="deleteMinute(minute)" class="fa fa-close ahover"></i></span></span>
-
+										<span ng-repeat="minute in single.check_minutes" style="margin: 5px;">
+											<span class="label label-info">{{padZero(minute)}}
+												<span> 
+													<i ng-show="showCloseMinute()" ng-click="deleteMinute(minute)" class="fa fa-close ahover"></i>
+												</span>
+											</span>
+										</div>
+									
 								</td>
 							</tr>
 
@@ -200,8 +206,9 @@
 					</table>
 
 
-					<div ng-show="is_owner" class="">
-						[ save buttons etc ]
+					<div ng-show="!formEnabled()" spinner="loading" class="">
+						<button type="button" class="btn btn-sm btn-info" ng-click="saveRelease()">Save</button>
+						<button type="button" class="btn btn-sm btn-info" ng-click="cancelChanges()">Cancel Changes</button>
 					</div>
 
 				</div>
