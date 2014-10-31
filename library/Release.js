@@ -6,29 +6,37 @@ module.exports = function(mongoose,manager) {
 	var Builder = require("./Builder.js"); 
 	//	var builder = new Builder(opts,irc);
 
+	var validator = {
+		slug: '^[\\w\S]+$',
+		docker_tag: '^[\\w\S]{4}[\\/]?[\\w\S\\/\:]*[\\w\S]$',
+		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
+		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
+		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
+	};
 
 	// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
+		// -------------- Over arching.
 		owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Who owns this?
+		active: Boolean,											  // Is this currently active?
+		method: String,												  // Update method -- For now, just "http", other methods, later.
+		slug: { type: String, unique: true }, 						  // An index/slug to refer to.
+		docker_tag: String,		// What's the name of the docker image tag?
 
-		active: Boolean,		// Is this currently active?
-		method: String,			// Update method -- For now, just "http", other methods, later.
-
-		slug: String,			// An index/slug to refer to.
-
-		host: String,			// [http] What's the host to look at with http method?
-		url_path: String,		// [http] What's the path from there?
-		
+		// --------------- Method: http
+		host: String,			 // [http] What's the host to look at with http method?
+		url_path: String,		 // [http] What's the path from there?
 		check_minutes: [Number], // At which minutes on the clock do we check?
 
+		// ----------- Git variables.
+		git_enabled: Boolean,	// Do we use git to update?
 		git_repo: String,		// What's the git repo?
 		git_path: String,		// This is the path to the dockerfile in the git repo
 		branch_name: String,	// What's the NEW branch name you'd like?
 		branch_master: String,	// What's your master branch name?
-		
-		docker_tag: String,		// What's the name of the docker image tag?
 
+		// ------------ Job properties.
 		job: {					// Here's our associate job.
 			exists: Boolean,	// Is there a job at all?
 			active: Boolean,	// Is the job checking for updates?
