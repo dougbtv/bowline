@@ -60,7 +60,7 @@ module.exports = function(opts,bot) {
 		
 		// We're passed in a this.release object.
 		this.release = initial_release;
-		console.log("!trace this.release @ Builder start: ",this.release);
+		// console.log("!trace this.release @ Builder start: ",this.release);
 
 		// Let's set it's local variables.
 		this.release.clone_path = "/tmp/" + this.release.slug + "/";
