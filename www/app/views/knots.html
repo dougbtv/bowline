@@ -73,9 +73,11 @@
 				</div>
 				<div class="panel-body">
 
-					<div ng-show="!formEnabled()" spinner="loading" class="pull-right" style="padding-bottom: 10px;">
-						<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>
-						<button type="button" class="btn btn-sm btn-default" ng-click="cancelChanges()">Cancel Changes</button>
+					<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
+						<span class="pull-right" style="padding-bottom: 15px;">
+							<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>
+							<button type="button" class="btn btn-sm btn-default" ng-click="cancelChanges()">Cancel Changes</button>
+						</span>
 					</div>
 					
 					<table class="table table-striped">

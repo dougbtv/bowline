@@ -11,7 +11,7 @@ bowlineApp.directive('spinner', function() {
 		scope: {
 			loading: '=spinner'
 		},
-		template: '<div style="position: relative;"><div ng-show="loading" class="my-loading-spinner-container" style="margin-top: 8px;"></div><div ng-hide="loading" ng-transclude></div></div>',
+		template: '<div style="position: relative;"><div ng-show="loading" class="my-loading-spinner-container" style="min-height: 18px; margin-bottom: 5px;"></div><div ng-hide="loading" ng-transclude></div></div>',
 		
 		link: function(scope, element, attrs) {
 
