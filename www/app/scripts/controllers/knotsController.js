@@ -10,6 +10,10 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		$scope.loading = true;
 
+		$scope.save_error = false;
+
+		$scope.save_success = false;
+
 		$scope.methods = [
 			'foo',
 			'http',
@@ -108,6 +112,31 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			}
 
 		};
+
+		$scope.saveRelease = function() {
+
+			$scope.save_error = false;
+			$scope.loading = true;
+
+			release.editRelease($scope.single,function(err){
+				if (!err) {
+
+					// Ok, that's good, now we can reload.
+					$scope.getSingleRelease();
+
+					$scope.form_edit = false;
+					$scope.save_success = true;
+					$timeout(function(){
+						$scope.save_success = false;
+					},1250);
+
+				} else {
+					$scope.loading = false;
+					$scope.save_error = true;
+				}
+			});
+
+		}
 
 		$scope.deleteMinute = function(minute) {
 

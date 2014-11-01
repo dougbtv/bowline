@@ -80,6 +80,61 @@ body {
   color: #E6B800;
 }
 
+/* ---------------------- get a fade -------------------------------------------------------- */
+/* -- thanks to:  http://www.yearofmoo.com/2013/08/remastered-animation-in-angularjs-1-2.html */
+/* -- // just add class "getfaded" to any element for ng-show / ng-hide --------------------- */
+
+.getfaded.ng-hide-add,
+.getfaded.ng-hide-remove {
+  -webkit-transition:0.5s linear all;
+  transition:0.5s linear all;
+
+  /* remember to add this */
+  display:block!important;
+  opacity:1;
+}
+.getfaded.ng-hide {
+  opacity:0;
+}
+
+.getfaded.ng-hide-remove,
+.getfaded.ng-hide-add {
+  /* remember, the .hg-hide class is added to element
+     when the active class is added causing it to appear
+     as hidden. Therefore set the styling to display=block
+     so that the hide animation is visible */
+  display:block!important;
+}
+
+.getfaded.ng-hide-add {
+  -webkit-animation:0.5s hide;
+  animation:0.5s hide;
+}
+
+@keyframes hide {
+  from { opacity:1; }
+  to { opacity:0; }
+}
+
+@-webkit-keyframes hide {
+  from { opacity:1; }
+  to { opacity:0; }
+}
+
+.getfaded.ng-hide-remove {
+  -webkit-animation:0.5s show;
+  animation:0.5s show;
+}
+
+@keyframes show {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+@-webkit-keyframes show {
+  from { opacity:0; }
+  to { opacity:1; }
+}
 
 /* ---------------------------- end validator */
 

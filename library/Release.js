@@ -107,6 +107,62 @@ module.exports = function(mongoose,manager) {
 		manager = in_manager;
 	}
 
+	this.updateReleaseProperties = function(source,dest,callback) {
+		
+		dest.slug = source.slug;
+		dest.method = source.method;
+		dest.docker_tag = source.docker_tag;
+		dest.host = source.host;
+		dest.url_path = source.url_path;
+
+		dest.git_enabled = source.git_enabled;
+		dest.git_repo = source.git_repo;
+		dest.git_path = source.git_path;
+		dest.branch_name = source.branch_name;
+		dest.branch_master = source.branch_master;
+
+		// Default the check minutes if it's not at least partially valid.
+		if (!typeof source.check_minutes === 'array') {
+			source.check_minutes = [0];
+		} else {
+			if (source.check_minutes.length < 1) {
+				source.check_minutes = [0];
+			}
+		}
+
+		dest.check_minutes = source.check_minutes;
+
+		dest.save(function(err){
+			callback(err);
+		});
+
+	}
+
+	this.newRelease = function(inrelease,callback) {
+
+	};
+
+	this.editRelease = function(inrelease,callback) {
+
+		// alright, we should find this release, then we'll edit it.
+		Release.findOne({
+			_id: inrelease._id
+		},function(err,release){
+			if (!err) {
+				
+				this.updateReleaseProperties(inrelease,release,function(err){
+
+					callback(err);
+
+				});
+
+			} else {
+				callback("Mongo error, couldn't get editRelease: " + err);
+			}
+		}.bind(this));
+
+	};
+
 	this.isOwner = function(userid,releaseid,callback) {
 		Release.findOne({
 			owner: userid,

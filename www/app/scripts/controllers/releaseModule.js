@@ -22,6 +22,22 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	};
 
+	this.editRelease = function(release,callback) {
+
+		$http.post(ENV.api_url + '/api/editRelease', { release: release, session: login.sessionpack })
+			.success(function(release){
+
+				console.log("!trace editRelease data",release);
+				callback(null,release);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with editRelease from API");
+
+			}.bind(this));
+
+	}
+
 	// This just gets all releases.
 	this.getSingleRelease = function(id,callback) {
 

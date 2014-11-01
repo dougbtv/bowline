@@ -82,6 +82,17 @@
 				</div>
 				<div class="panel-body">
 
+					<div ng-show="save_error">
+						<div class="alert alert-danger" ng-hide="loading" role="alert">
+							<i class="fa fa-times-circle icon-status-red"></i> 
+							<strong>Validation failed</strong> check the required fields and values and save again.
+						</div>
+					</div>
+
+					<div ng-show="save_success" class="alert alert-info getfaded" role="alert">
+						<strong>Great</strong> we saved this successfully.
+					</div>
+
 					<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
 						<span class="pull-right" style="padding-bottom: 15px;">
 							<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>

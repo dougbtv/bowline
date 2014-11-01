@@ -54,6 +54,10 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		server.post('/api/getReleaseValidator', this.getReleaseValidator);
 		server.head('/api/getReleaseValidator', this.getReleaseValidator);
 
+		server.get('/api/editRelease', this.editRelease);
+		server.post('/api/editRelease', this.editRelease);
+		server.head('/api/editRelease', this.editRelease);
+
 		server.get('/api/stopJob', this.stopJob);
 		server.post('/api/stopJob', this.stopJob);
 		server.head('/api/stopJob', this.stopJob);
@@ -147,6 +151,25 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		});
 	}
 
+	this.editRelease = function(req, res, next) {
+
+		var input = req.params;
+
+		this.ownsRelease(input.release._id,input.session,res,function(releaseowner){
+			if (releaseowner) {
+				release.editRelease(input.release,function(err){
+					res.contentType = 'json';
+					if (err) {
+						res.send({error: err});
+					} else {
+						res.send({});
+					}
+					
+				});
+			}
+		});
+
+	}.bind(this);
 	
 	this.getReleaseValidator = function(req, res, next) {
 
@@ -186,7 +209,7 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
 				manager.startJob(input.id,function(err){
-					console.log("!trace START JOB IS BACK");
+					// console.log("!trace START JOB IS BACK");
 					res.contentType = 'json';
 					res.send({});
 				});

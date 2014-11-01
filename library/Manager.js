@@ -96,7 +96,6 @@ module.exports = function(opts,bot,release,log) {
 
 							jobs[findslug] = new Builder(opts,bot);
 							jobs[findslug].start(rels[0],function(){
-								console.log("!trace GOOOOOOD RELEASE CAME BACK");
 								callback(null);
 							});
 
