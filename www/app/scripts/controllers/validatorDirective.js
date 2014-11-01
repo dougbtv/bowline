@@ -29,12 +29,12 @@ bowlineApp.directive('validator', function(){
 
 						// console.log("!trace variable in: >>%s<<",$scope.variable,$scope.required);
 
-						if ($scope.variable == '' && $scope.required) {
+						if ($scope.variable === '' && $scope.required) {
 							$scope.show_required = true;
 							$scope.show_failedvalid = false;
 						} else {
 
-							if ($scope.emptyok && $scope.variable == '') {
+							if ($scope.emptyok && $scope.variable === '') {
 
 								// That's OK.
 								$scope.show_required = false;

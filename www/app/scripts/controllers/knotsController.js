@@ -1,4 +1,4 @@
-/* global bowlineApp, moment, Spinner */
+/* global bowlineApp, moment, Spinner, Flatdoc */
 
 bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$location,$http,login,release,$timeout,ENV) {
 
@@ -75,7 +75,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			$scope.loading = true;
 			$scope.form_edit = false;
 			$scope.getSingleRelease();
-		}
+		};
 
 		$scope.addMinute = function(minute) {
 
@@ -83,7 +83,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			$scope.enter_minute = "";
 
 			// operate only if non empty.
-			if (minute != '') {
+			if (minute !== '') {
 				// operate only if minute on the clock
 				if (/^([0-5][0-9]|[0-9])$/.test(minute)) {
 					// ok, let's push it in the array.
@@ -100,12 +100,14 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 					$scope.single.check_minutes = uniqueArray;
 
 					// Now sort it.
-					$scope.single.check_minutes.sort(function(a, b){return a-b});
+					$scope.single.check_minutes.sort(function(a, b){
+						return a-b;
+					});
 
 				}
 			}
 
-		}
+		};
 
 		$scope.deleteMinute = function(minute) {
 
@@ -122,17 +124,19 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			$scope.single.check_minutes = keeper;
 
 			// Now sort it.
-			$scope.single.check_minutes.sort(function(a, b){return a-b});
+			$scope.single.check_minutes.sort(function(a, b){
+				return a-b;
+			});
 
-		}
+		};
 
 		$scope.showCloseMinute = function() {
 			return ($scope.is_owner && $scope.form_edit);
-		}
+		};
 
 		$scope.padZero = function(n) {
 		    return (n < 10) ? ("0" + n) : n;
-		}
+		};
 
 		$scope.enableForm = function() {
 
