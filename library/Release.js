@@ -8,7 +8,8 @@ module.exports = function(mongoose,manager) {
 
 	var validator = {
 		slug: '^[\\w\S]+$',
-		docker_tag: '^[\\w\S]{4}[\\/]?[\\w\S\\/\:]*[\\w\S]$',
+		method: '^(http|http|http)$',
+		docker_tag: '^[a-zA-Z0-9\:\\/\-_.]+$',
 		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
@@ -18,31 +19,31 @@ module.exports = function(mongoose,manager) {
 	var releaseSchema = mongoose.Schema({
 
 		// -------------- Over arching.
-		owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Who owns this?
-		active: Boolean,											  // Is this currently active?
-		method: String,												  // Update method -- For now, just "http", other methods, later.
-		slug: { type: String, unique: true }, 						  // An index/slug to refer to.
-		docker_tag: String,		// What's the name of the docker image tag?
+		owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 				// Who owns this?
+		active: Boolean,											  				// Is this currently active?
+		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
+		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
+		docker_tag: {type: String, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
 
 		// --------------- Method: http
-		host: String,			 // [http] What's the host to look at with http method?
-		url_path: String,		 // [http] What's the path from there?
-		check_minutes: [Number], // At which minutes on the clock do we check?
+		host: {type: String, match: new RegExp(validator.host) },					// [http] What's the host to look at with http method?
+		url_path: String,															// [http] What's the path from there?
+		check_minutes: [Number], 													// At which minutes on the clock do we check?
 
 		// ----------- Git variables.
-		git_enabled: Boolean,	// Do we use git to update?
-		git_repo: String,		// What's the git repo?
-		git_path: String,		// This is the path to the dockerfile in the git repo
-		branch_name: String,	// What's the NEW branch name you'd like?
-		branch_master: String,	// What's your master branch name?
+		git_enabled: Boolean,														// Do we use git to update?
+		git_repo: { type: String, match: new RegExp(validator.git_repo) },			// What's the git repo?
+		git_path: {type: String, match: new RegExp(validator.git_path) },			// This is the path to the dockerfile in the git repo
+		branch_name: String,														// What's the NEW branch name you'd like?
+		branch_master: String,														// What's your master branch name?
 
 		// ------------ Job properties.
-		job: {					// Here's our associate job.
-			exists: Boolean,	// Is there a job at all?
-			active: Boolean,	// Is the job checking for updates?
-			last_check: Date,	// When did it last check?
-			error: String,		// Is there an error?
-			in_progress: Boolean, // Is a build in progress?
+		job: {						// Here's our associate job.
+			exists: Boolean,		// Is there a job at all?
+			active: Boolean,		// Is the job checking for updates?
+			last_check: Date,		// When did it last check?
+			error: String,			// Is there an error?
+			in_progress: Boolean, 	// Is a build in progress?
 		},
 
 	}, { collection: 'releases' });
@@ -79,14 +80,6 @@ module.exports = function(mongoose,manager) {
 
 	}, 'Invalid release method');
 
-	// Check out the docker path for validation
-	Release.schema.path('docker_tag').validate(function (value) {
-
-		var re = new RegExp("[a-zA-Z0-9\:\\/\-_.]");
-		return re.test(value);
-
-	}, 'Docker tag must match [a-zA-Z0-9:/-_.]');
-
 	// the check minutes must be a list, and all values must be between 0 and 59.
 	Release.schema.path('check_minutes').validate(function (value) {
 
@@ -105,9 +98,6 @@ module.exports = function(mongoose,manager) {
 		} else {
 			return false;			
 		}
-
-		// It's only http right now... Later... We'll have other methods like: github PR's and stuff like that.
-		return /http|http|http/.test(value);
 
 	}, 'check_minutes must have at least one value, and all values must be between 0 and 59');
 
@@ -203,6 +193,12 @@ module.exports = function(mongoose,manager) {
 				callback("Mongo error, couldn't getSlug: " + err);	
 			}
 		});
+
+	}
+
+	this.getValidator = function(callback) {
+
+		callback(validator);
 
 	}
 

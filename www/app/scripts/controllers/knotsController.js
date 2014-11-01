@@ -17,6 +17,13 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		$scope.selected_method = $scope.methods[0];
 
+		$scope.validator = {};
+
+		release.getReleaseValidator(function(err,validator){
+			console.log("!trace validator",validator);
+			$scope.validator = validator;
+		});
+
 		$scope.getSingleRelease = function() {
 
 			$scope.is_owner = false;

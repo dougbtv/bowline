@@ -83,7 +83,7 @@
 							<tr>
 								<td class="vert-align">Nickname</td>
 								<td class="vert-align text-center">
-									<validator variable="single.slug" regex="'^[\\w\S]+$'" required='true' message="'Use just letters, numbers and underscores'">
+									<validator variable="single.slug" regex="validator.slug" required='true' message="'Use just letters, numbers and underscores'">
 								</td>
 								<td>
 									<input ng-model="single.slug" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="nickname">
@@ -93,7 +93,7 @@
 							<tr>
 								<td class="vert-align">Docker tag</td>
 								<td class="vert-align text-center">
-									<validator variable="single.docker_tag" regex="'^[\\w\S]{4}[\\/]?[\\w\S\\/\:]*[\\w\S]$'" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
+									<validator variable="single.docker_tag" regex="validator.docker_tag" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
 								</td>
 								<td class="vert-align text-center col-sm-6">
 									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
@@ -103,7 +103,7 @@
 							<tr>
 								<td class="vert-align">Github Repo</td>
 								<td class="vert-align text-center">
-									<validator variable="single.git_repo" regex="'^[\\w\\-]+\\/[\\w\\-]+$'" required='true' message="'Github Name/Repo format'">
+									<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
 								</td>
 								<td>
 									<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
@@ -113,7 +113,7 @@
 							<tr>
 								<td class="vert-align">Git Path</td>
 								<td class="vert-align text-center">
-									<validator variable="single.git_path" regex="'^[\\w\\/\\.\\-\\@\\~]+$'" required='true' message="'Use a normal filename, that is just weird'">
+									<validator variable="single.git_path" regex="validator.git_path" required='true' message="'Use a normal filename, that is just weird'">
 								</td>
 								<td>
 									<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
@@ -174,7 +174,7 @@
 							<tr ng-show="selected_method == 'http'">
 								<td class="vert-align">HTTP Host</td>
 								<td class="vert-align text-center">
-									<validator variable="single.host" regex="'^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$'" required='true' message="'A domain name, please'">
+									<validator variable="single.host" regex="validator.host" required='true' message="'A domain name, please'">
 								</td>
 								<td>
 									<input ng-model="single.host" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="some.domain.com">

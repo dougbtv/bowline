@@ -50,6 +50,10 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		server.post('/api/getSingleRelease', this.getSingleRelease);
 		server.head('/api/getSingleRelease', this.getSingleRelease);
 
+		server.get('/api/getReleaseValidator', this.getReleaseValidator);
+		server.post('/api/getReleaseValidator', this.getReleaseValidator);
+		server.head('/api/getReleaseValidator', this.getReleaseValidator);
+
 		server.get('/api/stopJob', this.stopJob);
 		server.post('/api/stopJob', this.stopJob);
 		server.head('/api/stopJob', this.stopJob);
@@ -141,6 +145,18 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 			}
 
 		});
+	}
+
+	
+	this.getReleaseValidator = function(req, res, next) {
+
+		var input = req.params;
+
+		release.getValidator(function(validator){
+			res.contentType = 'json';
+			res.send(validator);
+		});
+
 	}
 
 	this.validateJob = function(req, res, next) {

@@ -3,6 +3,8 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	console.log("!trace releaseModule instantiated, login status: ",login.status);
 
+	this.validator = {};
+
 	// This just gets all releases.
 	this.getReleases = function(callback) {
 
@@ -36,6 +38,27 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 			}.bind(this));
 
 	};
+
+	// Get the validator for releases.
+	this.getReleaseValidator = function(callback) {
+
+		$http.post(ENV.api_url + '/api/getReleaseValidator', { session: login.sessionpack })
+			.success(function(data){
+
+				// console.log("!trace getReleaseValidator data",data);
+				callback(null,data);
+
+				this.validator = data;
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with getReleaseValidator from API");
+
+			}.bind(this));
+
+	};
+
+	this.getReleaseValidator(function(){});
 
 	this.validateJob = function(id,callback){
 
