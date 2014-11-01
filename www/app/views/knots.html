@@ -62,6 +62,15 @@
 					
 				</div>
 			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">README</h3>
+				</div>
+				<div class="panel-body" role='flatdoc'>
+					<div role='flatdoc-content'></div>
+				</div>
+			</div>
 			
 		</div>
 
@@ -99,6 +108,16 @@
 								</td>
 								<td class="vert-align text-center col-sm-6">
 									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">Automatically update Github</td>
+								<td class="vert-align text-center">
+									&nbsp;
+								</td>
+								<td>
+									<input type="checkbox" ng-model="single.git_enabled" ng-disabled="formEnabled()">
 								</td>
 							</tr>
 

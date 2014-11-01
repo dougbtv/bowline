@@ -40,6 +40,18 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 						$scope.is_owner = true;
 					}
 
+					// figure out the readme.
+					// Strip the Dockerfile from the path.
+					var path_readme = single.git_path.replace(/Dockerfile/,'README.md');
+					
+					// Ok, let's compile a github URL.
+					// var url_github = 'https://github.com/' + release.git_repo + '/tree/' + release.branch_master + path_readme;
+
+					Flatdoc.run({
+						fetcher: Flatdoc.github(single.git_repo, path_readme),
+					});
+
+
 					// selects are a bummer, let's take the enumerated type of method and make it a reference to method.
 					for (var i = 0; i < $scope.methods.length; i++) {
 						if ($scope.methods[i] == $scope.single.method) {

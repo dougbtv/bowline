@@ -31,7 +31,7 @@ module.exports = function(mongoose,manager) {
 		check_minutes: [Number], 													// At which minutes on the clock do we check?
 
 		// ----------- Git variables.
-		git_enabled: Boolean,														// Do we use git to update?
+		git_enabled: Boolean,														// Do we upate the git repo?
 		git_repo: { type: String, match: new RegExp(validator.git_repo) },			// What's the git repo?
 		git_path: {type: String, match: new RegExp(validator.git_path) },			// This is the path to the dockerfile in the git repo
 		branch_name: String,														// What's the NEW branch name you'd like?

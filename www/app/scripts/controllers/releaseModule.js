@@ -26,10 +26,10 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 	this.getSingleRelease = function(id,callback) {
 
 		$http.post(ENV.api_url + '/api/getSingleRelease', { id: id, session: login.sessionpack })
-			.success(function(data){
+			.success(function(release){
 
-				console.log("!trace getReleases data",data);
-				callback(null,data);
+				console.log("!trace getReleases release",release);
+				callback(null,release);
 
 			}.bind(this)).error(function(data){
 
@@ -57,8 +57,6 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 			}.bind(this));
 
 	};
-
-	this.getReleaseValidator(function(){});
 
 	this.validateJob = function(id,callback){
 
