@@ -99,6 +99,14 @@
 							<button type="button" class="btn btn-sm btn-default" ng-click="cancelChanges()">Cancel Changes</button>
 						</span>
 					</div>
+
+					<span ng-show="form_edit">
+						<span ng-show="single.job.exists">
+							<span class="pull-right" style="padding-bottom: 15px;">
+								In order to edit, you must <button type="button" class="btn btn-sm btn-warning" ng-click="stopJob(single._id)">Stop Active Job</button>
+							</span>
+						</span>
+					</span>
 					
 					<table class="table table-striped">
 						<tbody>

@@ -122,13 +122,16 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 				if (!err) {
 
 					// Ok, that's good, now we can reload.
-					$scope.getSingleRelease();
+					// Let's start the job.
+					$scope.startJob($scope.single._id,function(){
+						
+						$scope.form_edit = false;
+						$scope.save_success = true;
+						$timeout(function(){
+							$scope.save_success = false;
+						},1250);
 
-					$scope.form_edit = false;
-					$scope.save_success = true;
-					$timeout(function(){
-						$scope.save_success = false;
-					},1250);
+					});
 
 				} else {
 					$scope.loading = false;
@@ -182,7 +185,22 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		};
 
 		$scope.formEnabled = function() {
-			return !$scope.form_edit;
+			if ($scope.single) {
+				
+				if (!$scope.form_edit) {
+					return true;
+				} else {
+					if ($scope.single.job.exists) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+				
+			} else {
+				return !$scope.form_edit;	
+			}
+			 
 		};
 
 		$scope.validateJob = function(id) {
@@ -193,10 +211,14 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			});
 		};
 
-		$scope.startJob = function(id) {
+		$scope.startJob = function(id,callback) {
+			if (typeof callback == 'undefined') {
+				callback = function(){};
+			}
 			$scope.loading = true;
 			// console.log("!trace startJob id: ",id);
 			release.startJob(id,function(err){
+				callback();
 				$scope.getSingleRelease();
 			});
 		};
