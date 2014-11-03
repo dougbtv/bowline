@@ -163,7 +163,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		};
 
 		$scope.showCloseMinute = function() {
-			return ($scope.is_owner && $scope.form_edit);
+			return ($scope.is_owner && !$scope.formEnabled());
 		};
 
 		$scope.padZero = function(n) {
@@ -173,14 +173,14 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		$scope.enableForm = function() {
 
 			// hack for re-draw
-			var keep = $scope.single.check_minutes;
-			$scope.single.check_minutes = [];
-			$timeout(function(){
-				$scope.single.check_minutes = keep;	
-			},100);
+			if ($scope.formEnabled()) {
+				var keep = $scope.single.check_minutes;
+				$scope.single.check_minutes = [];
+				$timeout(function(){
+					$scope.single.check_minutes = keep;	
+				},100);	
+			}
 			
-			
-
 			$scope.form_edit = true;
 		};
 
@@ -223,11 +223,14 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			});
 		};
 
-		$scope.stopJob = function(id) {
+		$scope.stopJob = function(id,enable_form) {
 			$scope.loading = true;
 			// console.log("!trace stopJob id: ",id);
 			release.stopJob(id,function(err){
 				$scope.getSingleRelease();
+				if (enable_form) {
+					$scope.enableForm();
+				}
 			});
 		};
 
