@@ -58,6 +58,10 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		server.post('/api/editRelease', this.editRelease);
 		server.head('/api/editRelease', this.editRelease);
 
+		server.get('/api/addRelease', this.addRelease);
+		server.post('/api/addRelease', this.addRelease);
+		server.head('/api/addRelease', this.addRelease);
+
 		server.get('/api/stopJob', this.stopJob);
 		server.post('/api/stopJob', this.stopJob);
 		server.head('/api/stopJob', this.stopJob);
@@ -150,6 +154,26 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 		});
 	}
+
+	this.addRelease = function(req, res, next) {
+
+		var input = req.params;
+
+		user.validateSession(input.session,function(validpack){
+			if (validpack.isvalid) {
+				release.addRelease(input.release,validpack.fulluser._id,function(err){
+					res.contentType = 'json';
+					if (err) {
+						res.send({error: err});
+					} else {
+						res.send({});
+					}
+					
+				});
+			}
+		});
+
+	}.bind(this);
 
 	this.editRelease = function(req, res, next) {
 

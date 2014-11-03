@@ -10,6 +10,15 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		$scope.loading = true;
 
+		// switch defaults if adding new knot
+		if ($scope.params.add) {
+			$scope.form_edit = true;
+			$scope.loading = false;
+			// initial the single
+			$scope.single = {};
+		}
+
+
 		$scope.save_error = false;
 
 		$scope.save_success = false;
@@ -93,6 +102,9 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 					// ok, let's push it in the array.
 					// dedupe it.
 					// and sort it.
+					if (!$scope.single.check_minutes) {
+						$scope.single.check_minutes = [];
+					}
 					$scope.single.check_minutes.push(parseInt(minute));
 
 					// Now make it unique.
@@ -118,7 +130,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 			$scope.save_error = false;
 			$scope.loading = true;
 
-			release.editRelease($scope.single,function(err){
+			release.editRelease($scope.single,$scope.params.add,function(err){
 				if (!err) {
 
 					// Ok, that's good, now we can reload.
@@ -185,21 +197,29 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		};
 
 		$scope.formEnabled = function() {
-			if ($scope.single) {
+			if ($scope.params.add) {
+				return false;
+			} else {
+
+				if ($scope.single) {
 				
-				if (!$scope.form_edit) {
-					return true;
-				} else {
-					if ($scope.single.job.exists) {
+					if (!$scope.form_edit) {
 						return true;
 					} else {
-						return false;
+						if ($scope.single.job.exists) {
+							return true;
+						} else {
+							return false;
+						}
 					}
+					
+				} else {
+					return !$scope.form_edit;	
 				}
-				
-			} else {
-				return !$scope.form_edit;	
+
 			}
+
+
 			 
 		};
 
@@ -243,29 +263,39 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 		// Ok bring up the details link.
 		$scope.showDetails = function(id) {
 			$location.search('details', id);
+			$location.search('add', null);
 		};
 
 		// And instantiate.
+		if ($scope.params.add) {
 
-		if ($scope.params.details) {
-
-			$scope.getSingleRelease();
+			// Ok, I guess we need a blank one...
 
 		} else {
 
-			release.getReleases(function(err,rels){
+			if ($scope.params.details) {
 
-				if (!err) {
+				$scope.getSingleRelease();
 
-					$scope.releases = rels;
-					// console.log("!trace checking releases: ",rels);
-				} else {
-					$scope.error = err;
-				}
-				
+			} else {
 
-			});
+				release.getReleases(function(err,rels){
+
+					if (!err) {
+
+						$scope.releases = rels;
+						// console.log("!trace checking releases: ",rels);
+					} else {
+						$scope.error = err;
+					}
+					
+
+				});
+
+			}
 
 		}
+
+		
 
 }]);

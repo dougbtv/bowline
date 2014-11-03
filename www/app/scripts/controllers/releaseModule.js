@@ -22,19 +22,37 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	};
 
-	this.editRelease = function(release,callback) {
+	this.editRelease = function(release,add_release,callback) {
 
-		$http.post(ENV.api_url + '/api/editRelease', { release: release, session: login.sessionpack })
-			.success(function(release){
+		if (add_release) {
 
-				console.log("!trace editRelease data",release);
-				callback(null,release);
+			$http.post(ENV.api_url + '/api/addRelease', { release: release, session: login.sessionpack })
+				.success(function(release){
 
-			}.bind(this)).error(function(data){
+					console.log("!trace addRelease data",release);
+					callback(null,release);
 
-				callback("Had trouble with editRelease from API");
+				}.bind(this)).error(function(data){
 
-			}.bind(this));
+					callback("Had trouble with addRelease from API");
+
+				}.bind(this));
+
+		} else {
+
+			$http.post(ENV.api_url + '/api/editRelease', { release: release, session: login.sessionpack })
+				.success(function(release){
+
+					console.log("!trace editRelease data",release);
+					callback(null,release);
+
+				}.bind(this)).error(function(data){
+
+					callback("Had trouble with editRelease from API");
+
+				}.bind(this));
+
+		}
 
 	}
 

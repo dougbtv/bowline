@@ -1,10 +1,11 @@
 <div class="container">
-<span ng-show="params.details">
-	<h2>{{single.docker_tag}}</h2>
+<span ng-show="params.details || params.add">
+	<h2 ng-hide="params.add">{{single.docker_tag}}</h2>
+	<h2 ng-show="params.add">Adding Knot<span ng-show="single.docker_tag">: {{single.docker_tag}}</span></h2>
 	
 	<div class="row">
 
-		<div class="col-md-5">
+		<div class="col-md-5" ng-hide="params.add">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Status</h3>
@@ -96,7 +97,7 @@
 					<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
 						<span class="pull-right" style="padding-bottom: 15px;">
 							<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>
-							<button type="button" class="btn btn-sm btn-default" ng-click="cancelChanges()">Cancel Changes</button>
+							<button type="button" class="btn btn-sm btn-default" ng-hide="params.add" ng-click="cancelChanges()">Cancel Changes</button>
 						</span>
 					</div>
 
@@ -266,7 +267,7 @@
 	</div>
 </span>
 
-<span ng-hide="params.details">
+<span ng-hide="params.details || params.add">
 <h2>Knots</h2>
 
 <p>"Knots" make up each individual project that's being built by Bowline. Here you can get a preview of the currently running jobs. Right now, all knots are public. However, the intention of making them private in the future is here. Additionally, only the creator of a knot may manage it.</p>

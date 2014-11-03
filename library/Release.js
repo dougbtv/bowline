@@ -122,7 +122,7 @@ module.exports = function(mongoose,manager) {
 		dest.branch_master = source.branch_master;
 
 		// Default the check minutes if it's not at least partially valid.
-		if (!typeof source.check_minutes === 'array') {
+		if (typeof source.check_minutes !== 'array') {
 			source.check_minutes = [0];
 		} else {
 			if (source.check_minutes.length < 1) {
@@ -138,7 +138,19 @@ module.exports = function(mongoose,manager) {
 
 	}
 
-	this.newRelease = function(inrelease,callback) {
+	this.addRelease = function(inrelease,userid,callback) {
+
+		console.log("!trace addRelease: userid: %s | inrelease",userid,inrelease);
+
+		var release = new Release;
+		release.owner = mongoose.Types.ObjectId(userid);
+		release.active = true;
+
+		this.updateReleaseProperties(inrelease,release,function(err){
+
+			callback(err);
+
+		});
 
 	};
 
