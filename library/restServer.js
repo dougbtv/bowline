@@ -29,6 +29,19 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 			// return next();
 		});
 
+		// When a client request is sent for a URL that does not exist, restify will emit this event. 
+		// Note that restify checks for listeners on this event, and if there are none, responds with a default 404 handler. 
+		// It is expected that if you listen for this event, you respond to the client.
+		server.on('NotFound', function (req, res, callback) {
+
+			console.log("!trace API CALL NOT FOUND, headers: ",req.headers);
+			console.log("!trace API CALL NOT FOUND, url: ",req.url);
+			console.log("!trace API CALL NOT FOUND, method: ",req.method);
+			console.log("!trace API CALL NOT FOUND, input: ",req.params);
+
+		});
+
+
 		// Tell the server to send a CORS request.
 		// refernce: http://stackoverflow.com/questions/14338683/how-can-i-support-cors-when-using-restify
 
