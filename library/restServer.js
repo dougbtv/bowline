@@ -39,6 +39,9 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 			console.log("!trace API CALL NOT FOUND, method: ",req.method);
 			console.log("!trace API CALL NOT FOUND, input: ",req.params);
 
+			res.contentType = 'json';
+			res.send({foo: "bar"});
+
 		});
 
 
@@ -52,6 +55,13 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 				return next();
 			}
 		);
+
+		server.use(restify.authorizationParser());
+
+		// Docker registry proxy methods
+		server.get('/auth/', this.dockerAuthProxy);
+		server.post('/auth/', this.dockerAuthProxy);
+		server.head('/auth/', this.dockerAuthProxy);
 
 		// Release methods
 		
@@ -146,6 +156,31 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 
 	*/
+
+	this.dockerAuthProxy = function(req, res, next) {
+
+		console.log("!trace dockerAuthProxy, headers: ",req.headers);
+		console.log("!trace dockerProxy, url: ",req.url);
+		console.log("!trace dockerProxy, authorization: ",req.authorization);
+		console.log("!trace dockerProxy, method: ",req.method);
+		// console.log("!trace dockerProxy, dockermethod: ",req.params.dockermethod);
+		console.log("!trace dockerProxy, input: ",req.params);
+
+		if (!req.authorization.basic) {
+
+			var auth = req.headers['authorization'];
+			res.statusCode = 401;
+			res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+			res.end('need creds');
+
+		} else {
+
+			res.contentType = 'json';
+			res.send({foo: "bar"});
+
+		}
+
+	}
 
 	this.ownsRelease = function(releaseid,session,res,callback) {
 
