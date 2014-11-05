@@ -10,6 +10,7 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 	// Initialize the user.
 	$scope.user = {
 		email: "",
+		username: "",
 		password: "",
 		passwordverify: "",
 	};
@@ -147,6 +148,7 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 		// Reset errors.
 		$scope.user.error_api = false;
 		$scope.user.error_email = false;
+		$scope.user.error_username = false;
 
 		console.log("submitregistration -- user: %j",$scope.user);
 
@@ -156,6 +158,12 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 		// Ok, let's validate that email.
 		if (!$scope.validateEmail($scope.user.email)) {
 			$scope.user.error_email = true;
+			is_error = true;
+		}
+
+		// Checkout that username:
+		if (!/^[a-zA-Z0-9\\-_\\.]{4,}$/.test($scope.user.username)) {
+			$scope.user.error_username = true;
 			is_error = true;
 		}
 

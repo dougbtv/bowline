@@ -416,6 +416,7 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 		// Ok, make a request to the user object.
 		user.registerUser(
 			input.user.email.trim(),
+			input.user.username.trim(),
 			function(err){
 
 			var sendjson = {};

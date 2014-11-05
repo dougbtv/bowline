@@ -24,7 +24,8 @@ module.exports = function(log, opts, mongoose) {
 	// Setup a schema.
 	var userSchema = mongoose.Schema({
 
-		email: String,			// Their email.
+		username: { type: String, unique: true, match: /^[a-zA-Z0-9\\-_\\.]{4,}$/ }, // Their username
+		email: { type: String, unique: true },			// Their email.
 		secret: String,			// The secret key
 		resetkey: String,		// The key to reset it (register or forgot password.)
 		active: Boolean,		// Is this user activated? (Important because of email verification)
@@ -60,7 +61,7 @@ module.exports = function(log, opts, mongoose) {
 	// Compile it to a model.
 	var User = mongoose.model('User', userSchema);
 
-	this.registerUser = function(email,callback) {
+	this.registerUser = function(email,username,callback) {
 
 		// Ok, see if the user exists.
 		this.exists(email,function(exists){
@@ -68,35 +69,52 @@ module.exports = function(log, opts, mongoose) {
 			// Only create if they don't exist.
 			if (!exists) {
 
-				// Otherwise? I think we're good to go.
-				// Go and create 'em.
-				var user = new User;
-				user.resetkey = this.uniqueHash();
-				user.email = email;
-				user.active = false;
-				user.indate = new Date();
-				
-				user.save(function(err){
-					if (!err) {
+				this.existsUsername(username,function(existsusername){
 
-						// Ok, let's send 'em a mail.
+					if (!existsusername) {
 
-						var subject = "Welcome to Bowline.io!"
-						var body = "Thanks for registering. To verify your account, and to set your password, visit: " + user.resetURL;
-
-						// Alright, now that they're saved, we can go ahead and send 'em a mail.
-						/// this.send = function(subject,body,to,from) {
-						mail.send(subject,body,user.email);
-
-						callback(false);
+						// Otherwise? I think we're good to go.
+						// Go and create 'em.
+						var user = new User;
+						user.resetkey = this.uniqueHash();
+						user.email = email;
+						user.username = username;
+						user.active = false;
+						user.indate = new Date();
 						
+						user.save(function(err){
+							if (!err) {
+
+								// Ok, let's send 'em a mail.
+
+								var subject = "Welcome to Bowline.io!"
+								var body = "Thanks for registering. To verify your account, and to set your password, visit: " + user.resetURL;
+
+								// Alright, now that they're saved, we can go ahead and send 'em a mail.
+								/// this.send = function(subject,body,to,from) {
+								mail.send(subject,body,user.email);
+
+								callback(false);
+								
+							} else {
+
+								log.error('mongo_error',{method: 'User.registerUser', note: "Couldn't save user", error: err});
+								callback("validation of your desired username failed");
+
+							}
+
+						}.bind(this));
+
 					} else {
-						log.error('mongo_error',{method: 'User.registerUser', note: "Couldn't save user", error: err});
+
+						callback("Sorry: This username already exists in the system.");
+
 					}
+					
 				}.bind(this));
 
 			} else {
-				callback("Sorry: This email address already exists on our system.");
+				callback("Sorry: This email address already exists in the system.");
 			}
 
 		}.bind(this));
@@ -234,6 +252,20 @@ module.exports = function(log, opts, mongoose) {
 
 	}
 
+	this.existsUsername = function(username,callback) {
+
+		User.findOne({username: username},function(err,user){
+
+			if (user) {
+				callback(true);
+			} else {
+				callback(false);
+			}
+
+		});
+
+	}
+
 	this.getUser = function(email,callback) {
 
 		User.findOne({email: email},function(err,user){
@@ -272,7 +304,8 @@ module.exports = function(log, opts, mongoose) {
 
 		var sessionid = this.uniqueHash();
 
-		User.findOne({email: email},function(err,user){
+		// !bang
+		User.findOne({ $or: [ {email: email}, {username: email} ] },function(err,user){
 
 			if (user) {
 
@@ -337,7 +370,8 @@ module.exports = function(log, opts, mongoose) {
 		var sessionid = sessionpack.session;
 		
 		// Ok, let's look for a result.
-		var searchpack = {email: email, session_id: sessionid};
+		// email or username is OK.
+		var searchpack = { $or: [ {email: email}, {username: email} ], session_id: sessionid };
 
 		// go through the general validator with our searchpack.
 		this.userValidator(searchpack,function(validpack){
@@ -356,7 +390,8 @@ module.exports = function(log, opts, mongoose) {
 	this.authenticate = function(email,password,callback) {
 
 		// Locate the user.
-		User.findOne({email: email},function(err,user){
+		// ..by email or username
+		User.findOne({ $or: [ {email: email}, {username: email} ] },function(err,user){
 
 			if (user) {
 

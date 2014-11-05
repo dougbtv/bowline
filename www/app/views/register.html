@@ -25,11 +25,21 @@
 								<strong>Required</strong> You must enter a valid email address.
 							</div>
 
-							<label>Email Address <span class="color-red">*</span></label>
-							<input type="text" class="form-control margin-bottom-20" placeholder="Enter your email address" ng-model="user.email" ng-enter="submitRegistration()">
+							<div class="input-group" style="margin-bottom: 15px;">
+								<span class="input-group-addon">Email Address</span>
+								<input type="text" class="form-control" placeholder="Enter your email address" ng-model="user.email" ng-enter="submitRegistration()">
+							</div>
 
+							<div ng-show="user.error_username" class="alert alert-warning" role="alert">
+								<strong>Required</strong> You must enter a valid username
+							</div>
+
+							<div class="input-group" style="margin-bottom: 15px;">
+								<span class="input-group-addon">Username: </span>
+								<input type="text" class="form-control" placeholder="Enter desired username" ng-model="user.username" ng-enter="submitRegistration()">
+							</div>
 							
-							<button class="btn-u" type="submit" ng-click="submitRegistration()">Register</button>                        
+							<button class="btn btn-primary" type="submit" ng-click="submitRegistration()">Register</button>
 							
 						</form>
 					</div>
