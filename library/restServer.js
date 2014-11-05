@@ -159,6 +159,7 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 	this.dockerAuthProxy = function(req, res, next) {
 
+		console.log("!trace dockerProxy >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
 		console.log("!trace dockerAuthProxy, headers: ",req.headers);
 		console.log("!trace dockerProxy, url: ",req.url);
 		console.log("!trace dockerProxy, authorization: ",req.authorization);
