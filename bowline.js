@@ -58,12 +58,16 @@ options.parse(function(opts){
 		// inject that into release, too.
 		release.inject(manager);
 
-		// Bowline handles our matters.		
+		// Bowline handles our matters.
 		var Bowline = require("./library/Bowline.js"); 
 		var bowline = new Bowline(opts,irc,release,manager);
 
+		// And our dockerRegistry proxy.
+		var DockerRegistry = require("./library/dockerRegistry.js"); 
+		var dockerRegistry = new DockerRegistry(log,opts);
+
 		var RestServer = require("./library/restServer.js"); 
-		var restserver = new RestServer(log,opts,bowline,user,release,manager);
+		var restserver = new RestServer(log,opts,bowline,user,release,manager,dockerRegistry);
 	    restserver.serverStart();
 
 		// Connect the irc bot's listener to the builder

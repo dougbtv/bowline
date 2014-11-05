@@ -1,4 +1,4 @@
-module.exports = function(log, opts, bowline, user, release, manager) {
+module.exports = function(log, opts, bowline, user, release, manager, dockerRegistry) {
 
 	// --------------------------------------------------------------------
 	// -- myConstructor : Throws the constructor into a method.
@@ -159,25 +159,59 @@ module.exports = function(log, opts, bowline, user, release, manager) {
 
 	this.dockerAuthProxy = function(req, res, next) {
 
-		console.log("!trace dockerProxy >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
-		console.log("!trace dockerAuthProxy, headers: ",req.headers);
-		console.log("!trace dockerProxy, url: ",req.url);
-		console.log("!trace dockerProxy, authorization: ",req.authorization);
-		console.log("!trace dockerProxy, method: ",req.method);
+		// console.log("!trace dockerProxy >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
+		// console.log("!trace dockerAuthProxy, headers: ",req.headers);
+		// console.log("!trace dockerProxy, url: ",req.url);
+		// console.log("!trace dockerProxy, authorization: ",req.authorization);
+		// console.log("!trace dockerProxy, method: ",req.method);
 		// console.log("!trace dockerProxy, dockermethod: ",req.params.dockermethod);
-		console.log("!trace dockerProxy, input: ",req.params);
+		// console.log("!trace dockerProxy, input: ",req.params);
 
+		// If no credentials are provided, we must ask for credentials.
 		if (!req.authorization.basic) {
 
 			var auth = req.headers['authorization'];
 			res.statusCode = 401;
-			res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-			res.end('need creds');
+			res.setHeader('WWW-Authenticate', 'Basic realm="Auth Required"');
+			res.end('Auth Required');
 
 		} else {
 
-			res.contentType = 'json';
-			res.send({foo: "bar"});
+			// If credentials are provided...
+			// we need to verify that they're OK.
+			user.authenticate(req.authorization.basic.username,req.authorization.basic.password,function(auth){
+
+				if (auth) {
+					
+					dockerRegistry.route(req.headers,auth.fulluser.username,function(err){
+
+						if (!err) {
+
+							// That looks legit.
+							res.contentType = 'json';
+							res.send({bowline: "is_the_knot"});
+		
+						} else {
+
+							// Errored, huh, just ask them to auth.
+							res.statusCode = 401;
+							res.setHeader('WWW-Authenticate', 'Basic realm="Auth Required"');
+							res.end('Auth Required');
+
+						}
+						
+					});
+
+				} else {
+
+					// Nope, no good, login is bad.
+					res.statusCode = 401;
+					res.setHeader('WWW-Authenticate', 'Basic realm="Auth Required"');
+					res.end('Auth Required');
+
+				}
+
+			});
 
 		}
 
