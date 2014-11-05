@@ -1,6 +1,6 @@
-# docker run -p 80:80 --link regserver:regserver -i -t dougbtv/bowline-nginx
-
+# NOTICE : This is unfinished.
 # this doesn't quite play with my mindset so well... so, just a sketch to begin with.
+# docker run -p 80:80 --link regserver:regserver -i -t dougbtv/bowline-nginx
 
 nginx:
   build: nginx/.
