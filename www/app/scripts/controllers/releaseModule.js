@@ -54,7 +54,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 		}
 
-	}
+	};
 
 	// This just gets all releases.
 	this.getSingleRelease = function(id,callback) {

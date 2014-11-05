@@ -1,4 +1,4 @@
-/* global bowlineApp, moment, Spinner, Flatdoc */
+/* global bowlineApp, moment, Spinner, Flatdoc, jQuery */
 
 // Thank you kindly to: http://www.yearofmoo.com/2013/08/remastered-animation-in-angularjs-1-2.html
 // just add class "getfaded" to any element for ng-show / ng-hide

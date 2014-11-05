@@ -151,7 +151,7 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 				}
 			});
 
-		}
+		};
 
 		$scope.deleteMinute = function(minute) {
 
