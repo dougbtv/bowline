@@ -1,4 +1,4 @@
-module.exports = function(opts,bot) {
+module.exports = function(opts,bot,log) {
 
 	// Our requirements.
 	var fs = require('fs');
@@ -90,49 +90,58 @@ module.exports = function(opts,bot) {
 		this.verifyRelease(function(err){
 			if (!err) {
 
-				this.started = true;
+				// Check for update once, then, once it's updated, schedule the job to recur.
+				this.checkForUpdate(function(err,initialupdate){
 
-				callback(null);
+					if (!err) {
+
+						this.started = true;
+						callback(null);
 				
 
-				// Check for update once, then, once it's updated, schedule the job to recur.
-				this.checkForUpdate(function(initialupdate){
+						if (initialupdate) {
+							this.performUpdate();
+						}
 
-					if (initialupdate) {
-						this.performUpdate();
-					}
+						// Create a range
+						// that runs every other unit.
+						var rule = new schedule.RecurrenceRule();
+						// rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+						rule.minute = this.release.check_minutes;
+						
 
-					// Create a range
-					// that runs every other unit.
-					var rule = new schedule.RecurrenceRule();
-					// rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
-					rule.minute = this.release.check_minutes;
-					
+						job = schedule.scheduleJob(rule, function(){
 
-					job = schedule.scheduleJob(rule, function(){
+							// Update the last time we checked.
+							this.last_check = new moment();
 
-						// Update the last time we checked.
-						this.last_check = new moment();
+							this.logit("Checking for an update @ " + moment().format("YYYY-MM-DD HH:mm:ss"));
 
-						this.logit("Checking for an update @ " + moment().format("YYYY-MM-DD HH:mm:ss"));
+							this.checkForUpdate(function(err,updated){
 
-						this.checkForUpdate(function(updated){
+								if (updated) {
+									// Ok, kick it off!
+									this.performUpdate();
+								}
 
-							if (updated) {
-								// Ok, kick it off!
-								this.performUpdate();
-							}
-
+							}.bind(this));
+						
 						}.bind(this));
-					
-					}.bind(this));
+
+					} else {
+
+						log.warn("http_check_error",err);
+						this.last_error = err;
+						callback(err);
+
+					}
 
 				}.bind(this));
 
 			} else {
 
 				// There's an error verifying this release.
-				console.log("!trace verifying error: ",err);
+				log.warn("verification_error",err);
 				this.last_error = err;
 				callback(err);
 
@@ -662,37 +671,46 @@ module.exports = function(opts,bot) {
 			var raw_modified = res.headers['last-modified'];
 			// console.log("!trace raw_modified: ",raw_modified);
 
-			// Ok, let's parse that date.
-			// Thu, 18 Sep 2014 18:40:20
-			var pts = raw_modified.split(" ");
-			// console.log("!trace pts: ",pts);
+			if (raw_modified) {
 
-			var day = pts[1];
-			var mon = pts[2];
-			var year = pts[3];
+				// Ok, let's parse that date.
+				// Thu, 18 Sep 2014 18:40:20
+				var pts = raw_modified.split(" ");
+				// console.log("!trace pts: ",pts);
 
-			var tpts = pts[4].split(":");
-			var hour = tpts[0];
-			var minute = tpts[1];
-			var second = tpts[2];
+				var day = pts[1];
+				var mon = pts[2];
+				var year = pts[3];
 
-			var last_modified = new moment().year(year).month(mon).date(day).hour(hour).minute(minute).second(second).add(4,"hours");
-			// console.log("!trace last-modified: ",last_modified.toDate());
+				var tpts = pts[4].split(":");
+				var hour = tpts[0];
+				var minute = tpts[1];
+				var second = tpts[2];
 
-			// Do we have an update?
-			var is_update = false;
+				var last_modified = new moment().year(year).month(mon).date(day).hour(hour).minute(minute).second(second).add(4,"hours");
+				// console.log("!trace last-modified: ",last_modified.toDate());
 
-			// Is it different from the last date?
-			if (last_modified.unix() > this.last_modified.unix()) {
-				// console.log("!trace IT'S GREATER.");
-				is_update = true;
+				// Do we have an update?
+				var is_update = false;
+
+				// Is it different from the last date?
+				if (last_modified.unix() > this.last_modified.unix()) {
+					// console.log("!trace IT'S GREATER.");
+					is_update = true;
+				}
+
+				// Set the update.
+				this.last_modified = last_modified;
+
+				
+				callback(null,is_update);
+
+			} else {
+
+				callback("There is no 'last-modified' header on your URL to check.");
+				
 			}
 
-			// Set the update.
-			this.last_modified = last_modified;
-
-			
-			callback(is_update);
 
 		}.bind(this));
 		req.end();
