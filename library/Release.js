@@ -248,6 +248,32 @@ module.exports = function(mongoose,manager) {
 
 	}
 
+	this.exists = function(username,namespace,callback) {
+
+		// Ok, string together the username and namespace
+		var docker_tag = username + "/" + namespace;
+
+		console.log("!trace search? ",{ docker_tag: docker_tag });
+
+		// Hrmmm, more than one can exist.
+		// But, that's OK, it's just gotta be registered at least once.
+		Release.findOne({ docker_tag: docker_tag },function(err,release){
+
+			if (!err && release) {
+				callback(true);
+			} else {
+
+				if (err) {
+					log.err("release_exists_mongo",err);
+				}
+				callback(false);
+
+			}
+
+		});
+
+	}
+
 	this.getSlug = function(releaseid,callback) {
 
 		Release.findOne({_id: releaseid},function(err,rel){

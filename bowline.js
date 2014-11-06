@@ -64,7 +64,7 @@ options.parse(function(opts){
 
 		// And our dockerRegistry proxy.
 		var DockerRegistry = require("./library/dockerRegistry.js"); 
-		var dockerRegistry = new DockerRegistry(log,opts);
+		var dockerRegistry = new DockerRegistry(log,opts,release);
 
 		var RestServer = require("./library/restServer.js"); 
 		var restserver = new RestServer(log,opts,bowline,user,release,manager,dockerRegistry);

@@ -1,4 +1,4 @@
-module.exports = function(log, opts) {
+module.exports = function(log, opts, release) {
 
 	console.log("!trace dockerRegistry instantiated");
 
@@ -42,25 +42,40 @@ module.exports = function(log, opts) {
 
 	this.repositories = function(username,method,namespace,repo_name,callback) {
 
-		// Ok, let's think about the methods
-		switch (method) {
-			// These are modifications
-			case "DELETE":
-			case "PUT":
-				if (username == namespace) {
-					// That's great.
-					callback(null);
-				} else {
-					callback("User not authorized for method of repositories");
-				}
-				break;
+		// This ain't no good if we don't have this stored as a release.
+		// ...you've gotta make that first.
+		release.exists(namespace,repo_name,function(exists){
 
-			// These are pulls and queries.
-			// Should be available unless repo is private.
-			default:
-				callback(null);
-				break;
-		}
+			if (exists) {
+
+				// Ok, let's think about the methods
+				switch (method) {
+					// These are modifications
+					case "DELETE":
+					case "PUT":
+						if (username == namespace) {
+							// That's great.
+							callback(null);
+						} else {
+							callback("User not authorized for method of repositories");
+						}
+						break;
+
+					// These are pulls and queries.
+					// Should be available unless repo is private.
+					default:
+						callback(null);
+						break;
+				}
+
+			} else {
+
+				callback("Release does not exist, you should create it in the UI first");
+				
+			}
+
+
+		});
 
 	}
 
