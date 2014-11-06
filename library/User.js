@@ -387,7 +387,7 @@ module.exports = function(log, opts, mongoose) {
 	}
 
 
-	this.authenticate = function(email,password,callback) {
+	this.authenticate = function(email,password,do_create_session,callback) {
 
 		// Locate the user.
 		// ..by email or username
@@ -409,17 +409,27 @@ module.exports = function(log, opts, mongoose) {
 							// Give them a session id.
 							// This way we don't store their password in the cookie.
 							// It will get reset with each authentication.
-							log.it("login",{
-								success: true,
-								email: email,	
-							});
+							if (do_create_session) {
 
-							this.createSession(email,function(sessionid){
+								log.it("login",{
+									success: true,
+									email: email,	
+								});
+
+								this.createSession(email,function(sessionid){
+									callback({
+										sessionid: sessionid,
+										fulluser: user.toObject({ hide: 'secret resetkey resetURL', transform: true, virtuals: true }),
+									});
+								});
+
+							} else {
 								callback({
-									sessionid: sessionid,
+									sessionid: null,
 									fulluser: user.toObject({ hide: 'secret resetkey resetURL', transform: true, virtuals: true }),
 								});
-							});
+							}
+							
 
 						} else {
 							log.it("login",{

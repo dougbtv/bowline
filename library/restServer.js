@@ -179,7 +179,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 			// If credentials are provided...
 			// we need to verify that they're OK.
-			user.authenticate(req.authorization.basic.username,req.authorization.basic.password,function(auth){
+			user.authenticate(req.authorization.basic.username,req.authorization.basic.password,false,function(auth){
 
 				if (auth) {
 					
@@ -384,7 +384,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		// log.trace("user login params: ",input);
 
 		// Now check it with the user module.
-		user.authenticate(input.email,input.password,function(auth){
+		user.authenticate(input.email,input.password,true,function(auth){
 
 			res.contentType = 'json';
 
