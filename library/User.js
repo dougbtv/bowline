@@ -439,6 +439,7 @@ module.exports = function(log, opts, mongoose) {
 
 							// log.it("!Warning: Password auth failed for %s with password: %s",email,password);
 							// Nope that didn't work.
+							log.error("login",{success: false, email: email, reason: "password auth failed"});
 							callback(false);
 						}
 
@@ -449,6 +450,7 @@ module.exports = function(log, opts, mongoose) {
 
 			} else {
 
+				log.error("login",{success: false, email: email, reason: "user not found"});
 				callback(false);
 
 			}

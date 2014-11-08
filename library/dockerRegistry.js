@@ -1,11 +1,11 @@
 module.exports = function(log, opts, release) {
 
-	console.log("!trace dockerRegistry instantiated");
+	// console.log("!trace dockerRegistry instantiated");
 
 	this.route = function(headers,username,callback) {
 
-		console.log("!trace dockerRegistry >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
-		console.log("!trace dockerRegistry, headers: ", headers);
+		// console.log("!trace dockerRegistry >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
+		// console.log("!trace dockerRegistry, headers: ", headers);
 
 		var url = headers['x-original-uri'];
 		var method = headers['x-original-method'];
@@ -15,7 +15,7 @@ module.exports = function(log, opts, release) {
 		// First one is bogus, since it starts with a /
 		routes.shift();
 
-		console.log("!trace routes??? ",routes);
+		// console.log("!trace routes??? ",routes);
 
 		var version = routes[0];
 		var command = routes[1];

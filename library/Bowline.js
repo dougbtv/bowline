@@ -5,7 +5,7 @@ module.exports = function(opts,bot,release,manager) {
 
 	// always init searches on start.
 	manager.initializeActiveSearches(function(err){
-		console.log("!trace back to Bowline handler.");
+		// console.log("!trace back to Bowline handler.");
 	});
 
 
