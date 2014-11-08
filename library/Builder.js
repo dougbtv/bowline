@@ -115,7 +115,7 @@ module.exports = function(opts,bot,log) {
 							// Update the last time we checked.
 							this.last_check = new moment();
 
-							this.logit("Checking for an update @ " + moment().format("YYYY-MM-DD HH:mm:ss"));
+							log.it("release_check",{slug: this.release.slug});
 
 							this.checkForUpdate(function(err,updated){
 
