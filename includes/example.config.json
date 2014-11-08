@@ -7,6 +7,8 @@
     "SERVER_PORT": 8000,
 	"gituser": "asteriskautobuilder",
 	"gitpassword": "aaaaaaaaaaaaaaaaa",
+	"docker_localuser": "admin",
+	"docker_localpassword": "bowline",
 	"docker_user": "dougbtv",
 	"docker_email": "d00d@d00d.com",
 	"docker_password": "aaaaaaaaaaaaaa",
