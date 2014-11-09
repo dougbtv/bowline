@@ -26,6 +26,10 @@ module.exports = function(mongoose,manager) {
 		docker_tag: {type: String, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
 		dockerfile: String,
 
+		// --------------- Storage options
+		store_dockerhub: Boolean,
+		store_local: Boolean,
+
 		// --------------- Method: http
 		host: {type: String, match: new RegExp(validator.host) },					// [http] What's the host to look at with http method?
 		url_path: String,															// [http] What's the path from there?
@@ -117,6 +121,9 @@ module.exports = function(mongoose,manager) {
 		dest.git_path = source.git_path;
 		dest.branch_name = source.branch_name;
 		dest.branch_master = source.branch_master;
+
+		dest.store_dockerhub = source.store_dockerhub;
+		dest.store_local = source.store_local;
 
 		// Default the check minutes if it's not at least partially valid.
 		if (typeof source.check_minutes !== 'array') {

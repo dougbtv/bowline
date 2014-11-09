@@ -132,6 +132,26 @@
 							</tr>
 
 							<tr>
+								<td class="vert-align">Store on dockerhub</td>
+								<td class="vert-align text-center">
+									&nbsp;
+								</td>
+								<td>
+									<input type="checkbox" ng-model="single.store_dockerhub" ng-disabled="formEnabled()">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="vert-align">Store on bowline registry</td>
+								<td class="vert-align text-center">
+									&nbsp;
+								</td>
+								<td>
+									<input type="checkbox" ng-model="single.store_local" ng-disabled="formEnabled()">
+								</td>
+							</tr>
+
+							<tr>
 								<td class="vert-align">Automatically update Github</td>
 								<td class="vert-align text-center">
 									&nbsp;
