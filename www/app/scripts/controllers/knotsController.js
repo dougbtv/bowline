@@ -281,6 +281,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.forceUpdate = function(id) {
 
 			release.forceUpdate(id,function(err){
+				console.log("!trace re-get after forceUpdate");
 				$scope.getSingleRelease();
 			});
 

@@ -47,9 +47,12 @@
 							<tr ng-show="is_owner">
 								<td><strong>Force Update</strong></td>
 								<td style="width: 50%;" class="text-center">
-									<button ng-show="single.job.active" type="button" class="btn btn-xs btn-warning" ng-click="forceUpdate(single._id)">
+									<button ng-show="single.job.active && !single.job.in_progress" type="button" class="btn btn-xs btn-warning" ng-click="forceUpdate(single._id)">
 										Force Update
 									</button>
+									<span ng-show="single.job.in_progress">
+										-
+									</span>
 								</td>
 							</tr>
 
