@@ -7,9 +7,9 @@ module.exports = function(log, opts, release) {
 		var url = headers['x-original-uri'];
 		var method = headers['x-original-method'];
 
-		console.log("!trace dockerRegistry >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
-		console.log("!trace dockerRegistry, headers: ", headers);
-		console.log("!trace dockerRegistry, url: ", url);
+		// console.log("!trace dockerRegistry >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
+		// console.log("!trace dockerRegistry, headers: ", headers);
+		// console.log("!trace dockerRegistry, url: ", url);
 
 
 		// Ok, so now we have the URL and the method, let's route it accordingly.

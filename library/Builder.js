@@ -1,4 +1,4 @@
-module.exports = function(opts,bot,log) {
+module.exports = function(opts,bot,log,release) {
 
 	// Our requirements.
 	var fs = require('fs');
@@ -537,6 +537,13 @@ module.exports = function(opts,bot,log) {
 						callback(err,stdout);	
 					}
 				});
+			}.bind(this),
+
+			// Update the dockerfile for this release.
+			update_dockerfile: function(callback) {
+
+				
+
 			}.bind(this),
 
 		},function(err,results){

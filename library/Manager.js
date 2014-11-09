@@ -58,7 +58,7 @@ module.exports = function(opts,bot,release,log) {
 						// console.log("!trace each rel: ",rel);
 
 						// We need a slug for this job.
-						jobs[rel.slug] = new Builder(opts,bot,log);
+						jobs[rel.slug] = new Builder(opts,bot,log,release);
 						jobs[rel.slug].start(rel,function(){
 							
 						});
@@ -131,7 +131,7 @@ module.exports = function(opts,bot,release,log) {
 						// Great, let's create this job.
 						release.getReleases({_id: releaseid},function(rels){
 
-							jobs[findslug] = new Builder(opts,bot,log);
+							jobs[findslug] = new Builder(opts,bot,log,release);
 							jobs[findslug].start(rels[0],function(){
 								callback(null);
 							});

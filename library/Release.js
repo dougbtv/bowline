@@ -175,6 +175,23 @@ module.exports = function(mongoose,manager) {
 
 	};
 
+	this.updateDockerfile = function(releaseid,dockerfile,callback) {
+
+		Release.update(
+			{ _id: releaseid },
+			{ dockerfile: dockerfile },
+			function(err){
+
+				if (err) {
+					log.error("mongo_update_dockerfile",err);
+				}
+
+				callback(err);
+
+			});
+
+	}
+
 	this.isOwner = function(userid,releaseid,callback) {
 		Release.findOne({
 			owner: userid,
