@@ -110,6 +110,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				for (var i = 0; i < dockercmds.length; i++) {
 					dockerhtml = dockerhtml.replace(new RegExp(dockercmds[i], 'g'), '<span class="coded-highlight">$&</span>');
 				}
+
+				dockerhtml = dockerhtml.replace(new RegExp('AUTOBUILD_UNIXTIME', 'g'), '<span class="coded-autobuild">$&</span>');
+
 				return $sce.trustAsHtml(dockerhtml);
 			}
 
