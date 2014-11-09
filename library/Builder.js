@@ -372,18 +372,6 @@ module.exports = function(opts,bot,log) {
 				});
 			}.bind(this),
 
-			docker_login: function(callback) {
-				// Uhhh, you don't wanna log this.
-				var cmd_login = 'docker login --email=\"' + opts.docker_email + '\"' +
-					' --username=\"' + opts.docker_user + '\"' +
-					' --password=\'' + opts.docker_password + '\' ';
-				exec(cmd_login,
-					function(err,stdout,stderr){
-						// this.logit();
-						callback(err,{stdout: stdout, stderr: stderr});
-					});
-			}.bind(this),
-
 			docker_pull: function(callback) {
 				this.logit("Beginning docker pull");
 				execlog('docker pull ' + this.release.docker_tag,function(err,stdout,stderr){

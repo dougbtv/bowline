@@ -5,6 +5,43 @@ module.exports = function(opts,bot,release,log) {
 	// Initialize our jobs hash
 	var jobs = {};
 
+	
+	// We'll log into dockerhub
+	var exec = require('child_process').exec;
+	var cmd_login = 'docker login --email=\"' + opts.docker_email + '\"' +
+		' --username=\"' + opts.docker_user + '\"' +
+		' --password=\'' + opts.docker_password + '\' ';
+	exec(cmd_login,
+		function(err,stdout,stderr){
+			// Uhhh, you don't wanna log with tooo much info.
+			if (!err) {
+				log.it("dockerhub_login",{successful: true});
+			} else {
+				log.it("dockerhub_login",{successful: false});
+			}
+		});
+
+	// We'll log into our local registry server
+	// note: we are the local registry server, this is... kinda meta.
+	// let's take a little delay because of that.
+	setTimeout(function(){
+		var exec = require('child_process').exec;
+		var cmd_login = 'docker login --email=\"doesnt@matter.com\"' +
+			' --username=\"' + opts.docker_localuser + '\"' +
+			' --password=\'' + opts.docker_localpassword + '\' ' +
+			' https://' + opts.docker_localhost + '/';
+		exec(cmd_login,
+			function(err,stdout,stderr){
+				// Uhhh, you don't wanna log with tooo much info.
+				console.log("!trace login error: ",stdout,stderr);
+				if (!err) {
+					log.it("dockerlocal_login",{successful: true});
+				} else {
+					log.it("dockerlocal_login",{successful: false});
+				}
+			});
+	},2000);
+	
 	this.initializeActiveSearches = function(callback) {
 
 		release.getActive(function(err,rels){
