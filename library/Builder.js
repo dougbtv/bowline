@@ -388,6 +388,7 @@ module.exports = function(opts,bot,log,release) {
 
 	}.bind(this);
 
+	var build_start;
 
 	this.dockerBuild = function(callback) {
 
@@ -412,6 +413,10 @@ module.exports = function(opts,bot,log,release) {
 			*/
 
 			docker_build: function(callback) {
+				
+				// When did we start?
+				build_start = new Date();
+
 				var relative_gitpath = this.release.git_path.replace(/^\/(.+)Dockerfile$/,"$1");
 				var path_dockerfile = this.release.clone_path + relative_gitpath;
 
@@ -498,6 +503,25 @@ module.exports = function(opts,bot,log,release) {
 			fs.readFile(this.release.log_docker, 'utf8', function (readlogerr, logcontents) {
 				if (readlogerr) throw readlogerr;
 
+				// Ok, let's add a build
+				var is_error = false;
+				if (err) {
+					is_error = true;
+				}
+
+				release.addBuild(this.release._id,build_start,new Date(),logcontents,!is_error,function(err){
+
+					// Ok, let's see if this worked!
+					log.it("build_complete",{
+						slug: this.release.slug,
+						id: this.release._id,
+						start: build_start,
+						end: new Date(),
+						success: !is_error
+					});
+
+				}.bind(this));
+
 				// TODO: This option is now a misnomer.
 				if (!opts.skipdockerpush) {
 					pasteall.paste(logcontents,"text",function(err,url){
@@ -513,7 +537,7 @@ module.exports = function(opts,bot,log,release) {
 									number: this.last_pullrequest,
 								},function(err,result){
 									if (err) {
-										console.log("Oooops, somehow the github issue comment failed: " + err);
+										log.it("Oooops, somehow the github issue comment failed: " + err);
 									}
 									// console.log("!trace PULL REQUEST err/result: ",err,result);
 									// callback(err,result);
