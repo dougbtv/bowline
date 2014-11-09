@@ -5,6 +5,8 @@ module.exports = function(opts,bot,release,log) {
 	// Initialize our jobs hash
 	var jobs = {};
 
+	var socketserver;
+
 	
 	// We'll log into dockerhub
 	var exec = require('child_process').exec;
@@ -33,7 +35,7 @@ module.exports = function(opts,bot,release,log) {
 		exec(cmd_login,
 			function(err,stdout,stderr){
 				// Uhhh, you don't wanna log with tooo much info.
-				console.log("!trace login error: ",stdout,stderr);
+				// console.log("!trace login error: ",stdout,stderr);
 				if (!err) {
 					log.it("dockerlocal_login",{successful: true});
 				} else {
@@ -41,6 +43,11 @@ module.exports = function(opts,bot,release,log) {
 				}
 			});
 	},2000);
+
+	this.inject = function(in_socketserver) {
+		socketserver = in_socketserver;
+		this.initializeActiveSearches(function(){});
+	}
 	
 	this.initializeActiveSearches = function(callback) {
 
@@ -58,7 +65,7 @@ module.exports = function(opts,bot,release,log) {
 						// console.log("!trace each rel: ",rel);
 
 						// We need a slug for this job.
-						jobs[rel.slug] = new Builder(opts,bot,log,release);
+						jobs[rel.slug] = new Builder(opts,bot,log,release,socketserver);
 						jobs[rel.slug].start(rel,function(){
 							
 						});
@@ -131,7 +138,7 @@ module.exports = function(opts,bot,release,log) {
 						// Great, let's create this job.
 						release.getReleases({_id: releaseid},function(rels){
 
-							jobs[findslug] = new Builder(opts,bot,log,release);
+							jobs[findslug] = new Builder(opts,bot,log,release,socketserver);
 							jobs[findslug].start(rels[0],function(){
 								callback(null);
 							});

@@ -9,10 +9,14 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 	// ProxyPass /api/ http://localhost:8001/api/
 
 	var fs = require('fs');
+	var io = require('socket.io');
 
 	var restify = require('restify');
 	var server = restify.createServer();
 	server.use(restify.bodyParser());
+
+	var SocketServer = require("./socketServer.js");
+    this.socketserver = new SocketServer(server,manager,release);
 	
 	this.myConstructor = function() {
 
@@ -34,13 +38,16 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		// It is expected that if you listen for this event, you respond to the client.
 		server.on('NotFound', function (req, res, callback) {
 
-			console.log("!trace API CALL NOT FOUND, headers: ",req.headers);
-			console.log("!trace API CALL NOT FOUND, url: ",req.url);
-			console.log("!trace API CALL NOT FOUND, method: ",req.method);
-			console.log("!trace API CALL NOT FOUND, input: ",req.params);
+			
+			// Always handy if you don't know the URL.
+			//console.log("!trace API CALL NOT FOUND, url: ",req.url);
 
-			res.contentType = 'json';
-			res.send({foo: "bar"});
+			//console.log("!trace API CALL NOT FOUND, headers: ",req.headers);
+			//console.log("!trace API CALL NOT FOUND, method: ",req.method);
+			//console.log("!trace API CALL NOT FOUND, input: ",req.params);
+
+			// res.contentType = 'json';
+			// res.send({foo: "bar"});
 
 		});
 
@@ -58,7 +65,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		server.use(restify.authorizationParser());
 
-		// Docker registry proxy methods
+	    // Docker registry proxy methods
 		server.get('/auth/', this.dockerAuthProxy);
 		server.post('/auth/', this.dockerAuthProxy);
 		server.head('/auth/', this.dockerAuthProxy);

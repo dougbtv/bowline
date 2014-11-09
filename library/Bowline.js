@@ -4,11 +4,7 @@ module.exports = function(opts,bot,release,manager) {
 	var moment = require('moment');
 
 	// always init searches on start.
-	manager.initializeActiveSearches(function(err){
-		// console.log("!trace back to Bowline handler.");
-	});
-
-
+	
 	// start up a cli if need be
 	if (opts.cli) {
 

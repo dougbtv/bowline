@@ -2,7 +2,6 @@
 
 bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$sce,$location,$http,login,release,$timeout,ENV) {
 
-
 		$scope.params = $location.search();
 		$scope.is_owner = false;
 
@@ -37,6 +36,22 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.validator = validator;
 		});
 
+		var socket = io.connect(ENV.api_url); 
+
+		if ($scope.params.details) {
+
+			socket.on('build_slug',function(id,msg){
+				console.log("!trace build_slug",id,msg);
+			});
+
+			/*
+				io.on('connection', function(socket){
+					socket.join('some room');
+				});
+			*/
+
+		}
+
 		$scope.getSingleRelease = function() {
 
 			$scope.is_owner = false;
@@ -44,6 +59,18 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			release.getSingleRelease($scope.params.details,function(err,single){
 
 				if (!err) {
+
+					// let's join a room and listen for this slug.
+					socket.emit('subscribe_build',{slug: single.slug});
+
+					socket.on('buildlogline',function(logline){
+						console.log("!trace buildlogline",logline);
+					});
+
+					$scope.$on("$destroy", function() {
+						// 
+					});
+					
 
 					$scope.single = single;
 					// console.log("!trace checking single release owner: ",single.owner,login.fulluser._id,(single.owner == login.fulluser._id));

@@ -1,4 +1,4 @@
-module.exports = function(opts,bot,log,release) {
+module.exports = function(opts,bot,log,release,socketserver) {
 
 	// Our requirements.
 	var fs = require('fs');
@@ -10,6 +10,7 @@ module.exports = function(opts,bot,log,release) {
 	var pasteall = require("pasteall"); 		// wewt, I wrote that module!
 	var exec = require('child_process').exec;
 	var GitHubApi = require("github");
+	var Tail = require('tail').Tail;
 
 	// Our constants
 	var AUTOBUILD_ENVVAR = "AUTOBUILD_UNIXTIME";
@@ -421,6 +422,14 @@ module.exports = function(opts,bot,log,release) {
 				var path_dockerfile = this.release.clone_path + relative_gitpath;
 
 				this.logit("And we begin the docker build");
+
+				var tail = new Tail(this.release.log_docker);
+
+				tail.on("line", function(data) {
+				  // console.log(data);
+				  socketserver.sendBuildLog(this.release.slug,data);
+				}.bind(this));
+
 				execlog('docker build -t ' + this.release.docker_tag + ' ' + path_dockerfile,function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});

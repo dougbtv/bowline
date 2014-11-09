@@ -70,6 +70,8 @@ options.parse(function(opts){
 		var restserver = new RestServer(log,opts,bowline,user,release,manager,dockerRegistry);
 	    restserver.serverStart();
 
+	    manager.inject(restserver.socketserver);
+
 		// Connect the irc bot's listener to the builder
 		irc.bot.addListener("message", function(from, to, text, message) {
 			// Let's handle this command.
