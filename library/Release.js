@@ -54,7 +54,12 @@ module.exports = function(mongoose,manager) {
 	
 	releaseSchema.virtual('dockerfile_array')
 		.get(function () {
-			return this.dockerfile.split("\n");
+			if (this.dockerfile) {
+				return this.dockerfile.split("\n");
+			} else {
+				return [];
+			}
+			
 		});
 
 	// Compile it to a model.
