@@ -68,7 +68,11 @@ module.exports = function(mongoose,manager) {
 	releaseSchema.virtual('dockerfile_array')
 		.get(function () {
 			if (this.dockerfile) {
-				return this.dockerfile.split("\n");
+				var dfa = this.dockerfile.split("\n");
+				if (dfa[dfa.length-1] == "") {
+					dfa.pop();
+				}
+				return dfa;
 			} else {
 				return [];
 			}
