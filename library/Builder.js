@@ -322,12 +322,12 @@ module.exports = function(opts,bot,log,release) {
 				update_clone: function(callback){
 					// Let's update our git repository.
 					if (this.release.git_enabled) {
-						this.logit("NOTICE: modify and branch IS SKIPPED -- should be a-ok");
-						callback(null);
-					} else {
 						this.gitModifyClone(buildstamp,function(err){
 							callback(err);
 						});
+					} else {
+						this.logit("NOTICE: modify and branch IS SKIPPED -- should be a-ok");
+						callback(null);
 					}
 				
 				}.bind(this),
@@ -398,12 +398,18 @@ module.exports = function(opts,bot,log,release) {
 				});
 			}.bind(this),
 
+			/*
+
+			// TODO: I don't think this is necessary....
+			// I can't see that a dockerfile that hasn't been locally honors a builds hash.
+
 			docker_pull: function(callback) {
 				this.logit("Beginning docker pull");
 				execlog('docker pull ' + this.release.docker_tag,function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});
 			}.bind(this),
+			*/
 
 			docker_build: function(callback) {
 				var relative_gitpath = this.release.git_path.replace(/^\/(.+)Dockerfile$/,"$1");
