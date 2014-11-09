@@ -1,6 +1,6 @@
 /* global bowlineApp, moment, Spinner, Flatdoc */
 
-bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$location,$http,login,release,$timeout,ENV) {
+bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$sce,$location,$http,login,release,$timeout,ENV) {
 
 
 		$scope.params = $location.search();
@@ -84,6 +84,38 @@ bowlineApp.controller('knotsController', ['$scope', '$location', '$http', 'login
 
 		};
 
+		var dockercmds = [
+			'FROM',
+			'MAINTAINER',
+			'RUN',
+			'CMD',
+			'EXPOSE',
+			'ENV',
+			'ADD',
+			'COPY',
+			'ENTRYPOINT',
+			'VOLUME',
+			'USER',
+			'WORKDIR',
+			'ONBUILD',
+		];
+
+		$scope.syntaxHighlight = function(dockerline) {
+
+			if (/^[\s]*#/.test(dockerline)) {
+				// That's a remark
+				return $sce.trustAsHtml(dockerline.replace(dockerline, '<span class="coded-comment">$&</span>'));
+			} else {
+				var dockerhtml = dockerline;
+				for (var i = 0; i < dockercmds.length; i++) {
+					dockerhtml = dockerhtml.replace(new RegExp(dockercmds[i], 'g'), '<span class="coded-highlight">$&</span>');
+				}
+				return $sce.trustAsHtml(dockerhtml);
+			}
+
+		}
+
+		
 		$scope.cancelChanges = function() {
 			$scope.loading = true;
 			$scope.form_edit = false;

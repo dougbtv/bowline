@@ -50,21 +50,12 @@ module.exports = function(mongoose,manager) {
 	}, { collection: 'releases' });
 
 	// We want virtuals when we export to json.
-	// releaseSchema.set('toObject', { virtuals: true });
-
-	// An array of available hours for comparison.
-	/* 
-
-	  releaseSchema.virtual('hoursarray')
+	releaseSchema.set('toObject', { virtuals: true });
+	
+	releaseSchema.virtual('dockerfile_array')
 		.get(function () {
-			var hoursarray = [];
-			for (var i = this.playstart; i <= this.playend; i++) {
-				hoursarray.push(i);
-			}
-			return hoursarray;
+			return this.dockerfile.split("\n");
 		});
-
-	*/
 
 	// Compile it to a model.
 	var Release = mongoose.model('Release', releaseSchema);
@@ -248,7 +239,7 @@ module.exports = function(mongoose,manager) {
 					manager.jobProperties(item.slug,function(err,props){
 						item.job = props;
 						// console.log("!trace jobProperties full: ",item);
-						callback(err,item);
+						callback(err,item.toObject());
 					});
 
 				}, function(err, results){

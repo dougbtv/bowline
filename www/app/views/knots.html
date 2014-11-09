@@ -258,6 +258,20 @@
 
 				</div>
 			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Dockerfile</h3>
+				</div>
+				<div class="panel-body">
+					<table class="table table-striped">
+						<tr ng-repeat="line in single.dockerfile_array track by $index">
+							<td style="color: #ADADAD;">{{ $index + 1 }}</td>
+							<td class="coded" ng-bind-html="syntaxHighlight(line)"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
 			
 		</div>
 
