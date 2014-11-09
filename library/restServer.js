@@ -85,6 +85,11 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		server.post('/api/addRelease', this.addRelease);
 		server.head('/api/addRelease', this.addRelease);
 
+		server.get('/api/forceUpdate', this.forceUpdate);
+		server.post('/api/forceUpdate', this.forceUpdate);
+		server.head('/api/forceUpdate', this.forceUpdate);
+
+
 		server.get('/api/stopJob', this.stopJob);
 		server.post('/api/stopJob', this.stopJob);
 		server.head('/api/stopJob', this.stopJob);
@@ -317,6 +322,21 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 			if (jobowner) {
 				manager.startJob(input.id,function(err){
 					// console.log("!trace START JOB IS BACK");
+					res.contentType = 'json';
+					res.send({});
+				});
+			}
+		});
+
+	}.bind(this);
+
+	this.forceUpdate = function(req, res, next) {
+
+		var input = req.params;
+
+		this.ownsRelease(input.id,input.session,res,function(jobowner){
+			if (jobowner) {
+				manager.forceUpdate(input.id,function(err){
 					res.contentType = 'json';
 					res.send({});
 				});

@@ -151,6 +151,12 @@ module.exports = function(opts,bot,log,release) {
 
 	}.bind(this);
 
+	// should be pretty simple to force....
+	this.forceUpdate = function(callback) {
+		this.performUpdate();
+		callback(null);
+	}
+
 	this.verifyRelease = function(callback) {
 
 		// We'll need these paths.
@@ -416,32 +422,58 @@ module.exports = function(opts,bot,log,release) {
 				});
 			}.bind(this),
 
-			docker_kill: function(callback) {
-				execlog('docker kill $(docker ps -a -q) || true',function(err,stdout,stderr){
-					callback(err,{stdout: stdout, stderr: stderr});
-				});
-			}.bind(this),
+			// TODO: So these aren't really atomic
+			// so, we should do them less scoped to these atomic actions.
+			/*
+				docker_kill: function(callback) {
+					execlog('docker kill $(docker ps -a -q) || true',function(err,stdout,stderr){
+						callback(err,{stdout: stdout, stderr: stderr});
+					});
+				}.bind(this),
 
-			docker_clean: function(callback) {
-				execlog('docker rm $(docker ps -a -q) || true',function(err,stdout,stderr){
-					callback(err,{stdout: stdout, stderr: stderr});
-				});
-			}.bind(this),
+				docker_clean: function(callback) {
+					execlog('docker rm $(docker ps -a -q) || true',function(err,stdout,stderr){
+						callback(err,{stdout: stdout, stderr: stderr});
+					});
+				}.bind(this),
 
-			docker_remove_untagged: function(callback) {
-				execlog('docker images | grep -i "none" | awk \'{print \$3}\' | xargs docker rmi || true',function(err,stdout,stderr){
-					callback(err,{stdout: stdout, stderr: stderr});
-				});
-			}.bind(this),
+				docker_remove_untagged: function(callback) {
+					execlog('docker images | grep -i "none" | awk \'{print \$3}\' | xargs docker rmi || true',function(err,stdout,stderr){
+						callback(err,{stdout: stdout, stderr: stderr});
+					});
+				}.bind(this),
+			*/
 			
-			docker_push: function(callback) {
-				if (!opts.skipdockerpush) {
-					this.logit("And we've started pushing it");
+			docker_push_local: function(callback) {
+				if (this.release.store_local) {
+					this.logit("Pushing to bowling registry");
+					var localtag = opts.docker_localhost + '/' + this.release.docker_tag;
+					execlog('docker tag ' + this.release.docker_tag + ' ' + localtag,function(err,stdout,stderr){
+						if (!err) {
+
+							execlog('docker push ' + localtag,function(err,stdout,stderr){
+								callback(err,{stdout: stdout, stderr: stderr});
+							}.bind(this));
+
+						} else {
+							callback("docker tag error: " + err);
+						}
+					}.bind(this));
+					
+				} else {
+					// this.logit("NOTICE: No docker push (by options)");
+					callback(null);
+				}
+			}.bind(this),
+
+			docker_push_dockerhub: function(callback) {
+				if (this.release.store_dockerhub) {
+					this.logit("Pushing to dockerhub");
 					execlog('docker push ' + this.release.docker_tag,function(err,stdout,stderr){
 						callback(err,{stdout: stdout, stderr: stderr});
 					});
 				} else {
-					this.logit("NOTICE: No docker push (by options)");
+					// this.logit("NOTICE: No docker push (by options)");
 					callback(null);
 				}
 			}.bind(this),
@@ -453,12 +485,14 @@ module.exports = function(opts,bot,log,release) {
 				this.logit("Grreeeat! Docker build & push successful");
 			} else {
 				this.logit("Docker build failed with: " + err);
+				console.log("!trace results for docker build: ",results);
 			}
 
 			// Let's read the log file, and post to pasteall
 			fs.readFile(this.release.log_docker, 'utf8', function (readlogerr, logcontents) {
 				if (readlogerr) throw readlogerr;
 
+				// TODO: This option is now a misnomer.
 				if (!opts.skipdockerpush) {
 					pasteall.paste(logcontents,"text",function(err,url){
 						if (!err) {

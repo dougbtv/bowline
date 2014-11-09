@@ -92,6 +92,27 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	};
 
+	this.forceUpdate = function(id,callback) {
+
+		$http.post(ENV.api_url + '/api/forceUpdate', { id: id, session: login.sessionpack })
+			.success(function(data){
+
+				var err = null;
+				if (data.error) {
+					err = data.error;
+				}
+
+				// console.log("!trace forceUpdate data",data);
+				callback(err,data);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with forceUpdate from API");
+
+			}.bind(this));
+
+	}
+
 	this.validateJob = function(id,callback){
 
 		$http.post(ENV.api_url + '/api/validateJob', { id: id, session: login.sessionpack })

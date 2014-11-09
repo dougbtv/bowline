@@ -278,6 +278,14 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			});
 		};
 
+		$scope.forceUpdate = function(id) {
+
+			release.forceUpdate(id,function(err){
+				$scope.getSingleRelease();
+			});
+
+		}
+
 		$scope.stopJob = function(id,enable_form) {
 			$scope.loading = true;
 			// console.log("!trace stopJob id: ",id);
