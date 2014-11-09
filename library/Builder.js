@@ -321,11 +321,11 @@ module.exports = function(opts,bot,log,release) {
 
 				update_clone: function(callback){
 					// Let's update our git repository.
-					if (opts.skipclone) {
-						this.logit("NOTICE: CLONE (which is really modify and branch) IS SKIPPED, typically for development.");
+					if (this.release.git_enabled) {
+						this.logit("NOTICE: modify and branch IS SKIPPED -- should be a-ok");
 						callback(null);
 					} else {
-						this.gitModifyAndBranch(buildstamp,function(err){
+						this.gitModifyClone(buildstamp,function(err){
 							callback(err);
 						});
 					}
@@ -605,10 +605,10 @@ module.exports = function(opts,bot,log,release) {
 		
 	}
 
-	this.gitModifyAndBranch = function(buildstamp,callback) {
+	this.gitModifyClone = function(buildstamp,callback) {
 
 		// Ok, let's clone the repo, and update it.
-		branch_name = this.release.slug + "-" + buildstamp;
+		var branch_name = this.release.slug + "-" + buildstamp;
 		
 		async.series({
 			
@@ -689,14 +689,14 @@ module.exports = function(opts,bot,log,release) {
 		},function(err,result){
 			if (!err) {
 
-				// console.log("!trace gitCloneAndUpdate RESULTS");
+				// console.log("!trace gitModifyClone RESULTS");
 				// console.log(JSON.stringify(result, null, 2));
 
 				this.logit("Repo cloned & updated, pull request @ " + result.pull_request.html_url);
 				callback(null);
 
 			} else {
-				var errtxt = "ERROR with the gitCloneAndUpdate: " + err
+				var errtxt = "ERROR with the gitModifyClone: " + err
 				this.logit(errtxt);
 				callback(errtxt);
 			}
