@@ -16,7 +16,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 	server.use(restify.bodyParser());
 
 	var SocketServer = require("./socketServer.js");
-    this.socketserver = new SocketServer(server,manager,release);
+    this.socketserver = new SocketServer(server,manager,release,log);
 	
 	this.myConstructor = function() {
 

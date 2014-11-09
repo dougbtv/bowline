@@ -390,6 +390,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 	}.bind(this);
 
 	var build_start;
+	var lastline = "__initialize_this";
 
 	this.dockerBuild = function(callback) {
 
@@ -426,8 +427,12 @@ module.exports = function(opts,bot,log,release,socketserver) {
 				var tail = new Tail(this.release.log_docker);
 
 				tail.on("line", function(data) {
-				  // console.log(data);
-				  socketserver.sendBuildLog(this.release.slug,data);
+					// sometimes we get dupes, omit those.
+					if (data != lastline) {
+						lastline = data;
+						// console.log("!trace TAIL DATA: ",data);
+						socketserver.sendBuildLog(this.release.slug,data);
+					}
 				}.bind(this));
 
 				execlog('docker build -t ' + this.release.docker_tag + ' ' + path_dockerfile,function(err,stdout,stderr){

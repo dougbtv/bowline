@@ -52,6 +52,29 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		}
 
+		var subscribed = false;
+
+		$scope.socketSubscribe = function(single) {
+
+			if (!subscribed) {
+
+				subscribed = true;
+
+				// let's join a room and listen for this slug.
+				socket.emit('subscribe_build',{slug: single.slug});
+
+				socket.on('buildlogline',function(logline){
+					console.log("!trace buildlogline [dupe?]",logline);
+				});
+
+				$scope.$on("$destroy", function() {
+					// 
+				});
+
+			}
+
+		}
+
 		$scope.getSingleRelease = function() {
 
 			$scope.is_owner = false;
@@ -60,18 +83,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 				if (!err) {
 
-					// let's join a room and listen for this slug.
-					socket.emit('subscribe_build',{slug: single.slug});
-
-					socket.on('buildlogline',function(logline){
-						console.log("!trace buildlogline",logline);
-					});
-
-					$scope.$on("$destroy", function() {
-						// 
-					});
+					$scope.socketSubscribe(single);
 					
-
 					$scope.single = single;
 					// console.log("!trace checking single release owner: ",single.owner,login.fulluser._id,(single.owner == login.fulluser._id));
 					

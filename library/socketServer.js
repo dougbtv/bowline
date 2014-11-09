@@ -1,4 +1,4 @@
-module.exports = function(server,manager,release) {
+module.exports = function(server,manager,release,log) {
 
 	// TODO: I want to do this, but, it's bigger bite than I want to chew right now, -Doug
 	socketio = require('socket.io');
@@ -36,6 +36,7 @@ module.exports = function(server,manager,release) {
 
 	this.sendBuildLog = function(slug,logline) {
 
+		// log.it("debug_emit",{slug: slug,logline: logline});
 		io.to(slug).emit('buildlogline',logline);
 
 	}
