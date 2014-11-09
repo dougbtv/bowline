@@ -241,6 +241,26 @@ module.exports = function(opts,bot,log,release) {
 
 				}.bind(this),
 
+				// Update the dockerfile for this release.
+				update_dockerfile: function(callback) {
+
+					fs.readFile(path_dockerfile, 'utf8', function (err, dockerfile_contents) {
+						// !bang
+						if (!err) {
+
+							release.updateDockerfile(this.release._id,dockerfile_contents,function(err){
+								callback(err);
+							}.bind(this));
+
+						} else {
+							callback("Damn, couldn't read the dockerfile when looking for environment variable.");
+						}
+						
+
+					}.bind(this));
+
+				}.bind(this),
+
 				rmdir: function(callback){
 					exec("rm -Rf " + this.release.clone_path,function(err){
 						callback(err);
@@ -537,13 +557,6 @@ module.exports = function(opts,bot,log,release) {
 						callback(err,stdout);	
 					}
 				});
-			}.bind(this),
-
-			// Update the dockerfile for this release.
-			update_dockerfile: function(callback) {
-
-				
-
 			}.bind(this),
 
 		},function(err,results){

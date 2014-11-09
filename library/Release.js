@@ -24,6 +24,7 @@ module.exports = function(mongoose,manager) {
 		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
 		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
 		docker_tag: {type: String, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
+		dockerfile: String,
 
 		// --------------- Method: http
 		host: {type: String, match: new RegExp(validator.host) },					// [http] What's the host to look at with http method?
