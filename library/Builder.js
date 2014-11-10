@@ -10,7 +10,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 	var pasteall = require("pasteall"); 		// wewt, I wrote that module!
 	var exec = require('child_process').exec;
 	var GitHubApi = require("github");
-	var Tail = require('tail').Tail;
+	var Tail = require('always-tail');
 
 	// Our constants
 	var AUTOBUILD_ENVVAR = "AUTOBUILD_UNIXTIME";
@@ -402,8 +402,11 @@ module.exports = function(opts,bot,log,release,socketserver) {
 
 	this.dockerBuild = function(callback) {
 
+		var tail = new Tail(this.release.log_docker, '\n',{ interval: 1 });
+
 		async.series({
 			clear_log: function(callback) {
+				tail.unwatch();
 				exec('> ' + this.release.log_docker,function(err){
 					callback(err);
 				});
@@ -432,8 +435,6 @@ module.exports = function(opts,bot,log,release,socketserver) {
 
 				this.logit("And we begin the docker build");
 
-				var tail = new Tail(this.release.log_docker);
-
 				tail.on("line", function(data) {
 					// sometimes we get dupes, omit those.
 					if (data != lastline) {
@@ -442,6 +443,8 @@ module.exports = function(opts,bot,log,release,socketserver) {
 						socketserver.sendBuildLog(this.release.slug,data);
 					}
 				}.bind(this));
+
+				tail.watch();
 
 				execlog('docker build -t ' + this.release.docker_tag + ' ' + path_dockerfile,function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
@@ -513,6 +516,8 @@ module.exports = function(opts,bot,log,release,socketserver) {
 
 			
 		},function(err,results){
+
+			tail.unwatch();
 
 			if (!err) { 
 				this.logit("Grreeeat! Docker build & push successful");

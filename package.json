@@ -35,6 +35,7 @@
     "request": "*",
     "restify": "*",
     "socket.io": "^1.2.0",
-    "tail": "^0.4.0"
+    "tail": "^0.4.0",
+    "always-tail": "~0.1.1"
   }
 }
