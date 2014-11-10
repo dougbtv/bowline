@@ -152,6 +152,14 @@ body {
   to { opacity:1; }
 }
 
+.unpre {
+  border: none;
+  background-color: initial;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+}
+
 /* ---------------------------- end validator */
 
   /*
