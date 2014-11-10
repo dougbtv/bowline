@@ -320,6 +320,14 @@ module.exports = function(opts,bot,log,release,socketserver) {
 
 				}.bind(this),
 
+				update_build_stamp: function(callback) {
+
+					this.updateBuildStamp(buildstamp,function(err){
+						callback(err);
+					});
+
+				}.bind(this),
+
 				update_clone: function(callback){
 					// Let's update our git repository.
 					if (this.release.git_enabled) {
@@ -649,6 +657,23 @@ module.exports = function(opts,bot,log,release,socketserver) {
 		
 	}
 
+	this.updateBuildStamp = function(buildstamp,callback){
+
+		var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
+		var path_dockerfile = this.release.clone_path + relative_gitpath;
+
+		var cmd_sed = 'sed -i -e "s|.*' + AUTOBUILD_ENVVAR + '.*|ENV ' + AUTOBUILD_ENVVAR + ' ' + buildstamp + '|" ' + path_dockerfile;
+		// console.log("!trace SED IT? >>%s<< (%s)",cmd_sed,path_dockerfile);
+		exec(cmd_sed, {}, function(err,stdout){
+			// Ok, after this point, if we're not updating the clone...
+			// We exit with an console.
+			// error.log("!trace sed result: ",err,stdout);
+			callback(err,stdout);
+			
+		});
+
+	}.bind(this);
+
 	this.gitModifyClone = function(buildstamp,callback) {
 
 		// Ok, let's clone the repo, and update it.
@@ -669,22 +694,6 @@ module.exports = function(opts,bot,log,release,socketserver) {
 					// console.log("!trace branch -v stdout: \n",stdout);
 					callback(err,stdout);
 				});
-			}.bind(this),
-
-			branch_verbose: function(callback){
-
-				var cmd_sed = 'sed -i -e "s|.*' + AUTOBUILD_ENVVAR + '.*|ENV ' + AUTOBUILD_ENVVAR + ' ' + buildstamp + '|" Dockerfile';
-				exec(cmd_sed, {cwd: this.release.clone_path}, function(err,stdout){
-					// Ok, after this point, if we're not updating the clone...
-					// We exit with an error.
-					if (!opts.skipclone) {-
-						callback(err,stdout);
-					} else {
-						callback("We've skipped updating the clone.");
-					}
-
-				});
-
 			}.bind(this),
 
 			git_add: function(callback){
