@@ -83,6 +83,20 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		}
 
+		$scope.mode = "status";
+
+		$scope.changeMode = function(mode) {
+			$scope.mode = mode;
+		}
+
+		$scope.navHighlight = function(mode) {
+			if ($scope.mode == mode) {
+				return "active";
+			} else {
+				return "";
+			}
+		}
+
 		$scope.getSingleRelease = function() {
 
 			$scope.is_owner = false;

@@ -1,4 +1,32 @@
 <div class="container">
+
+	<div class="col-sm-9">
+		[content]
+	</div>
+	<div class="col-sm-3" >
+		<div class="list-group">
+			<a ng-click="changeMode('status')" ng-class="navHighlight('status')" class="list-group-item ahover">
+				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Status / Properties
+			</a>
+
+			<a ng-click="changeMode('readme')" ng-class="navHighlight('readme')" class="list-group-item ahover">
+				<i class="fa fa-newspaper-o" style="padding-right: 12px;"></i>Readme
+			</a>
+
+			<a ng-click="changeMode('dockerfile')" ng-class="navHighlight('dockerfile')" class="list-group-item ahover">
+				<i class="fa fa-cubes" style="padding-right: 12px;"></i>Dockerfile
+			</a>
+
+			<a ng-click="changeMode('logs')" ng-class="navHighlight('logs')" class="list-group-item ahover">
+				<i class="fa fa-history" style="padding-right: 12px;"></i>History and Logs
+			</a>
+
+			
+
+		</div>
+	</div>
+
+
 <span ng-show="params.details || params.add">
 	<h2 ng-hide="params.add">{{single.docker_tag}}</h2>
 	<h2 ng-show="params.add">Adding Knot<span ng-show="single.docker_tag">: {{single.docker_tag}}</span></h2>
