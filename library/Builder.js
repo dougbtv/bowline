@@ -544,8 +544,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 
 				}.bind(this));
 
-				// TODO: This option is now a misnomer.
-				if (!opts.skipdockerpush) {
+				if (!opts.skippasteall) {
 					pasteall.paste(logcontents,"text",function(err,url){
 						if (!err) {
 							this.logit("Build results posted @ " + url);
