@@ -53,6 +53,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		}
 
 		var subscribed = false;
+		$scope.log_lines = [];
 
 		$scope.socketSubscribe = function(single) {
 
@@ -64,7 +65,14 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				socket.emit('subscribe_build',{slug: single.slug});
 
 				socket.on('buildlogline',function(logline){
-					console.log("!trace buildlogline [dupe?]",logline);
+					// console.log("!trace buildlogline: ",logline);
+					$scope.$apply(function(){
+						$scope.log_lines.push(logline);	
+						$timeout(function(){
+							$('#logdiv').scrollTop($('#logdiv').prop('scrollHeight'));
+						},50);
+					});
+					// console.log("!trace buildlogline [dupe?]",$scope.log_lines);
 				});
 
 				$scope.$on("$destroy", function() {
