@@ -36,6 +36,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.validator = validator;
 		});
 
+		$scope.entry = {};
+		$scope.entry.enter_minute = "";
+
 		var socket = io.connect(ENV.api_url); 
 
 		if ($scope.params.details) {
@@ -209,7 +212,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.addMinute = function(minute) {
 
 			// reset input field.
-			$scope.enter_minute = "";
+			$scope.entry.enter_minute = "";
 
 			// operate only if non empty.
 			if (minute !== '') {
