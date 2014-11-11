@@ -402,14 +402,30 @@ module.exports = function(opts,bot,log,release,socketserver) {
 
 	this.dockerBuild = function(callback) {
 
-		var tail = new Tail(this.release.log_docker, '\n',{ interval: 1 });
+		var tail = null;
 
 		async.series({
 			clear_log: function(callback) {
-				tail.unwatch();
+				if (tail) {
+					tail.unwatch();
+				}
 				exec('> ' + this.release.log_docker,function(err){
 					callback(err);
 				});
+			}.bind(this),
+
+			tail_it: function(callback){
+
+				var iserr = null;
+
+				try {
+					tail = new Tail(this.release.log_docker, '\n',{ interval: 1 });	
+				} catch (err) {
+					iserr = err.message;
+				}
+
+				callback(iserr);
+				
 			}.bind(this),
 
 			/*
