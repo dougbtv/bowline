@@ -78,6 +78,10 @@
 					</div>
 				</div><!-- status -->
 
+			</span>
+
+			<span ng-switch-when="properties">
+
 				<div class="panel panel-info"><!-- properties -->
 					<div class="panel-heading">
 						<h3 class="panel-title">Properties <i class="fa fa-edit pull-right ahover" ng-show="is_owner" ng-click="enableForm()"></i></h3>
@@ -339,8 +343,13 @@
 
 	<div class="col-sm-3" >
 		<div class="list-group">
+
+			<a ng-click="changeMode('properties')" ng-class="navHighlight('properties')" class="list-group-item ahover">
+				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Properties
+			</a>
+
 			<a ng-click="changeMode('status')" ng-class="navHighlight('status')" class="list-group-item ahover">
-				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Status / Properties
+				<i class="fa fa-cogs" style="padding-right: 12px;"></i>Status
 			</a>
 
 			<a ng-click="changeMode('readme')" ng-class="navHighlight('readme')" class="list-group-item ahover">
