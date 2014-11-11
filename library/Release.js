@@ -21,16 +21,6 @@ module.exports = function(mongoose,log) {
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
 	};
 
-
-
-	// Each build gets a 
-	var buildSchema = mongoose.Schema({ 
-		success: Boolean,
-		startdate: Date,
-		enddate: Date,
-		log: String,
-	});
-
 	// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
@@ -41,8 +31,7 @@ module.exports = function(mongoose,log) {
 		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
 		docker_tag: {type: String, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
 		dockerfile: String,
-		builds: [buildSchema],
-
+		
 		// --------------- Storage options
 		store_dockerhub: Boolean,
 		store_local: Boolean,
@@ -89,7 +78,6 @@ module.exports = function(mongoose,log) {
 
 	// Compile it to a model.
 	var Release = mongoose.model('Release', releaseSchema);
-	var Build = mongoose.model('Build', buildSchema);
 	
 	// The method is enumerated, so we'll enforce that.
 	Release.schema.path('method').validate(function (value) {
