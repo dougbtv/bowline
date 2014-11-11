@@ -1,10 +1,16 @@
-module.exports = function(mongoose,manager) {
+module.exports = function(mongoose,log) {
+
+	var manager;
 
 	// We instantiate builders for each specification.
 	var moment = require('moment');
 	var async = require('async');
 	var Builder = require("./Builder.js"); 
 	//	var builder = new Builder(opts,irc);
+
+	// A child object is the build log.
+	var BuildLog = require('./BuildLog.js');
+	var buildlog = new BuildLog(mongoose,log);
 
 	var validator = {
 		slug: '^[\\w\S]+$',
@@ -14,6 +20,8 @@ module.exports = function(mongoose,manager) {
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
 	};
+
+
 
 	// Each build gets a 
 	var buildSchema = mongoose.Schema({ 
@@ -212,38 +220,9 @@ module.exports = function(mongoose,manager) {
 
 	this.addBuild = function(releaseid,start,end,log,success,callback) {
 
-		var build = new Build;
-
-		build.success = success;
-		build.log = log;
-		build.startdate = start;
-		build.enddate = end;
-		
-		Release.findOne(
-			{ _id: releaseid },
-			function(err,rel){
-
-				if (!err) {
-
-					rel.builds.push(build);
-
-					rel.save(function(err){
-						callback(err);
-					});
-
-				} else {
-					if (err) {
-						log.error("mongo_find_addbuild",err);
-						callback(err);
-					} else {
-						callback("document not found: addBuild");
-					}
-					
-				}
-
-				
-
-			});
+		buildlog.addBuildLog(releaseid,start,end,log,success,function(err){
+			callback(err);
+		});
 
 	}
 

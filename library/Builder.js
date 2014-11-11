@@ -636,7 +636,8 @@ module.exports = function(opts,bot,log,release,socketserver) {
 
 			// Set your git config user items.
 			
-   			// 1. Branch from master
+   			// TODO: This is wonked out. I'm not sure what to do with it, yet.
+   			/*
 			git_set_email: function(callback){
 				exec('git config --global user.email "' + opts.git_setemail + '"', function(err,stdout){
 					// console.log("!trace branch stdout: ",stdout);
@@ -650,6 +651,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 					callback(err,stdout);
 				});
 			},
+			*/
 
 			// Clone with git.
 			clone: function(callback){

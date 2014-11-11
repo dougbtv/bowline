@@ -49,7 +49,7 @@ options.parse(function(opts){
 
 		// Defines a "knot"
 		var Release = require('./library/Release.js');
-		var release = new Release(mongoose);
+		var release = new Release(mongoose,log);
 
 		// Bowline handles our matters.		
 		var Manager = require("./library/Manager.js"); 
