@@ -1,8 +1,342 @@
 <div class="container">
 
+<span ng-show="params.details || params.add">
+	<h3 ng-hide="params.add">{{single.docker_tag}}</h3>
+	<h2 ng-show="params.add">Adding Knot<span ng-show="single.docker_tag">: {{single.docker_tag}}</span></h2>
+
 	<div class="col-sm-9">
-		[content]
+		<span ng-switch="mode">
+
+			<span ng-switch-when="status">
+				<div class="panel panel-primary"><!-- status -->
+					<div class="panel-heading">
+						<h3 class="panel-title">Status</h3>
+					</div>
+
+					<div class="panel-body">
+					
+						<div ng-show="single.job.error">
+							<div class="alert alert-danger" ng-hide="loading" role="alert">
+								<i class="fa fa-times-circle icon-status-red"></i> 
+								<strong>Uh oh.</strong> {{ single.job.error }}
+							</div>
+						</div>
+
+						<table class="table table-striped">
+							<tbody>
+								<tr ng-show="is_owner">
+									<td><strong>Control job</strong></td>
+									<td style="width: 50%;" class="text-center">
+
+										<div spinner="loading">
+
+											<button ng-hide="single.job.exists" type="button" class="btn btn-xs btn-info" ng-click="startJob(single._id)">
+												Start Job
+											</button>
+											
+											<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="stopJob(single._id)">
+												Stop Job
+											</button>
+											
+											<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">
+												Re-Validate Job
+											</button>
+										</div>
+
+									</td>
+								</tr>
+
+								<tr ng-show="is_owner">
+									<td><strong>Force Update</strong></td>
+									<td style="width: 50%;" class="text-center">
+										<button ng-show="single.job.active && !single.job.in_progress" type="button" class="btn btn-xs btn-warning" ng-click="forceUpdate(single._id)">
+											Force Update
+										</button>
+										<span ng-show="single.job.in_progress">
+											-
+										</span>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<strong>Last Check: </strong>
+									</td>
+									<td class="text-center">
+										<span ng-show="single.job.active">
+											{{ ago(single.job.last_check) }} 
+										</span>
+										<span ng-hide="single.job.active">
+											-
+										</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					
+						
+					</div>
+				</div><!-- status -->
+
+				<div class="panel panel-info"><!-- properties -->
+					<div class="panel-heading">
+						<h3 class="panel-title">Properties <i class="fa fa-edit pull-right ahover" ng-show="is_owner" ng-click="enableForm()"></i></h3>
+
+					</div>
+					<div class="panel-body">
+
+						<div ng-show="save_error">
+							<div class="alert alert-danger" ng-hide="loading" role="alert">
+								<i class="fa fa-times-circle icon-status-red"></i> 
+								<strong>Validation failed</strong> check the required fields and values and save again.
+							</div>
+						</div>
+
+						<div ng-show="save_success" class="alert alert-info getfaded" role="alert">
+							<strong>Great</strong> we saved this successfully.
+						</div>
+
+						<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
+							<span class="pull-right" style="padding-bottom: 15px;">
+								<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>
+								<button type="button" class="btn btn-sm btn-default" ng-hide="params.add" ng-click="cancelChanges()">Cancel Changes</button>
+							</span>
+						</div>
+
+						<span ng-show="form_edit">
+							<span ng-show="single.job.exists">
+								<span class="pull-right" style="padding-bottom: 15px;">
+									In order to edit, you must <button type="button" class="btn btn-sm btn-warning" ng-click="stopJob(single._id,true)">Stop Active Job</button>
+								</span>
+							</span>
+						</span>
+						
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<td class="vert-align">Nickname</td>
+									<td class="vert-align text-center">
+										<validator variable="single.slug" regex="validator.slug" required='true' message="'Use just letters, numbers and underscores'">
+									</td>
+									<td>
+										<input ng-model="single.slug" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="nickname">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Docker tag</td>
+									<td class="vert-align text-center">
+										<validator variable="single.docker_tag" regex="validator.docker_tag" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
+									</td>
+									<td class="vert-align text-center col-sm-6">
+										<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Store on dockerhub</td>
+									<td class="vert-align text-center">
+										&nbsp;
+									</td>
+									<td>
+										<input type="checkbox" ng-model="single.store_dockerhub" ng-disabled="formEnabled()">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Store on bowline registry</td>
+									<td class="vert-align text-center">
+										&nbsp;
+									</td>
+									<td>
+										<input type="checkbox" ng-model="single.store_local" ng-disabled="formEnabled()">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Automatically update Github</td>
+									<td class="vert-align text-center">
+										&nbsp;
+									</td>
+									<td>
+										<input type="checkbox" ng-model="single.git_enabled" ng-disabled="formEnabled()">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Github Repo</td>
+									<td class="vert-align text-center">
+										<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
+									</td>
+									<td>
+										<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Git Path</td>
+									<td class="vert-align text-center">
+										<validator variable="single.git_path" regex="validator.git_path" required='true' message="'Use a normal filename, that is just weird'">
+									</td>
+									<td>
+										<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Method</td>
+									<td class="vert-align text-center">
+										&nbsp;
+									</td>
+									<td>
+										 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
+										 </select>
+									</td>
+								</tr>
+
+								<tr ng-show="selected_method == 'http'">
+									<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
+									<td class="vert-align text-center">
+										&nbsp;
+									</td>
+									<td>
+										<div class="row" ng-show="!formEnabled()">
+											<div class="col-sm-4">
+												<input ng-model="enter_minute" ng-enter="addMinute(enter_minute)" type="text" class="form-control" placeholder="">
+											</div>
+											<div class="col-sm-7">
+												<button type="button" class="btn btn-sm btn-info" ng-click="addMinute(enter_minute)">Add Minute</button>
+												<validator variable="enter_minute" emptyok="true" regex="'^([0-5][0-9]|[0-9])$'" message="'Minutes on the clock dial only'">
+											</div>
+											<div class="col-sm-1">
+												
+											</div>
+											
+										</div>
+										<hr ng-show="!formEnabled()">
+										
+										<!-- hackish! work-around labels get fucked up on edit. show two versions. -->
+										<div class="row no-select" style="margin-left: 0px;">
+											<div ng-repeat="minute in single.check_minutes" class="col-md-2" style="margin:1px; padding:3px;">
+												<span class="label label-info">
+													<span >
+														{{padZero(minute)}}
+														<span ng-show="showCloseMinute()"> 
+															<i ng-click="deleteMinute(minute)" style="" class="fa fa-close ahover"></i>
+														</span>
+													</span>
+												</span>
+											</div>
+										</div>
+									
+
+									</td>
+								</tr>
+
+								<tr ng-show="selected_method == 'http'">
+									<td class="vert-align">HTTP Host</td>
+									<td class="vert-align text-center">
+										<validator variable="single.host" regex="validator.host" required='true' message="'A domain name, please'">
+									</td>
+									<td>
+										<input ng-model="single.host" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="some.domain.com">
+									</td>
+								</tr>
+
+								<tr ng-show="selected_method == 'http'">
+									<td class="vert-align">HTTP Path</td>
+									<td class="vert-align text-center">
+										<validator variable="single.url_path" required='true' message="'No regex'">
+									</td>
+									<td>
+										<input ng-model="single.url_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/via/http/to/file.tar.gz">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">Master Branch</td>
+									<td class="vert-align text-center">
+										<validator variable="single.branch_master" required='true' >
+									</td>
+									<td>
+										<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
+									</td>
+								</tr>
+
+								<tr>
+									<td class="vert-align">New Branch Name (prefix)</td>
+									<td class="vert-align text-center">
+										<validator variable="single.branch_name" required='true'>
+									</td>
+									<td>
+										<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="newly created branch names">
+									</td>
+								</tr>
+
+
+							</tbody>
+						</table>
+
+
+					</div>
+				</div><!-- properties -->
+
+
+			</span>
+
+			<span ng-switch-when="readme">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">README</h3>
+					</div>
+					<div class="panel-body" role='flatdoc'>
+						<div role='flatdoc-content'></div>
+					</div>
+				</div>
+
+			</span>
+
+			<span ng-switch-when="dockerfile">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Dockerfile</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+							<tr ng-repeat="line in single.dockerfile_array track by $index">
+								<td style="color: #ADADAD;">{{ $index + 1 }}</td>
+								<td class="coded" ng-bind-html="syntaxHighlight(line)"></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</span>
+
+			<span ng-switch-when="logs">
+
+				<span ng-show="single.job.in_progress">
+					<h3>Job in progress!</h3>
+					<hr />
+					<div style="overflow: auto; max-height: 300px;" id="logdiv">
+						<table class="table table-striped">
+							<tbody>
+								<tr ng-repeat="eachline in log_lines track by $index">
+									<td class="coded"><pre class="unpre">{{ eachline }}</pre></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</span>
+
+			</span>
+
+
+
+		</span>
 	</div>
+
+
 	<div class="col-sm-3" >
 		<div class="list-group">
 			<a ng-click="changeMode('status')" ng-class="navHighlight('status')" class="list-group-item ahover">
@@ -25,326 +359,28 @@
 
 		</div>
 	</div>
-
+</span>
 
 <span ng-show="params.details || params.add">
-	<h2 ng-hide="params.add">{{single.docker_tag}}</h2>
-	<h2 ng-show="params.add">Adding Knot<span ng-show="single.docker_tag">: {{single.docker_tag}}</span></h2>
-
+	
 	<div class="row">
-		<div style="overflow: auto; max-height: 300px;" id="logdiv">
-			<table class="table table-striped">
-				<tbody>
-					<tr ng-repeat="eachline in log_lines track by $index">
-						<td class="coded"><pre class="unpre">{{ eachline }}</pre></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		
 	</div>
 
 
 	<div class="row">
 
 		<div class="col-md-5" ng-hide="params.add">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">Status</h3>
-				</div>
+			
 
-				<div class="panel-body">
-				
-					<div ng-show="single.job.error">
-						<div class="alert alert-danger" ng-hide="loading" role="alert">
-							<i class="fa fa-times-circle icon-status-red"></i> 
-							<strong>Uh oh.</strong> {{ single.job.error }}
-						</div>
-					</div>
-
-					<table class="table table-striped">
-						<tbody>
-							<tr ng-show="is_owner">
-								<td><strong>Control job</strong></td>
-								<td style="width: 50%;" class="text-center">
-
-									<div spinner="loading">
-
-										<button ng-hide="single.job.exists" type="button" class="btn btn-xs btn-info" ng-click="startJob(single._id)">
-											Start Job
-										</button>
-										
-										<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="stopJob(single._id)">
-											Stop Job
-										</button>
-										
-										<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">
-											Re-Validate Job
-										</button>
-									</div>
-
-								</td>
-							</tr>
-
-							<tr ng-show="is_owner">
-								<td><strong>Force Update</strong></td>
-								<td style="width: 50%;" class="text-center">
-									<button ng-show="single.job.active && !single.job.in_progress" type="button" class="btn btn-xs btn-warning" ng-click="forceUpdate(single._id)">
-										Force Update
-									</button>
-									<span ng-show="single.job.in_progress">
-										-
-									</span>
-								</td>
-							</tr>
-
-							<tr>
-								<td>
-									<strong>Last Check: </strong>
-								</td>
-								<td class="text-center">
-									<span ng-show="single.job.active">
-										{{ ago(single.job.last_check) }} 
-									</span>
-									<span ng-hide="single.job.active">
-										-
-									</span>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				
-					
-				</div>
-			</div>
-
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">README</h3>
-				</div>
-				<div class="panel-body" role='flatdoc'>
-					<div role='flatdoc-content'></div>
-				</div>
-			</div>
+			
 			
 		</div>
 
 		<div class="col-md-7">
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">Properties <i class="fa fa-edit pull-right ahover" ng-show="is_owner" ng-click="enableForm()"></i></h3>
+			
 
-				</div>
-				<div class="panel-body">
-
-					<div ng-show="save_error">
-						<div class="alert alert-danger" ng-hide="loading" role="alert">
-							<i class="fa fa-times-circle icon-status-red"></i> 
-							<strong>Validation failed</strong> check the required fields and values and save again.
-						</div>
-					</div>
-
-					<div ng-show="save_success" class="alert alert-info getfaded" role="alert">
-						<strong>Great</strong> we saved this successfully.
-					</div>
-
-					<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
-						<span class="pull-right" style="padding-bottom: 15px;">
-							<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>
-							<button type="button" class="btn btn-sm btn-default" ng-hide="params.add" ng-click="cancelChanges()">Cancel Changes</button>
-						</span>
-					</div>
-
-					<span ng-show="form_edit">
-						<span ng-show="single.job.exists">
-							<span class="pull-right" style="padding-bottom: 15px;">
-								In order to edit, you must <button type="button" class="btn btn-sm btn-warning" ng-click="stopJob(single._id,true)">Stop Active Job</button>
-							</span>
-						</span>
-					</span>
-					
-					<table class="table table-striped">
-						<tbody>
-							<tr>
-								<td class="vert-align">Nickname</td>
-								<td class="vert-align text-center">
-									<validator variable="single.slug" regex="validator.slug" required='true' message="'Use just letters, numbers and underscores'">
-								</td>
-								<td>
-									<input ng-model="single.slug" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="nickname">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Docker tag</td>
-								<td class="vert-align text-center">
-									<validator variable="single.docker_tag" regex="validator.docker_tag" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
-								</td>
-								<td class="vert-align text-center col-sm-6">
-									<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Store on dockerhub</td>
-								<td class="vert-align text-center">
-									&nbsp;
-								</td>
-								<td>
-									<input type="checkbox" ng-model="single.store_dockerhub" ng-disabled="formEnabled()">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Store on bowline registry</td>
-								<td class="vert-align text-center">
-									&nbsp;
-								</td>
-								<td>
-									<input type="checkbox" ng-model="single.store_local" ng-disabled="formEnabled()">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Automatically update Github</td>
-								<td class="vert-align text-center">
-									&nbsp;
-								</td>
-								<td>
-									<input type="checkbox" ng-model="single.git_enabled" ng-disabled="formEnabled()">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Github Repo</td>
-								<td class="vert-align text-center">
-									<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
-								</td>
-								<td>
-									<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Git Path</td>
-								<td class="vert-align text-center">
-									<validator variable="single.git_path" regex="validator.git_path" required='true' message="'Use a normal filename, that is just weird'">
-								</td>
-								<td>
-									<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Method</td>
-								<td class="vert-align text-center">
-									&nbsp;
-								</td>
-								<td>
-									 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
-									 </select>
-								</td>
-							</tr>
-
-							<tr ng-show="selected_method == 'http'">
-								<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
-								<td class="vert-align text-center">
-									&nbsp;
-								</td>
-								<td>
-									<div class="row" ng-show="!formEnabled()">
-										<div class="col-sm-4">
-											<input ng-model="enter_minute" ng-enter="addMinute(enter_minute)" type="text" class="form-control" placeholder="">
-										</div>
-										<div class="col-sm-7">
-											<button type="button" class="btn btn-sm btn-info" ng-click="addMinute(enter_minute)">Add Minute</button>
-											<validator variable="enter_minute" emptyok="true" regex="'^([0-5][0-9]|[0-9])$'" message="'Minutes on the clock dial only'">
-										</div>
-										<div class="col-sm-1">
-											
-										</div>
-										
-									</div>
-									<hr ng-show="!formEnabled()">
-									
-									<!-- hackish! work-around labels get fucked up on edit. show two versions. -->
-									<div class="row no-select" style="margin-left: 0px;">
-										<div ng-repeat="minute in single.check_minutes" class="col-md-2" style="margin:1px; padding:3px;">
-											<span class="label label-info">
-												<span >
-													{{padZero(minute)}}
-													<span ng-show="showCloseMinute()"> 
-														<i ng-click="deleteMinute(minute)" style="" class="fa fa-close ahover"></i>
-													</span>
-												</span>
-											</span>
-										</div>
-									</div>
-								
-
-								</td>
-							</tr>
-
-							<tr ng-show="selected_method == 'http'">
-								<td class="vert-align">HTTP Host</td>
-								<td class="vert-align text-center">
-									<validator variable="single.host" regex="validator.host" required='true' message="'A domain name, please'">
-								</td>
-								<td>
-									<input ng-model="single.host" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="some.domain.com">
-								</td>
-							</tr>
-
-							<tr ng-show="selected_method == 'http'">
-								<td class="vert-align">HTTP Path</td>
-								<td class="vert-align text-center">
-									<validator variable="single.url_path" required='true' message="'No regex'">
-								</td>
-								<td>
-									<input ng-model="single.url_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/via/http/to/file.tar.gz">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">Master Branch</td>
-								<td class="vert-align text-center">
-									<validator variable="single.branch_master" required='true' >
-								</td>
-								<td>
-									<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="vert-align">New Branch Name (prefix)</td>
-								<td class="vert-align text-center">
-									<validator variable="single.branch_name" required='true'>
-								</td>
-								<td>
-									<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="newly created branch names">
-								</td>
-							</tr>
-
-
-						</tbody>
-					</table>
-
-
-				</div>
-			</div>
-
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Dockerfile</h3>
-				</div>
-				<div class="panel-body">
-					<table class="table table-striped">
-						<tr ng-repeat="line in single.dockerfile_array track by $index">
-							<td style="color: #ADADAD;">{{ $index + 1 }}</td>
-							<td class="coded" ng-bind-html="syntaxHighlight(line)"></td>
-						</tr>
-					</table>
-				</div>
-			</div>
+			
 			
 		</div>
 

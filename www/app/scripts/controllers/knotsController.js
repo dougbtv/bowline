@@ -86,7 +86,22 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.mode = "status";
 
 		$scope.changeMode = function(mode) {
+
 			$scope.mode = mode;
+
+			switch (mode) {
+				case "readme":
+					$timeout(function(){
+						var path_readme = $scope.single.git_path.replace(/Dockerfile/,'README.md');
+						Flatdoc.run({
+							fetcher: Flatdoc.github($scope.single.git_repo, path_readme),
+						});
+					},300);
+					
+					break;
+				default:
+			}
+
 		}
 
 		$scope.navHighlight = function(mode) {
@@ -97,7 +112,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			}
 		}
 
-		$scope.getSingleRelease = function() {
+		$scope.getSingleRelease = function(callback) {
 
 			$scope.is_owner = false;
 
@@ -140,6 +155,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				}
 
 				$scope.loading = false;
+
+				if (callback) {
+					callback(null);
+				}
 				
 
 			});
@@ -343,8 +362,16 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.forceUpdate = function(id) {
 
 			release.forceUpdate(id,function(err){
+				
 				console.log("!trace re-get after forceUpdate");
-				$scope.getSingleRelease();
+
+				// force that the job is in progress.
+				$scope.getSingleRelease(function(){
+					$scope.single.job.in_progress = true;
+				});
+
+				// show the logs screen.
+				$scope.mode = "logs";
 			});
 
 		}
