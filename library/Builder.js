@@ -469,7 +469,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 			}.bind(this),
 
 			docker_show_images: function(callback) {
-				execlog('docker images',function(err,stdout,stderr){
+				execlog('docker images | grep "' + this.release.docker_tag + '"',function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});
 			}.bind(this),
