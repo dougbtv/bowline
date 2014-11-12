@@ -570,24 +570,6 @@ module.exports = function(opts,bot,log,release,socketserver) {
 						if (!err) {
 							this.logit("Build results posted @ " + url);
 
-							// last_pullrequest
-							if (!opts.skipclone) {
-								github.issues.createComment({
-									user: repo_username,
-									repo: repo_name,
-									body: "Build complete, log posted @ " + url,
-									number: this.last_pullrequest,
-								},function(err,result){
-									if (err) {
-										log.it("Oooops, somehow the github issue comment failed: " + err);
-									}
-									// console.log("!trace PULL REQUEST err/result: ",err,result);
-									// callback(err,result);
-								}.bind(this));
-							} else {
-								// callback(null);					
-							}
-
 						} else {
 							this.logit("pasteall errored: " + err);
 						}
@@ -596,26 +578,26 @@ module.exports = function(opts,bot,log,release,socketserver) {
 				
 
 			}.bind(this));
-			
-			// console.log("!trace results: %j",results);
 
-			// Let's collect the output, and put it on a paste bin.
-			/* 
-			var output = "";
-			for (var key in results) {
-				if (results.hasOwnProperty(key)) {
-					output += "====================== " + key + "\n\n";
-					output += "-- stdout\n";
-					output += results[key].stdout + "\n\n";
-					output += "-- stderr\n";
-					output += results[key].stderr + "\n\n";
-					// console.log(key + " -> " + results[key]);
-				}
+			// last_pullrequest
+			if (this.release.git_enabled) {
+				github.issues.createComment({
+					user: repo_username,
+					repo: repo_name,
+					body: "Build complete", 		// , log posted @ " + url,
+					number: this.last_pullrequest,
+				},function(err,result){
+					if (err) {
+						log.it("Oooops, somehow the github issue comment failed: " + err);
+					}
+					// console.log("!trace PULL REQUEST err/result: ",err,result);
+					// callback(err,result);
+				}.bind(this));
+			} else {
+				// callback(null);					
 			}
-			console.log("!trace collected output: \n\n",output);
 			
-			*/
-
+			// and you can just callback while this other stuff happens.
 			callback(err);
 
 			
