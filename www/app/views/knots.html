@@ -317,16 +317,51 @@
 				</div>
 			</span>
 
+			<span ng-switch-when="in_progress">
+				<h3>Job in progress!</h3>
+				<hr />
+				<div style="overflow: auto; max-height: 450px;" id="logdiv">
+					<table class="table table-striped">
+						<tbody>
+							<tr ng-repeat="eachline in log_lines track by $index">
+								<td class="coded">
+									<pre class="unpre">{{ eachline }}</pre>
+									<span ng-hide="eachline">
+										&nbsp;
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</span>
+
 			<span ng-switch-when="logs">
 
-				<span ng-show="single.job.in_progress">
-					<h3>Job in progress!</h3>
+				<span ng-show="selectedlog.logid">
+					<p ng-show="selectedlog.log.success">
+						Build was successful.
+					</p>
+					<p ng-hide="selectedlog.log.success">
+						Build failed.
+					</p>
+					<p>
+						Build started @ {{ logFormateDayDate(selectedlog.log.startdate) }}
+					</p>
+					<p>
+						Build finished @ {{ logFormateDayDate(selectedlog.log.enddate) }}
+					</p>
 					<hr />
 					<div style="overflow: auto; max-height: 450px;" id="logdiv">
 						<table class="table table-striped">
 							<tbody>
-								<tr ng-repeat="eachline in log_lines track by $index">
-									<td class="coded"><pre class="unpre">{{ eachline }}</pre></td>
+								<tr ng-repeat="eachline in selectedlog.lines track by $index">
+									<td class="coded">
+										<pre class="unpre">{{ eachline }}</pre>
+										<span ng-hide="eachline">
+											&nbsp;
+										</span>
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -361,12 +396,29 @@
 			</a>
 
 			<a ng-click="changeMode('logs')" ng-class="navHighlight('logs')" class="list-group-item ahover">
-				<i class="fa fa-history" style="padding-right: 12px;"></i>History and Logs
+				<i class="fa fa-book" style="padding-right: 12px;"></i>Build Logs
 			</a>
 
 			
 
 		</div>
+
+
+		<div ng-show="mode == 'logs'" class="list-group">
+
+			<a ng-repeat="log in logs" ng-click="selectLog(log._id)" ng-class="logHighlight(log._id)" class="list-group-item ahover">
+				<span ng-show="log.success">
+					<i class="fa fa-check-circle" style="padding-right: 12px;"></i>
+				</span>
+				<span ng-hide="log.success">
+					<i class="fa fa-times" style="padding-right: 12px;"></i>
+				</span>
+
+				{{ formatLogDate(log.enddate) }}
+			</a>
+
+		</div>
+
 	</div>
 </span>
 

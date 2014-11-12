@@ -214,6 +214,14 @@ module.exports = function(mongoose,log) {
 
 	}
 
+	this.getLogs = function(releaseid,callback) {
+
+		buildlog.getLogs(releaseid,function(err,logs){
+			callback(err,logs);
+		});
+
+	}
+
 	this.isOwner = function(userid,releaseid,callback) {
 		Release.findOne({
 			owner: userid,

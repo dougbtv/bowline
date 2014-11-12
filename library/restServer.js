@@ -96,6 +96,9 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		server.post('/api/forceUpdate', this.forceUpdate);
 		server.head('/api/forceUpdate', this.forceUpdate);
 
+		server.get('/api/getLogs', this.getLogs);
+		server.post('/api/getLogs', this.getLogs);
+		server.head('/api/getLogs', this.getLogs);
 
 		server.get('/api/stopJob', this.stopJob);
 		server.post('/api/stopJob', this.stopJob);
@@ -351,6 +354,22 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		});
 
 	}.bind(this);
+
+	this.getLogs = function(req, res, next) {
+
+		var input = req.params;
+
+		this.ownsRelease(input.id,input.session,res,function(jobowner){
+			if (jobowner) {
+				release.getLogs(input.id,function(err,logs){
+					res.contentType = 'json';
+					res.send(logs);
+				});
+			}
+		});
+
+	}.bind(this);
+
 
 	this.stopJob = function(req, res, next) {
 

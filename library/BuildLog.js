@@ -25,11 +25,27 @@ module.exports = function(mongoose,log) {
 
 		build.save(function(err){
 			if (err) {
-				log.error("save_build_mongoerr",err);
+				log.error("save_buildlog_mongoerr",err);
 			}
 			callback(err);
 		});
 		
+	}
+
+	this.getLogs = function(releaseid,callback) {
+
+		BuildLog.find({release: releaseid})
+			.sort({enddate: -1})
+			.exec(function(err,logs){
+
+				if (err) {
+					log.error("get_buildlog_mongoerr",err);
+				}
+
+				callback(err,logs);
+
+			});
+
 	}
 	
 }

@@ -113,6 +113,27 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	}
 
+	this.getLogs = function(id,callback){
+
+		$http.post(ENV.api_url + '/api/getLogs', { id: id, session: login.sessionpack })
+			.success(function(data){
+
+				var err = null;
+				if (data.error) {
+					err = data.error;
+				}
+
+				console.log("!trace getLogs data",data);
+				callback(err,data);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with getLogs from API");
+
+			}.bind(this));
+
+	};
+
 	this.validateJob = function(id,callback){
 
 		$http.post(ENV.api_url + '/api/validateJob', { id: id, session: login.sessionpack })

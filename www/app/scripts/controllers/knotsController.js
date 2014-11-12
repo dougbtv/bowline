@@ -41,11 +41,25 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		var socket = io.connect(ENV.api_url); 
 
+		$scope.logs = {};
+
+		$scope.selectedlog = {};
+		$scope.selectedlog.logid = '';
+		$scope.selectedlog.log = {};
+		
+		$scope.getLogs = function() {
+			release.getLogs($scope.params.details,function(err,data){
+				$scope.logs = data;
+			});
+		}
+
 		if ($scope.params.details) {
 
 			socket.on('build_slug',function(id,msg){
 				console.log("!trace build_slug",id,msg);
 			});
+
+			$scope.getLogs();
 
 			/*
 				io.on('connection', function(socket){
@@ -86,6 +100,49 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		}
 
+		$scope.formatLogDate = function(indate){
+			var a = moment();
+			var b = moment(indate);
+			var minutesold = a.diff(b, 'minutes') // 1
+			if (minutesold > 60) {
+				return moment(indate).format("MMMM Do, h:mm:ss a");
+			} else {
+				return moment(indate).from();	
+			}
+			
+		};
+
+		$scope.logFormateDayDate = function(indate) {
+			return moment(indate).format("MMMM Do YYYY, h:mm a");
+		}
+
+		$scope.logHighlight = function(logid) {
+
+			if ($scope.selectedlog.logid == logid) {
+				return "active";
+			} else {
+				return "";
+			}
+
+		};
+
+		$scope.selectLog = function(logid) {
+
+			if ($scope.logs) {
+
+				for (var i = 0; i < $scope.logs.length; i++) {
+					if ($scope.logs[i]._id == logid) {
+						$scope.selectedlog.logid = $scope.logs[i]._id;
+						$scope.selectedlog.log = $scope.logs[i];
+						$scope.selectedlog.lines = $scope.logs[i].log.split("\n");
+						break;
+					}
+				}
+
+			}
+
+		};
+
 		$scope.mode = "status";
 
 		$scope.changeMode = function(mode) {
@@ -93,6 +150,11 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.mode = mode;
 
 			switch (mode) {
+				case "logs":
+					if ($scope.logs.length) {
+						$scope.selectLog($scope.logs[0]._id);
+					}
+					break;
 				case "readme":
 					$timeout(function(){
 						var path_readme = $scope.single.git_path.replace(/Dockerfile/,'README.md');
@@ -374,7 +436,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				});
 
 				// show the logs screen.
-				$scope.mode = "logs";
+				$scope.mode = "in_progress";
 			});
 
 		}
