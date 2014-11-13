@@ -338,19 +338,33 @@
 
 			<span ng-switch-when="logs">
 
+
 				<span ng-show="selectedlog.logid">
-					<p ng-show="selectedlog.log.success">
-						Build was successful.
-					</p>
-					<p ng-hide="selectedlog.log.success">
-						Build failed.
-					</p>
-					<p>
-						Build started @ {{ logFormateDayDate(selectedlog.log.startdate) }}
-					</p>
-					<p>
-						Build finished @ {{ logFormateDayDate(selectedlog.log.enddate) }}
-					</p>
+					<div class="row">
+						<div class="col-md-3">
+							<p ng-show="selectedlog.log.success">
+								<i class="fa fa-check-circle" style="color: green; padding-right: 12px;"></i> 
+								Build was successful.
+							</p>
+							<p ng-hide="selectedlog.log.success">
+								<i class="fa fa-times" style="color: red; padding-right: 12px;"></i>
+								Build failed.
+							</p>
+						</div>
+						<div class="col-md-3">
+							<p>
+								Build took {{ logDuration(selectedlog.log.startdate,selectedlog.log.enddate) }}
+							</p>
+						</div>
+						<div class="col-md-4">
+							<p>
+								Started @ {{ logFormateDayDate(selectedlog.log.startdate) }}<BR />
+								Finished @ {{ logFormateDayDate(selectedlog.log.enddate) }}
+							</p>
+						</div>
+						
+					</div>
+					
 					<hr />
 					<div style="overflow: auto; max-height: 450px;" id="logdiv">
 						<table class="table table-striped">
@@ -408,10 +422,10 @@
 
 			<a ng-repeat="log in logs" ng-click="selectLog(log._id)" ng-class="logHighlight(log._id)" class="list-group-item ahover">
 				<span ng-show="log.success">
-					<i class="fa fa-check-circle" style="padding-right: 12px;"></i>
+					<i class="fa fa-check-circle" style="color: green; padding-right: 12px;"></i>
 				</span>
 				<span ng-hide="log.success">
-					<i class="fa fa-times" style="padding-right: 12px;"></i>
+					<i class="fa fa-times" style="color: red; padding-right: 12px;"></i>
 				</span>
 
 				{{ formatLogDate(log.enddate) }}

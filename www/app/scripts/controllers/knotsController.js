@@ -112,8 +112,18 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			
 		};
 
+		$scope.logDuration = function(start,end) {
+
+			var startmoment = moment(start);
+			var endmoment = moment(end);
+			var dura = startmoment.diff(endmoment);
+
+			return moment.duration(dura).humanize();
+
+		}
+
 		$scope.logFormateDayDate = function(indate) {
-			return moment(indate).format("MMMM Do YYYY, h:mm a");
+			return moment(indate).format("YYYY-M-D h:mm:ss a");
 		}
 
 		$scope.logHighlight = function(logid) {
