@@ -54,9 +54,12 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.selectedlog.logid = '';
 		$scope.selectedlog.log = {};
 		
-		$scope.getLogs = function() {
+		$scope.getLogs = function(callback) {
 			release.getLogs($scope.params.details,function(err,data){
 				$scope.logs = data;
+				if (callback) {
+					callback(null);
+				}
 			});
 		}
 
@@ -97,6 +100,15 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 						},50);
 					});
 					// console.log("!trace buildlogline [dupe?]",$scope.log_lines);
+				});
+
+				socket.on('buildfinished',function(logline){
+					// Ok, the build is finished, let's show 'em the log.
+					$scope.getLogs(function(){
+						// Alright, we refreshed the logs, let's move 'em to the right page
+						$scope.mode = "logs";
+						$scope.selectLog($scope.logs[0]._id);
+					});
 				});
 
 				$scope.$on("$destroy", function() {

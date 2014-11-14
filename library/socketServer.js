@@ -41,6 +41,13 @@ module.exports = function(bowline,opts,log) {
 
 	}
 
+	this.buildFinished = function(slug,success,callback) {
+
+		// log.it("debug_emit",{slug: slug,logline: logline});
+		io.to(slug).emit('buildfinished',{success: success});
+
+	}
+
 	// When the SMC is updated server-side, we emit that globally.
 	/*
 	this.smcUpdate = function() {

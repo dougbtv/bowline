@@ -519,7 +519,7 @@ module.exports = function(bowline,opts,log) {
 					is_error = true;
 				}
 
-			 bowline.release.addBuild(this.release._id,build_start,new Date(),logcontents,!is_error,function(err){
+				bowline.release.addBuild(this.release._id,build_start,new Date(),logcontents,!is_error,function(err){
 
 					// Ok, let's see if this worked!
 					log.it("build_complete",{
@@ -542,6 +542,9 @@ module.exports = function(bowline,opts,log) {
 						}
 					}.bind(this));
 				}
+
+				// And shoot a message via socket to say we're done
+				bowline.socketserver.buildFinished(this.release.slug,!is_error,function(){});
 				
 
 			}.bind(this));
