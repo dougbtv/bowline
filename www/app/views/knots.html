@@ -186,46 +186,47 @@
 							<div class="panel-body">
 								<table class="table table-striped">
 									<tbody>
-											<tr>
-										<td class="vert-align">Git Method</td>
-										<td class="vert-align text-center">
-											&nbsp;
-										</td>
-										<td>
-											 <select ng-model="selected_gitmethod" ng-disabled="formEnabled()" ng-options="method.label for method in gitmethods" class="form-control">
-											 </select>
-										</td>
-									</tr>
 
-									<tr ng-show="selected_gitmethod.value == 'github'">
-										<td class="vert-align">Automatically update Github</td>
-										<td class="vert-align text-center">
-											&nbsp;
-										</td>
-										<td>
-											<input type="checkbox" ng-model="single.git_enabled" ng-disabled="formEnabled()">
-										</td>
-									</tr>
+										<tr>
+											<td class="vert-align">Git Method</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												 <select ng-model="selected_gitmethod" ng-disabled="formEnabled()" ng-options="method.label for method in gitmethods" class="form-control">
+												 </select>
+											</td>
+										</tr>
 
-									<tr>
-										<td class="vert-align">Github Repo</td>
-										<td class="vert-align text-center">
-											<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
-										</td>
-										<td>
-											<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
-										</td>
-									</tr>
+										<tr ng-show="selected_gitmethod.value == 'github'">
+											<td class="vert-align">Automatically update Github</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<input type="checkbox" ng-model="single.git_enabled" ng-disabled="formEnabled()">
+											</td>
+										</tr>
 
-									<tr>
-										<td class="vert-align">Git Path</td>
-										<td class="vert-align text-center">
-											<validator variable="single.git_path" regex="validator.git_path" required='true' message="'Use a normal filename, that is just weird'">
-										</td>
-										<td>
-											<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
-										</td>
-									</tr>
+										<tr>
+											<td class="vert-align">Github Repo</td>
+											<td class="vert-align text-center">
+												<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
+											</td>
+											<td>
+												<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+											</td>
+										</tr>
+
+										<tr>
+											<td class="vert-align">Git Path</td>
+											<td class="vert-align text-center">
+												<validator variable="single.git_path" regex="validator.git_path" required='true' message="'Use a normal filename, that is just weird'">
+											</td>
+											<td>
+												<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
+											</td>
+										</tr>
 									</tbody>
 								</table>
 							</div>
@@ -238,6 +239,17 @@
 							<div class="panel-body">
 								<table class="table table-striped">
 									<tbody>
+										<tr>
+											<td class="vert-align">Update Method</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
+												 </select>
+											</td>
+										</tr>
+
 										<tr ng-show="selected_method == 'http'">
 											<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
 											<td class="vert-align text-center">
