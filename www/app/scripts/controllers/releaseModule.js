@@ -111,7 +111,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 			}.bind(this));
 
-	}
+	};
 
 	this.getLogs = function(id,callback){
 

@@ -1,4 +1,4 @@
-/* global bowlineApp, moment, Spinner, Flatdoc */
+/* global bowlineApp, moment, Spinner, Flatdoc, io, $ */
 
 bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$sce,$location,$http,login,release,$timeout,ENV) {
 
@@ -61,7 +61,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					callback(null);
 				}
 			});
-		}
+		};
 
 		if ($scope.params.details) {
 
@@ -117,12 +117,12 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			}
 
-		}
+		};
 
 		$scope.formatLogDate = function(indate){
 			var a = moment();
 			var b = moment(indate);
-			var minutesold = a.diff(b, 'minutes') // 1
+			var minutesold = a.diff(b, 'minutes');
 			if (minutesold > 60) {
 				return moment(indate).format("MMMM Do, h:mm:ss a");
 			} else {
@@ -139,11 +139,11 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			return moment.duration(dura).humanize();
 
-		}
+		};
 
 		$scope.logFormateDayDate = function(indate) {
 			return moment(indate).format("YYYY-M-D h:mm:ss a");
-		}
+		};
 
 		$scope.logHighlight = function(logid) {
 
@@ -196,7 +196,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				default:
 			}
 
-		}
+		};
 
 		$scope.navHighlight = function(mode) {
 			if ($scope.mode == mode) {
@@ -204,7 +204,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			} else {
 				return "";
 			}
-		}
+		};
 
 		$scope.getSingleRelease = function(callback) {
 
@@ -245,9 +245,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					}
 
 					// same for gitmethod
-					for (var i = 0; i < $scope.gitmethods.length; i++) {
-						if ($scope.gitmethods[i].value == $scope.single.git_method) {
-							$scope.selected_gitmethod = $scope.gitmethods[i];
+					for (var j = 0; j < $scope.gitmethods.length; j++) {
+						if ($scope.gitmethods[j].value == $scope.single.git_method) {
+							$scope.selected_gitmethod = $scope.gitmethods[j];
 							// console.log("!trace HIT THAT METHOD",$scope.selected_gitmethod);
 						}
 					}
@@ -299,7 +299,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				return $sce.trustAsHtml(dockerhtml);
 			}
 
-		}
+		};
 
 		
 		$scope.cancelChanges = function() {
@@ -485,7 +485,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				$scope.mode = "in_progress";
 			});
 
-		}
+		};
 
 		$scope.stopJob = function(id,enable_form) {
 			$scope.loading = true;
