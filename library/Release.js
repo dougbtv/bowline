@@ -44,6 +44,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 		branch_name: String,														// What's the NEW branch name you'd like?
 		branch_master: String,														// What's your master branch name?
 
+		// github specific variables
+		github_oauth: String,
+
 		// ------------ Job properties.
 		job: {						// Here's our associate job.
 			exists: Boolean,		// Is there a job at all?

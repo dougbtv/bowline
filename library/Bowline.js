@@ -35,7 +35,6 @@ module.exports = function(opts,mongoose) {
 	var SocketServer = require("./socketServer.js");
 	this.socketserver = new SocketServer(this,opts,log);
 	
-
 	/*
 	// Connect the irc bot's listener to the builder
 	irc.bot.addListener("message", function(from, to, text, message) {

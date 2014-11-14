@@ -201,13 +201,24 @@
 								</tr>
 
 								<tr>
-									<td class="vert-align">Update Method</td>
+									<td class="vert-align">Git Path</td>
 									<td class="vert-align text-center">
-										&nbsp;
+										<validator variable="single.git_path" regex="validator.git_path" required='true' message="'Use a normal filename, that is just weird'">
 									</td>
 									<td>
-										 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
-										 </select>
+										<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
+									</td>
+								</tr>
+
+								
+
+								<tr ng-show="selected_gitmethod.value == 'github'">
+									<td class="vert-align">Github Deploy Key (optional)</td>
+									<td class="vert-align text-center">
+										<validator variable="single.github_oauth" regex="validator.github_oauth" required='true' message="'Use a normal filename, that is just weird'">
+									</td>
+									<td>
+										<input ng-model="single.github_oauth" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
 									</td>
 								</tr>
 

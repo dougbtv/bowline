@@ -1,6 +1,11 @@
 module.exports = function(bowline,opts,log) {
 
-	// ,release,socketserver
+	// Our children.
+	var GitHub = require('./builders/GitHub.js');
+	var github = new GitHub(bowline,opts,log);
+
+	var Git = require('./builders/Git.js');
+	var git = new Git(bowline,opts,log);
 
 	// Our requirements.
 	var fs = require('fs');
@@ -11,23 +16,11 @@ module.exports = function(bowline,opts,log) {
 	var schedule = require('node-schedule');
 	var pasteall = require("pasteall"); 		// wewt, I wrote that module!
 	var exec = require('child_process').exec;
-	var GitHubApi = require("github");
+	
 	var Tail = require('always-tail');
 
 	// Our constants
 	var AUTOBUILD_ENVVAR = "AUTOBUILD_UNIXTIME";
-
-	var github = new GitHubApi({
-		// required
-		version: "3.0.0",
-	});
-	
-	// OAuth2 Key/Secret
-	github.authenticate({
-		type: "basic",
-		username: opts.gituser,
-		password: opts.gitpassword
-	});
 
 	// Is there a build in progress?
 	this.in_progress = false;
