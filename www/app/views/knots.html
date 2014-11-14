@@ -168,9 +168,7 @@
 								</tr>
 
 								<tr>
-									<td class="vert-align">Git Method
-										{{selected_gitmethod}}
-									</td>
+									<td class="vert-align">Git Method</td>
 									<td class="vert-align text-center">
 										&nbsp;
 									</td>
@@ -210,17 +208,17 @@
 									</td>
 								</tr>
 
-								
-
-								<tr ng-show="selected_gitmethod.value == 'github'">
-									<td class="vert-align">Github Deploy Key (optional)</td>
-									<td class="vert-align text-center">
-										<validator variable="single.github_oauth" regex="validator.github_oauth" required='true' message="'Use a normal filename, that is just weird'">
-									</td>
-									<td>
-										<input ng-model="single.github_oauth" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
-									</td>
-								</tr>
+								<!-- 
+									<tr ng-show="selected_gitmethod.value == 'github'">
+										<td class="vert-align">Github Deploy Key (optional)</td>
+										<td class="vert-align text-center">
+											<validator variable="single.github_oauth" regex="validator.github_oauth" message="'It should be a github deploy key'">
+										</td>
+										<td>
+											<input ng-model="single.github_oauth" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
+										</td>
+									</tr>
+								-->
 
 								<tr ng-show="selected_method == 'http'">
 									<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>

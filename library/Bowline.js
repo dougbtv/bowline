@@ -43,6 +43,23 @@ module.exports = function(opts,mongoose) {
 	});
 	*/
 
+	// We just want to instantiate this once.
+	// ...because builders spawn up like crazaaay.
+	// so we'll keep this around.
+
+	var GitHubApi = require("github");
+	this.github = new GitHubApi({
+		// required
+		version: "3.0.0",
+	});
+
+	// OAuth2 Key/Secret
+	this.github.authenticate({
+		type: "basic",
+		username: opts.gituser,
+		password: opts.gitpassword
+	});
+
 
 	// We instantiate builders for each specification.
 	var moment = require('moment');

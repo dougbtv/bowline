@@ -2,25 +2,24 @@ module.exports = function(bowline,opts,log) {
 
 	// Our children.
 	var GitHub = require('./builders/GitHub.js');
-	var github = new GitHub(bowline,opts,log);
-
 	var Git = require('./builders/Git.js');
-	var git = new Git(bowline,opts,log);
+
+	// We create a common interface for those two git methods.
+	this.git = null;
 
 	// Our requirements.
 	var fs = require('fs');
 	var http = require('http');
-	var request = require("request");
 	var moment = require('moment');
 	var async = require('async');
 	var schedule = require('node-schedule');
 	var pasteall = require("pasteall"); 		// wewt, I wrote that module!
-	var exec = require('child_process').exec;
-	
+	var exec = require('child_process').exec;	
 	var Tail = require('always-tail');
 
 	// Our constants
 	var AUTOBUILD_ENVVAR = "AUTOBUILD_UNIXTIME";
+	var TMP_DIR = "/tmp/";
 
 	// Is there a build in progress?
 	this.in_progress = false;
@@ -46,7 +45,6 @@ module.exports = function(bowline,opts,log) {
 
 	// Our properties
 	this.last_modified = new moment();	// When was the file on server last updated?
-	this.last_pullrequest = 0;
 
 	// Our virtual constructor.
 	// We can also start(), but that kicks off a job.
@@ -59,18 +57,32 @@ module.exports = function(bowline,opts,log) {
 		// console.log("!trace this.release @ Builder start: ",this.release);
 
 		// Let's set it's local variables.
-		this.release.clone_path = "/tmp/" + this.release.slug + "/";
-		this.release.log_docker = "/tmp/" + this.release.slug + ".docker.log";
+		this.release.clone_path = TMP_DIR + this.release.slug + "/";
+		this.release.log_docker = TMP_DIR + this.release.slug + ".docker.log";
 
 		// Ok, we need to do a little work on those git repo names to break it apart.
 		repo_username = this.release.git_repo.replace(/^(.+)\/.+$/,"$1");
 		repo_name = this.release.git_repo.replace(/^.+\/(.+)$/,"$1");
 
+		// Alright, so... what's our git method?
+		switch (this.release.git_method) {
+			// use github.
+			case "github":
+				this.git = new GitHub(this.release,bowline,opts,log);
+				break;
 
-		// For an update if we've asked for one.
-		if (opts.forceupdate) {
-			this.last_modified = new moment().subtract(20, "years");
-			this.logit("Forcing an update on start, set date to: ",this.last_modified.toDate());
+			// use a standard git repo.
+			case "git":
+				this.git = new Git(this.release,bowline,opts,log);
+				break;
+
+			// Hrmm, that's an error.
+			// ...try github.
+			default:
+				log.warn("invalid_gitmethod",{releaseid: this.release._id});
+				this.git = new GitHub(this.release,bowline,opts,log);
+				break;
+
 		}
 
 		return;
@@ -164,44 +176,9 @@ module.exports = function(bowline,opts,log) {
 			// Alright, so, let's check that this release is OK.
 			async.series({
 
-				repo_exists: function(callback) {
+				git_verify: function() {
 
-					request({
-						uri: "https://api.github.com/repos/" + this.release.git_repo,
-						method: "GET",
-						timeout: 10000,
-						auth: {
-							user: opts.gituser,
-							pass: opts.gitpassword,
-						
-						},
-						headers: { 
-							'User-Agent': 'Bowline Autobuilder Bot',
-						}
-					}, function(err, response, body) {						
-
-						if (!err) {
-
-							var apireturns = JSON.parse(body);
-
-							if (typeof apireturns.name != 'undefined') {
-								// Great, looks good.
-								callback(null);
-							} else {
-								callback("Sorry the github repo doesn't exist: '" + this.release.git_repo + "'");
-							}
-
-						} else {
-							callback("Ack http error talking to github api when trying to repo_exists");
-						}
-
-					}.bind(this));
-
-				}.bind(this),
-
-				clone: function(callback) {
-
-					this.gitClone(function(err){
+					this.git.verify(function(err){
 						callback(err);
 					});
 
@@ -309,7 +286,7 @@ module.exports = function(bowline,opts,log) {
 
 				clone: function(callback) {
 
-					this.gitClone(function(err){
+					this.git.clone(function(err){
 						callback(err);
 					});
 
@@ -325,14 +302,9 @@ module.exports = function(bowline,opts,log) {
 
 				update_clone: function(callback){
 					// Let's update our git repository.
-					if (this.release.git_enabled) {
-						this.gitModifyClone(buildstamp,function(err){
-							callback(err);
-						});
-					} else {
-						this.logit("NOTICE: modify and branch IS SKIPPED -- should be a-ok");
-						callback(null);
-					}
+					this.git.branchCommitPushPR(buildstamp,function(err){
+						callback(err);
+					});
 				
 				}.bind(this),
 
@@ -574,23 +546,7 @@ module.exports = function(bowline,opts,log) {
 
 			}.bind(this));
 
-			// last_pullrequest
-			if (this.release.git_enabled) {
-				github.issues.createComment({
-					user: repo_username,
-					repo: repo_name,
-					body: "Build complete", 		// , log posted @ " + url,
-					number: this.last_pullrequest,
-				},function(err,result){
-					if (err) {
-						log.it("Oooops, somehow the github issue comment failed: " + err);
-					}
-					// console.log("!trace PULL REQUEST err/result: ",err,result);
-					// callback(err,result);
-				}.bind(this));
-			} else {
-				// callback(null);					
-			}
+			this.git.success(function(err){});
 			
 			// and you can just callback while this other stuff happens.
 			callback(err);
@@ -600,61 +556,6 @@ module.exports = function(bowline,opts,log) {
 		
 	}
 
-	this.gitClone = function(callback) {
-
-		async.series({
-
-			// Remove the tempdir if necessary
-			rmdir: function(callback){
-				exec("rm -Rf " + this.release.clone_path,function(err){
-					callback(err);
-				});
-			}.bind(this),
-
-			// Set your git config user items.
-			
-   			// TODO: This is wonked out. I'm not sure what to do with it, yet.
-   			/*
-			git_set_email: function(callback){
-				exec('git config --global user.email "' + opts.git_setemail + '"', function(err,stdout){
-					// console.log("!trace branch stdout: ",stdout);
-					callback(err,stdout);
-				});
-			},
-
-			git_set_email: function(callback){
-				exec('git config --global user.name "' + opts.git_setname + '"', function(err,stdout){
-					// console.log("!trace branch stdout: ",stdout);
-					callback(err,stdout);
-				});
-			},
-			*/
-
-			// Clone with git.
-			clone: function(callback){
-				// this.logit("Beginning git clone.");
-				var cmd_gitclone = 'git clone https://' + opts.gituser + ':' + opts.gitpassword + '@github.com/' + this.release.git_repo + ".git " + this.release.clone_path;
-				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
-				exec(cmd_gitclone,function(err,stdout,stderr){
-					if (err) {
-						callback("Git clone failed");
-					} else {
-						callback(err,stdout);	
-					}
-				});
-			}.bind(this),
-
-		},function(err,results){
-
-			if (err) {
-				this.logit("!ERROR: Clone failed " + err);
-			}
-
-			callback(err);
-
-		}.bind(this));
-		
-	}
 
 	this.updateBuildStamp = function(buildstamp,callback){
 
@@ -672,89 +573,6 @@ module.exports = function(bowline,opts,log) {
 		});
 
 	}.bind(this);
-
-	this.gitModifyClone = function(buildstamp,callback) {
-
-		// Ok, let's clone the repo, and update it.
-		var branch_name = this.release.slug + "-" + buildstamp;
-		
-		async.series({
-			
-			// 1. Branch from master
-			branch: function(callback){
-				exec('git checkout -b ' + branch_name, {cwd: this.release.clone_path}, function(err,stdout){
-					// console.log("!trace branch stdout: ",stdout);
-					callback(err,stdout);
-				});
-			}.bind(this),
-
-			branch_verbose: function(callback){
-				exec('git branch -v', {cwd: this.release.clone_path}, function(err,stdout){
-					// console.log("!trace branch -v stdout: \n",stdout);
-					callback(err,stdout);
-				});
-			}.bind(this),
-
-			git_add: function(callback){
-				exec('git add --all', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
-			}.bind(this),
-
-			git_commit: function(callback){
-				exec('git commit -m "[autobuild] Updating @ ' + buildstamp + '"', {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
-			}.bind(this),
-
-			git_push: function(callback){
-				exec('git push origin ' + branch_name, {cwd: this.release.clone_path}, function(err,stdout){ callback(err,stdout); });
-			}.bind(this),
-
-			pull_request: function(callback) {
-
-				console.log("!trace @ pull_request: " + this.release);
-
-				// console.log("!trace PLAIN REPO: |" + repo_name + "|");
-
-				github.pullRequests.create({
-					user: repo_username,
-					repo: repo_name,
-					title: "[autobuild] Updating Asterisk @ " + buildstamp,
-					body: "Your friendly builder bot here saying that we're updating @ " + buildstamp,
-					base: this.release.branch_master,
-					head: branch_name,
-				},function(err,result){
-					if (!err) {
-						// Keep our last pull request.
-						this.last_pullrequest = result.number;
-					}
-					// console.log("!trace PULL REQUEST err/result: ",err,result);
-					callback(err,result);
-				}.bind(this));
-
-			}.bind(this),
-
-			// Alright, that's great, all we need to do is simply.
-			
-			// 2. Edit the file.
-			// 3. Stage changes.
-			// 4. commit
-			// 5. Push.
-
-		},function(err,result){
-			if (!err) {
-
-				// console.log("!trace gitModifyClone RESULTS");
-				// console.log(JSON.stringify(result, null, 2));
-
-				this.logit("Repo cloned & updated, pull request @ " + result.pull_request.html_url);
-				callback(null);
-
-			} else {
-				var errtxt = "ERROR with the gitModifyClone: " + err
-				this.logit(errtxt);
-				callback(errtxt);
-			}
-		}.bind(this));
-
-	}
 
 	this.checkForUpdate = function(callback) {
 
