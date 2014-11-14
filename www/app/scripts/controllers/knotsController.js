@@ -27,6 +27,13 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			'http',
 		];
 
+		$scope.gitmethods = [
+			{label: 'GitHub', value: 'github' },
+			{label: 'Plain Git', value: 'git' },
+		];
+
+		$scope.selected_gitmethod = $scope.gitmethods[0];
+
 		$scope.selected_method = $scope.methods[0];
 
 		$scope.validator = {};
@@ -225,6 +232,14 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 						}
 					}
 
+					// same for gitmethod
+					for (var i = 0; i < $scope.gitmethods.length; i++) {
+						if ($scope.gitmethods[i].value == $scope.single.git_method) {
+							$scope.selected_gitmethod = $scope.gitmethods[i];
+							console.log("!trace HIT THAT METHOD",$scope.selected_gitmethod);
+						}
+					}
+
 				} else {
 					$scope.error = err;
 				}
@@ -316,10 +331,19 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		};
 
-		$scope.saveRelease = function() {
+		$scope.saveRelease = function(release_method) {
 
+			
 			$scope.save_error = false;
 			$scope.loading = true;
+
+			// Tack on the selected values.
+			$scope.single.method = $scope.selected_method;
+			$scope.single.git_method = release_method.value;
+
+			console.log("!trace scope single on saveRelease: ",$scope.single);
+
+			
 
 			release.editRelease($scope.single,$scope.params.add,function(err){
 				if (!err) {

@@ -37,6 +37,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		check_minutes: [Number], 													// At which minutes on the clock do we check?
 
 		// ----------- Git variables.
+		git_method: String,															// What git method do we use? (pure git or github)
 		git_enabled: Boolean,														// Do we upate the git repo?
 		git_repo: { type: String, match: new RegExp(validator.git_repo) },			// What's the git repo?
 		git_path: {type: String, match: new RegExp(validator.git_path) },			// This is the path to the dockerfile in the git repo
@@ -86,6 +87,19 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}, 'Invalid release method');
 
+	// git method is also enum.
+	Release.schema.path('git_method').validate(function (value) {
+	  
+	  if (value === '' || typeof value === 'undefined') {
+	  	return true;
+	  }
+
+	  return /github|git/.test(value);
+
+	}, 'Invalid release method');
+
+	
+
 	// the check minutes must be a list, and all values must be between 0 and 59.
 	Release.schema.path('check_minutes').validate(function (value) {
 
@@ -116,6 +130,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.url_path = source.url_path;
 
 		dest.git_enabled = source.git_enabled;
+		dest.git_method = source.git_method;
 		dest.git_repo = source.git_repo;
 		dest.git_path = source.git_path;
 		dest.branch_name = source.branch_name;

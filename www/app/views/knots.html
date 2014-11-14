@@ -102,7 +102,7 @@
 
 						<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
 							<span class="pull-right" style="padding-bottom: 15px;">
-								<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease()">Save</button>
+								<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease(selected_gitmethod)">Save</button>
 								<button type="button" class="btn btn-sm btn-default" ng-hide="params.add" ng-click="cancelChanges()">Cancel Changes</button>
 							</span>
 						</div>
@@ -168,6 +168,19 @@
 								</tr>
 
 								<tr>
+									<td class="vert-align">Git Method
+										{{selected_gitmethod}}
+									</td>
+									<td class="vert-align text-center">
+										&nbsp;
+									</td>
+									<td>
+										 <select ng-model="selected_gitmethod" ng-disabled="formEnabled()" ng-options="method.label for method in gitmethods" class="form-control">
+										 </select>
+									</td>
+								</tr>
+
+								<tr>
 									<td class="vert-align">Github Repo</td>
 									<td class="vert-align text-center">
 										<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
@@ -188,7 +201,7 @@
 								</tr>
 
 								<tr>
-									<td class="vert-align">Method</td>
+									<td class="vert-align">Update Method</td>
 									<td class="vert-align text-center">
 										&nbsp;
 									</td>
