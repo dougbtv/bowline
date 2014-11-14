@@ -29,7 +29,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 			$http.post(ENV.api_url + '/api/addRelease', { release: release, session: login.sessionpack })
 				.success(function(release){
 
-					console.log("!trace addRelease data",release);
+					// console.log("!trace addRelease data",release);
 					callback(null,release);
 
 				}.bind(this)).error(function(data){
@@ -43,7 +43,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 			$http.post(ENV.api_url + '/api/editRelease', { release: release, session: login.sessionpack })
 				.success(function(release){
 
-					console.log("!trace editRelease data",release);
+					// console.log("!trace editRelease data",release);
 					callback(null,release);
 
 				}.bind(this)).error(function(data){
@@ -62,7 +62,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 		$http.post(ENV.api_url + '/api/getSingleRelease', { id: id, session: login.sessionpack })
 			.success(function(release){
 
-				console.log("!trace getReleases release",release);
+				// console.log("!trace getReleases release",release);
 				callback(null,release);
 
 			}.bind(this)).error(function(data){
@@ -123,7 +123,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 					err = data.error;
 				}
 
-				console.log("!trace getLogs data",data);
+				// console.log("!trace getLogs data",data);
 				callback(err,data);
 
 			}.bind(this)).error(function(data){

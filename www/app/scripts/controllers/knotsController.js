@@ -236,7 +236,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					for (var i = 0; i < $scope.gitmethods.length; i++) {
 						if ($scope.gitmethods[i].value == $scope.single.git_method) {
 							$scope.selected_gitmethod = $scope.gitmethods[i];
-							console.log("!trace HIT THAT METHOD",$scope.selected_gitmethod);
+							// console.log("!trace HIT THAT METHOD",$scope.selected_gitmethod);
 						}
 					}
 

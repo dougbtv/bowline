@@ -24,7 +24,7 @@ var bowlineApp = angular
 		'LocalStorageModule'
 	])
 	.config(function ($routeProvider,ENV) {
-		console.log("!trace env come through? ",ENV);
+		// console.log("!trace env come through? ",ENV);
 
 		$routeProvider
 		.when('/', {
