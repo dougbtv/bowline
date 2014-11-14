@@ -176,7 +176,7 @@ module.exports = function(bowline,opts,log) {
 			// Alright, so, let's check that this release is OK.
 			async.series({
 
-				git_verify: function() {
+				git_verify: function(callback) {
 
 					this.git.verify(function(err){
 						callback(err);
