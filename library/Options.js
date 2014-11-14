@@ -144,6 +144,10 @@ module.exports = function() {
 				flag: true,
 				help: 'Do not push to dockerhub'
 			})
+			.option('logdisable', {
+				flag: true,
+				help: 'Disable logging (for unit tests, usually)'
+			})
 			.option('forceupdate', {
 				flag: true,
 				help: 'Force an update automatically.'

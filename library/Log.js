@@ -13,6 +13,11 @@ module.exports = function(opts) {
 		stream: prettyStdOut
 	}];
 
+	// disable the log if need be.
+	if (opts.logdisable) {
+		mystreams = [];
+	}
+
 	/*
 	// in production you'll want this...
 

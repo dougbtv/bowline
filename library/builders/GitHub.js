@@ -63,7 +63,7 @@ module.exports = function(inrelease,bowline,opts,log) {
 		},function(err,results){
 
 			if (err) {
-				this.logit("!ERROR: Clone failed " + err);
+				log.error("github_clone",err);
 			}
 
 			callback(err);
@@ -149,7 +149,7 @@ module.exports = function(inrelease,bowline,opts,log) {
 
 			callback(err);
 
-		});
+		}.bind(this));
 	}
 
 	this.branchCommitPushPR = function(buildstamp,callback) {
@@ -228,12 +228,12 @@ module.exports = function(inrelease,bowline,opts,log) {
 					// console.log("!trace gitModifyClone RESULTS");
 					// console.log(JSON.stringify(result, null, 2));
 
-					this.logit("Repo cloned & updated, pull request @ " + result.pull_request.html_url);
+					log.it("Repo cloned & updated, pull request @ " + result.pull_request.html_url);
 					callback(null);
 
 				} else {
 					var errtxt = "ERROR with the gitModifyClone: " + err
-					this.logit(errtxt);
+					log.err("github_branch_commit",err);
 					callback(errtxt);
 				}
 			}.bind(this));
