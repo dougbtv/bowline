@@ -1,13 +1,8 @@
-module.exports = function(mongoose,log) {
+module.exports = function(bowline,opts,log,mongoose) {
 
-	var manager;
-
-	// We instantiate builders for each specification.
 	var moment = require('moment');
 	var async = require('async');
-	var Builder = require("./Builder.js"); 
-	//	var builder = new Builder(opts,irc);
-
+	
 	// A child object is the build log.
 	var BuildLog = require('./BuildLog.js');
 	var buildlog = new BuildLog(mongoose,log);
@@ -111,12 +106,6 @@ module.exports = function(mongoose,log) {
 		}
 
 	}, 'check_minutes must have at least one value, and all values must be between 0 and 59');
-
-	// Allow a dependency to be injected after instantiation.
-	// ...for now we need the manager.
-	this.inject = function(in_manager) {
-		manager = in_manager;
-	}
 
 	this.updateReleaseProperties = function(source,dest,callback) {
 		
@@ -274,7 +263,7 @@ module.exports = function(mongoose,log) {
 
 				async.map(rels, function(item,callback){
 
-					manager.jobProperties(item.slug,function(err,props){
+					bowline.manager.jobProperties(item.slug,function(err,props){
 						item.job = props;
 						// console.log("!trace jobProperties full: ",item);
 						callback(err,item.toObject());

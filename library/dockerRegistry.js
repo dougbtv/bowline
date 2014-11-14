@@ -1,4 +1,4 @@
-module.exports = function(log, opts, release) {
+module.exports = function(bowline, opts, log) {
 
 	// console.log("!trace dockerRegistry instantiated");
 
@@ -59,7 +59,7 @@ module.exports = function(log, opts, release) {
 
 			// This ain't no good if we don't have this stored as a release.
 			// ...you've gotta make that first.
-			release.exists(namespace,repo_name,function(exists){
+			bowline.release.exists(namespace,repo_name,function(exists){
 
 				if (exists) {
 

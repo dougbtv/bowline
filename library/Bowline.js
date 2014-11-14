@@ -1,10 +1,58 @@
-module.exports = function(opts,bot,release,manager) {
+module.exports = function(opts,mongoose) {
+
+	var Log = require('./Log.js');
+	var log = new Log(opts);
+
+	// irc disabled during refactor.
+	// Now that we're connected to mongo, we can continue along.
+	// The Condor object, the meat of our dealings.
+	// var IRC = require('./IRC.js');
+	// this.irc = new IRC(opts);
+
+	// Our users, for login/management purposes.
+	var User = require('./User.js');
+	this.user = new User(this,log,opts,mongoose);
+
+	// Defines a "knot"
+	var Release = require('./Release.js');
+	this.release = new Release(this,opts,log,mongoose);
+
+	// We include the builder for imports (specifically the manager users this)
+	this.Builder = require("./Builder.js");
+
+	// The manager is the master of the builders.
+	var Manager = require("./Manager.js"); 
+	this.manager = new Manager(this,opts,log);
+
+	// And our dockerRegistry proxy.
+	var DockerRegistry = require("./dockerRegistry.js");
+	this.dockerRegistry = new DockerRegistry(this,opts,log);
+
+	var RestServer = require("./restServer.js"); 
+	this.restserver = new RestServer(this,opts,log);
+	this.restserver.serverStart();
+
+	var SocketServer = require("./socketServer.js");
+	this.socketserver = new SocketServer(this,opts,log);
+	
+
+	/*
+	// Connect the irc bot's listener to the builder
+	irc.bot.addListener("message", function(from, to, text, message) {
+		// Let's handle this command.
+		bowline.ircHandler(text,from,message);
+	});
+	*/
+
 
 	// We instantiate builders for each specification.
 	var moment = require('moment');
 
-	// always init searches on start.
-	
+	/*
+
+	// ------------------- DISABLED DURING REFACTOR.
+	// ...CLI disabled after refactor.
+
 	// start up a cli if need be
 	if (opts.cli) {
 
@@ -40,6 +88,7 @@ module.exports = function(opts,bot,release,manager) {
 		}.bind(this));
 
 	}
+
 
 	this.commandHandler = function(cmd,authorized,callback) {
 
@@ -201,5 +250,7 @@ module.exports = function(opts,bot,release,manager) {
 		console.log("[ " + displaytime + " ] " + message);
 		bot.say(message);
 	}
+
+	*/
 
 }

@@ -1,14 +1,14 @@
-module.exports = function(server,manager,release,log) {
+module.exports = function(bowline,opts,log) {
 
 	// TODO: I want to do this, but, it's bigger bite than I want to chew right now, -Doug
 	socketio = require('socket.io');
 
-	console.log("Starting socket.io server.");
-	var io = socketio.listen(server);
+	log.it("Starting socket.io server.");
+	var io = socketio.listen(bowline.restserver.server);
 
 	io.on('connection', function (socket) {
 
-		console.log("!trace Cool, got connection....");
+		log.it("socket_io_connection",{remove: 'this thing'});
 
 		// -- a few examples.
 		// This goes to everyone but the person who requested.

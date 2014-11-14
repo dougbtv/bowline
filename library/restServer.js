@@ -1,4 +1,6 @@
-module.exports = function(log, opts, bowline, user, release, manager, dockerRegistry) {
+module.exports = function(bowline, opts, log) {
+
+	// user, release, manager, dockerRegistry
 
 	// --------------------------------------------------------------------
 	// -- myConstructor : Throws the constructor into a method.
@@ -15,9 +17,9 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 	var server = restify.createServer();
 	server.use(restify.bodyParser());
 
-	var SocketServer = require("./socketServer.js");
-    this.socketserver = new SocketServer(server,manager,release,log);
-	
+	// We access this from socketio
+	this.server = server;
+
 	this.myConstructor = function() {
 
 		// Set an error handler for the server
@@ -151,7 +153,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 			var input = req.params;
 
-			user.validateSession(input.session,function(isvalid){
+			bowline.user.validateSession(input.session,function(isvalid){
 
 				res.contentType = 'json';
 
@@ -194,11 +196,11 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 			// If credentials are provided...
 			// we need to verify that they're OK.
-			user.authenticate(req.authorization.basic.username,req.authorization.basic.password,false,function(auth){
+			bowline.user.authenticate(req.authorization.basic.username,req.authorization.basic.password,false,function(auth){
 
 				if (auth) {
 					
-					dockerRegistry.route(req.headers,auth.fulluser.username,function(err){
+					bowline.dockerRegistry.route(req.headers,auth.fulluser.username,function(err){
 
 						if (!err) {
 
@@ -234,11 +236,11 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 	this.ownsRelease = function(releaseid,session,res,callback) {
 
-		user.validateSession(session,function(validpack){
+		bowline.user.validateSession(session,function(validpack){
 
 			if (validpack.isvalid) {
 
-				release.isOwner(validpack.fulluser._id,releaseid,function(err,owner){
+				bowline.release.isOwner(validpack.fulluser._id,releaseid,function(err,owner){
 					callback(owner);
 					if (!owner) {
 						res.send({error: "Invalid credentials, tisk tsk [attempt logged]"});
@@ -257,9 +259,9 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		var input = req.params;
 
-		user.validateSession(input.session,function(validpack){
+		bowline.user.validateSession(input.session,function(validpack){
 			if (validpack.isvalid) {
-				release.addRelease(input.release,validpack.fulluser._id,function(err){
+				bowline.release.addRelease(input.release,validpack.fulluser._id,function(err){
 					res.contentType = 'json';
 					if (err) {
 						res.send({error: err});
@@ -279,7 +281,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		this.ownsRelease(input.release._id,input.session,res,function(releaseowner){
 			if (releaseowner) {
-				release.editRelease(input.release,function(err){
+				bowline.release.editRelease(input.release,function(err){
 					res.contentType = 'json';
 					if (err) {
 						res.send({error: err});
@@ -297,7 +299,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		var input = req.params;
 
-		release.getValidator(function(validator){
+		bowline.release.getValidator(function(validator){
 			res.contentType = 'json';
 			res.send(validator);
 		});
@@ -310,7 +312,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
-				manager.validateJob(input.id,function(err,validated){
+				bowline.manager.validateJob(input.id,function(err,validated){
 					res.contentType = 'json';
 					if (err) {
 						res.send({error: err});
@@ -330,7 +332,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
-				manager.startJob(input.id,function(err){
+				bowline.manager.startJob(input.id,function(err){
 					// console.log("!trace START JOB IS BACK");
 					res.contentType = 'json';
 					res.send({});
@@ -346,7 +348,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
-				manager.forceUpdate(input.id,function(err){
+				bowline.manager.forceUpdate(input.id,function(err){
 					res.contentType = 'json';
 					res.send({});
 				});
@@ -361,7 +363,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
-				release.getLogs(input.id,function(err,logs){
+				bowline.release.getLogs(input.id,function(err,logs){
 					res.contentType = 'json';
 					res.send(logs);
 				});
@@ -377,7 +379,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
-				manager.stopJob(input.id,function(err){
+				bowline.manager.stopJob(input.id,function(err){
 					res.contentType = 'json';
 					res.send({});
 				});
@@ -390,7 +392,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		var input = req.params;
 
-		release.getReleases(false,function(rels){
+		bowline.release.getReleases(false,function(rels){
 			res.contentType = 'json';
 			res.send(rels);
 		});
@@ -401,7 +403,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		var input = req.params;
 
-		release.getReleases({_id: input.id},function(rels){
+		bowline.release.getReleases({_id: input.id},function(rels){
 			// console.log("!trace rels from single release",rels);
 			res.contentType = 'json';
 			res.send(rels[0]);
@@ -413,7 +415,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 
 		var input = req.params;
 
-		user.validateSession(input.session,function(validpack){
+		bowline.user.validateSession(input.session,function(validpack){
 
 			res.contentType = 'json';
 			res.send({valid: validpack.isvalid, fulluser: validpack.fulluser});
@@ -430,7 +432,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		// log.trace("user login params: ",input);
 
 		// Now check it with the user module.
-		user.authenticate(input.email,input.password,true,function(auth){
+		bowline.user.authenticate(input.email,input.password,true,function(auth){
 
 			res.contentType = 'json';
 
@@ -459,7 +461,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		var input = req.params;
 
 		// Ok, make a request to the user object.
-		user.setPassword(input.email.trim(),input.password,input.resetkey,function(auth){
+		bowline.user.setPassword(input.email.trim(),input.password,input.resetkey,function(auth){
 
 			res.contentType = 'json';
 			res.send(auth);
@@ -473,7 +475,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		var input = req.params;
 
 		// Ok, make a request to the user object.
-		user.forgotPassword(input.email.trim(),function(err){
+		bowline.user.forgotPassword(input.email.trim(),function(err){
 
 			var sendjson = {};
 
@@ -494,7 +496,7 @@ module.exports = function(log, opts, bowline, user, release, manager, dockerRegi
 		var input = req.params;
 
 		// Ok, make a request to the user object.
-		user.registerUser(
+		bowline.user.registerUser(
 			input.user.email.trim(),
 			input.user.username.trim(),
 			function(err){

@@ -1,4 +1,6 @@
-module.exports = function(opts,bot,log,release,socketserver) {
+module.exports = function(bowline,opts,log) {
+
+	// ,release,socketserver
 
 	// Our requirements.
 	var fs = require('fs');
@@ -255,7 +257,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 						// !bang
 						if (!err) {
 
-							release.updateDockerfile(this.release._id,dockerfile_contents,function(err){
+							bowline.release.updateDockerfile(this.release._id,dockerfile_contents,function(err){
 								callback(err);
 							}.bind(this));
 
@@ -456,7 +458,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 					if (data != lastline) {
 						lastline = data;
 						// console.log("!trace TAIL DATA: ",data);
-						socketserver.sendBuildLog(this.release.slug,data);
+						bowline.socketserver.sendBuildLog(this.release.slug,data);
 					}
 				}.bind(this));
 
@@ -552,7 +554,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 					is_error = true;
 				}
 
-				release.addBuild(this.release._id,build_start,new Date(),logcontents,!is_error,function(err){
+			 bowline.release.addBuild(this.release._id,build_start,new Date(),logcontents,!is_error,function(err){
 
 					// Ok, let's see if this worked!
 					log.it("build_complete",{
@@ -820,7 +822,7 @@ module.exports = function(opts,bot,log,release,socketserver) {
 		// Let's give a time.
 		var displaytime = new moment().format("YYYY-MM-DD HH:mm:ss");
 		console.log("[ " + displaytime + " ] [" + this.release.slug + "] " + message);
-		bot.say(message);
+		// bot.say(message);
 	}
 
 }

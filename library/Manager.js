@@ -1,13 +1,11 @@
-module.exports = function(opts,bot,release,log) {
+module.exports = function(bowline,opts,log) {
 
-	var Builder = require("./Builder.js"); 
+	// import our builder object.
+	var Builder = bowline.Builder; 
 
 	// Initialize our jobs hash
 	var jobs = {};
 
-	var socketserver;
-
-	
 	// We'll log into dockerhub
 	var exec = require('child_process').exec;
 	var cmd_login = 'docker login --email=\"' + opts.docker_email + '\"' +
@@ -44,14 +42,9 @@ module.exports = function(opts,bot,release,log) {
 			});
 	},2000);
 
-	this.inject = function(in_socketserver) {
-		socketserver = in_socketserver;
-		this.initializeActiveSearches(function(){});
-	}
-	
 	this.initializeActiveSearches = function(callback) {
 
-		release.getActive(function(err,rels){
+		bowline.release.getActive(function(err,rels){
 
 			if (!err) {
 
@@ -65,7 +58,7 @@ module.exports = function(opts,bot,release,log) {
 						// console.log("!trace each rel: ",rel);
 
 						// We need a slug for this job.
-						jobs[rel.slug] = new Builder(opts,bot,log,release,socketserver);
+						jobs[rel.slug] = new Builder(bowline,opts,log);
 						jobs[rel.slug].start(rel,function(){
 							
 						});
@@ -89,6 +82,8 @@ module.exports = function(opts,bot,release,log) {
 		});
 
 	}
+
+	this.initializeActiveSearches(function(){});
 
 	// Let's compile a list of properties about this job.
 	this.jobProperties = function(findslug,callback) {
@@ -128,7 +123,7 @@ module.exports = function(opts,bot,release,log) {
 
 	this.startJob = function(releaseid,callback) {
 
-		release.getSlug(releaseid,function(err,findslug){
+		bowline.release.getSlug(releaseid,function(err,findslug){
 			
 			if (!err) {
 
@@ -136,9 +131,9 @@ module.exports = function(opts,bot,release,log) {
 				this.jobExists(findslug,function(exists){
 					if (!exists) {
 						// Great, let's create this job.
-						release.getReleases({_id: releaseid},function(rels){
+						bowline.release.getReleases({_id: releaseid},function(rels){
 
-							jobs[findslug] = new Builder(opts,bot,log,release,socketserver);
+							jobs[findslug] = new Builder(bowline,opts,log);
 							jobs[findslug].start(rels[0],function(){
 								callback(null);
 							});
@@ -161,7 +156,7 @@ module.exports = function(opts,bot,release,log) {
 
 	this.forceUpdate = function(releaseid,callback) {
 
-		release.getSlug(releaseid,function(err,findslug){
+		bowline.release.getSlug(releaseid,function(err,findslug){
 			
 			if (!err) {
 
@@ -189,7 +184,7 @@ module.exports = function(opts,bot,release,log) {
 
 	this.stopJob = function(releaseid,callback) {
 
-		release.getSlug(releaseid,function(err,findslug){
+		bowline.release.getSlug(releaseid,function(err,findslug){
 			
 			if (!err) {
 
@@ -243,7 +238,7 @@ module.exports = function(opts,bot,release,log) {
 
 	this.validateJob = function(releaseid,callback) {
 
-		release.getSlug(releaseid,function(err,findslug){
+		bowline.release.getSlug(releaseid,function(err,findslug){
 
 			this.verifyRelease(findslug,function(err,validated){
 				callback(err,validated);

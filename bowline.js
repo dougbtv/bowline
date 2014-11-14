@@ -35,49 +35,9 @@ options.parse(function(opts){
 		// We're connected to mongo, now.
 		console.log("mongo_connect",{server: opts.MONGO_CONNECT_STRING });
 
-		var Log = require('./library/Log.js');
-		var log = new Log(opts);
-
-		// Now that we're connected to mongo, we can continue along.
-		// The Condor object, the meat of our dealings.
-		var IRC = require('./library/IRC.js');
-		var irc = new IRC(opts);
-
-		// Our users, for login/management purposes.
-		var User = require('./library/User.js');
-		var user = new User(log,opts,mongoose);
-
-		// Defines a "knot"
-		var Release = require('./library/Release.js');
-		var release = new Release(mongoose,log);
-
-		// Bowline handles our matters.		
-		var Manager = require("./library/Manager.js"); 
-		var manager = new Manager(opts,irc,release,log);
-
-		// inject that into release, too.
-		release.inject(manager);
-
 		// Bowline handles our matters.
 		var Bowline = require("./library/Bowline.js"); 
-		var bowline = new Bowline(opts,irc,release,manager);
-
-		// And our dockerRegistry proxy.
-		var DockerRegistry = require("./library/dockerRegistry.js"); 
-		var dockerRegistry = new DockerRegistry(log,opts,release);
-
-		var RestServer = require("./library/restServer.js"); 
-		var restserver = new RestServer(log,opts,bowline,user,release,manager,dockerRegistry);
-	    restserver.serverStart();
-
-	    manager.inject(restserver.socketserver);
-
-		// Connect the irc bot's listener to the builder
-		irc.bot.addListener("message", function(from, to, text, message) {
-			// Let's handle this command.
-			bowline.ircHandler(text,from,message);
-		});
-
+		var bowline = new Bowline(opts,mongoose);
 
 	});
 

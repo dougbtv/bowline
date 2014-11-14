@@ -1,4 +1,4 @@
-module.exports = function(log, opts, mongoose) {
+module.exports = function(bowline, log, opts, mongoose) {
 
 	// We use this for password storage and authentication.
 	// reference: http://devsmash.com/blog/password-authentication-with-mongoose-and-bcrypt
