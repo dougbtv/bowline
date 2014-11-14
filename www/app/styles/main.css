@@ -160,6 +160,11 @@ body {
   padding: 0;
 }
 
+.knotproperties-header {
+  background-color: #31708f !important; 
+  color: whitesmoke !important;
+}
+
 /* ---------------------------- end validator */
 
   /*
