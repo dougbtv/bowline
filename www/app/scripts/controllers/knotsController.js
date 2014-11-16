@@ -1,4 +1,4 @@
-/* global bowlineApp, moment, Spinner, Flatdoc, io, $ */
+/* global bowlineApp, moment, Spinner, Flatdoc, io, $, lil */
 
 bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$sce,$location,$http,login,release,$timeout,ENV) {
 
@@ -14,7 +14,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.form_edit = true;
 			$scope.loading = false;
 			// initial the single
-			$scope.single = {};
+			$scope.single = {
+				hook_secret: lil.uuid(),
+			};
 		}
 
 
@@ -22,17 +24,18 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.save_success = false;
 
-		$scope.methods = [
-			'foo',
-			'http',
-		];
-
 		$scope.gitmethods = [
 			{label: 'GitHub', value: 'github' },
 			{label: 'Plain Git', value: 'git' },
 		];
 
 		$scope.selected_gitmethod = $scope.gitmethods[0];
+
+		$scope.methods = [
+			{label: 'Git Hook', value: 'hook' },
+			{label: 'Manual Update', value: 'manual' },
+			{label: 'Poll HTTP', value: 'http' },
+		];
 
 		$scope.selected_method = $scope.methods[0];
 
@@ -238,7 +241,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 					// selects are a bummer, let's take the enumerated type of method and make it a reference to method.
 					for (var i = 0; i < $scope.methods.length; i++) {
-						if ($scope.methods[i] == $scope.single.method) {
+						if ($scope.methods[i].value == $scope.single.method) {
 							// console.log("!trace HIT THAT METHOD");
 							$scope.selected_method = $scope.methods[i];
 						}
@@ -264,6 +267,12 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				
 
 			});
+
+		};
+
+		$scope.generateUUID = function() {
+
+			$scope.single.hook_secret = lil.uuid();
 
 		};
 
@@ -343,14 +352,14 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		};
 
-		$scope.saveRelease = function(release_method) {
+		$scope.saveRelease = function(release_method,update_method) {
 
 			
 			$scope.save_error = false;
 			$scope.loading = true;
 
 			// Tack on the selected values.
-			$scope.single.method = $scope.selected_method;
+			$scope.single.method = update_method.value;
 			$scope.single.git_method = release_method.value;
 
 			console.log("!trace scope single on saveRelease: ",$scope.single);

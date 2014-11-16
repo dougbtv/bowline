@@ -9,7 +9,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	var validator = {
 		slug: '^[\\w\S]+$',
-		method: '^(http|http|http)$',
+		method: '^(http|hook|manual)$',
+		hook_secret: '^[\\w\\-]+$',
 		docker_tag: '^[a-zA-Z0-9\:\\/\-_.]+$',
 		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
@@ -22,7 +23,6 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// -------------- Over arching.
 		owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 				// Who owns this?
 		active: Boolean,											  				// Is this currently active?
-		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
 		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
 		docker_tag: {type: String, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
 		dockerfile: String,
@@ -31,10 +31,17 @@ module.exports = function(bowline,opts,log,mongoose) {
 		store_dockerhub: Boolean,
 		store_local: Boolean,
 
-		// --------------- Method: http
-		host: {type: String, match: new RegExp(validator.host) },					// [http] What's the host to look at with http method?
-		url_path: String,															// [http] What's the path from there?
-		check_minutes: [Number], 													// At which minutes on the clock do we check?
+		// --------------- Update methods.
+		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
+		
+			// --------------- Method: http
+			host: {type: String, match: new RegExp(validator.host) },				// [http] What's the host to look at with http method?
+			url_path: String,														// [http] What's the path from there?
+			check_minutes: [Number], 												// At which minutes on the clock do we check?
+
+			// --------------- Method: git hook.
+			hook_secret: {type: String, unique: true, match: new RegExp(validator.hook_secret) },	// A secret to be passed in git hook.
+
 
 		// ----------- Git variables.
 		git_method: String,															// What git method do we use? (pure git or github)
@@ -78,18 +85,6 @@ module.exports = function(bowline,opts,log,mongoose) {
 	// Compile it to a model.
 	var Release = mongoose.model('Release', releaseSchema);
 	
-	// The method is enumerated, so we'll enforce that.
-	Release.schema.path('method').validate(function (value) {
-	  
-	  if (value === '' || typeof value === 'undefined') {
-	  	return true;
-	  }
-
-	  // It's only http right now... Later... We'll have other methods like: github PR's and stuff like that.
-	  return /http|http|http/.test(value);
-
-	}, 'Invalid release method');
-
 	// git method is also enum.
 	Release.schema.path('git_method').validate(function (value) {
 	  
@@ -132,6 +127,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.host = source.host;
 		dest.url_path = source.url_path;
 
+		dest.hook_secret = source.hook_secret;
 		dest.git_enabled = source.git_enabled;
 		dest.git_method = source.git_method;
 		dest.git_repo = source.git_repo;

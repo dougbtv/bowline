@@ -103,7 +103,7 @@
 						<div class="row" style="padding-right: 15px;">
 							<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
 								<span class="pull-right" style="padding-bottom: 15px;">
-									<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease(selected_gitmethod)">Save</button>
+									<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease(selected_gitmethod,selected_method)">Save</button>
 									<button type="button" class="btn btn-sm btn-default" ng-hide="params.add" ng-click="cancelChanges()">Cancel Changes</button>
 								</span>
 							</div>
@@ -264,12 +264,31 @@
 												&nbsp;
 											</td>
 											<td>
-												 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method for method in methods" class="form-control">
+												 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method.label for method in methods" class="form-control">
 												 </select>
 											</td>
 										</tr>
 
-										<tr ng-show="selected_method == 'http'">
+										<!-- - - - - - - - - - - - hook -->
+
+										<tr ng-show="selected_method.value == 'hook'">
+											<td class="vert-align">Secret Key</td>
+											<td class="vert-align text-center">
+												<validator variable="single.hook_secret" regex="validator.hook_secret" required='true' message="'Numbers, letters, dashes (must be unique)'">
+											</td>
+											<td>
+												<div class="col-sm-8">
+													<input ng-model="single.hook_secret" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="a uuid">
+												</div>
+												<div class="col-sm-4">
+													<button type="button" class="btn btn-sm btn-info" ng-click="generateUUID()">Generate</button>
+												</div>
+											</td>
+										</tr>
+
+										<!-- - - - - - - - - - - - http -->
+
+										<tr ng-show="selected_method.value == 'http'">
 											<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
 											<td class="vert-align text-center">
 												&nbsp;
@@ -308,7 +327,7 @@
 											</td>
 										</tr>
 
-										<tr ng-show="selected_method == 'http'">
+										<tr ng-show="selected_method.value == 'http'">
 											<td class="vert-align">HTTP Host</td>
 											<td class="vert-align text-center">
 												<validator variable="single.host" regex="validator.host" required='true' message="'A domain name, please'">
@@ -318,7 +337,7 @@
 											</td>
 										</tr>
 
-										<tr ng-show="selected_method == 'http'">
+										<tr ng-show="selected_method.value == 'http'">
 											<td class="vert-align">HTTP Path</td>
 											<td class="vert-align text-center">
 												<validator variable="single.url_path" required='true' message="'No regex'">
