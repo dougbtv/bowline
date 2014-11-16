@@ -2,7 +2,7 @@ module.exports = function(bowline, opts, log) {
 
 	// console.log("!trace dockerRegistry instantiated");
 
-	this.route = function(headers,username,callback) {
+	this.route = function(headers,username,userid,callback) {
 
 		var url = headers['x-original-uri'];
 		var method = headers['x-original-method'];
@@ -30,7 +30,7 @@ module.exports = function(bowline, opts, log) {
 			case "repositories":
 				var namespace = routes[2];
 				var repo_name = routes[3];
-				this.repositories(username,method,namespace,repo_name,function(err){
+				this.repositories(username,userid,method,namespace,repo_name,function(err){
 					callback(err);
 				});
 				break;
@@ -46,7 +46,7 @@ module.exports = function(bowline, opts, log) {
 		
 	}
 
-	this.repositories = function(username,method,namespace,repo_name,callback) {
+	this.repositories = function(username,userid,method,namespace,repo_name,callback) {
 
 		// Is this an admin?
 		// ...we always allow an admin.
@@ -59,21 +59,24 @@ module.exports = function(bowline, opts, log) {
 
 			// This ain't no good if we don't have this stored as a release.
 			// ...you've gotta make that first.
-			bowline.release.exists(namespace,repo_name,function(exists){
+			bowline.release.exists(namespace,repo_name,function(releaseid){
 
-				if (exists) {
+				if (releaseid) {
 
 					// Ok, let's think about the methods
 					switch (method) {
 						// These are modifications
 						case "DELETE":
 						case "PUT":
-							if (username == namespace) {
-								// That's great.
-								callback(null);
-							} else {
-								callback("User not authorized for method of repositories");
-							}
+							// See if they're an owner.
+							bowline.release.isOwner(userid,releaseid,function(err,isowner){
+								if (!err) {
+									// That's great.
+									callback(null);
+								} else {
+									callback(err);
+								}
+							});
 							break;
 
 						// These are pulls and queries.

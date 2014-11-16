@@ -204,7 +204,7 @@ module.exports = function(bowline, opts, log) {
 
 				if (auth) {
 					
-					bowline.dockerRegistry.route(req.headers,auth.fulluser.username,function(err){
+					bowline.dockerRegistry.route(req.headers,auth.fulluser.username,auth.fulluser._id,function(err){
 
 						if (!err) {
 

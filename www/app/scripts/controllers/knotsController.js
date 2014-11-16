@@ -240,6 +240,14 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 						$scope.is_owner = true;
 					}
 
+					// Or if we're a collaborator.
+					$scope.single.collaborators.forEach(function(col){
+						// console.log("!trace colid: ",col._id);
+						if (col._id == login.fulluser._id) {
+							$scope.is_owner = true;
+						}
+					});
+
 					// figure out the readme.
 					// Strip the Dockerfile from the path.
 					var path_readme = '';

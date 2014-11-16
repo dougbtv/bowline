@@ -246,7 +246,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	this.isOwner = function(userid,releaseid,callback) {
 		Release.findOne({
-			owner: userid,
+			$or: [{owner: userid},{collaborators: userid}],
 			_id: releaseid
 		},function(err,rel){
 			if (!err) {
@@ -331,7 +331,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		Release.findOne({ docker_tag: docker_tag },function(err,release){
 
 			if (!err && release) {
-				callback(true);
+				callback(release._id);
 			} else {
 
 				if (err) {
