@@ -17,10 +17,18 @@ var options = new Options();
 
 var mongoose = require('mongoose');
 
-options.parse(function(opts){
+options.parse(function(err,opts){
 
 	// console.log("!trace opts: ",opts);
 	// -- Connect to mongo.
+
+	if (err) {
+		throw "Configuration LOAD ERROR: " + err;
+	}
+
+	// we start logging quite early.
+	var Log = require('./library/Log.js');
+	var log = new Log(opts);
 
 	mongoose.connect(opts.MONGO_CONNECT_STRING);
 
@@ -32,12 +40,14 @@ options.parse(function(opts){
 
 	db.once('open', function callback () {
 
+		log.it("configuration_loaded",{ configname: opts.CONFIG_NAME });
+
 		// We're connected to mongo, now.
-		console.log("mongo_connect",{server: opts.MONGO_CONNECT_STRING });
+		log.it("mongo_connect",{server: opts.MONGO_CONNECT_STRING });
 
 		// Bowline handles our matters.
 		var Bowline = require("./library/Bowline.js"); 
-		var bowline = new Bowline(opts,mongoose);
+		var bowline = new Bowline(opts,log,mongoose);
 
 	});
 

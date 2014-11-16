@@ -1,7 +1,4 @@
-module.exports = function(opts,mongoose) {
-
-	var Log = require('./Log.js');
-	var log = new Log(opts);
+module.exports = function(opts,log,mongoose) {
 
 	// irc disabled during refactor.
 	// Now that we're connected to mongo, we can continue along.

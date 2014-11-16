@@ -29,7 +29,7 @@ module.exports = function(opts) {
 
 	var bunyan = require('bunyan');
 	var log = bunyan.createLogger({
-		name: "condor",
+		name: "bowline",
 		streams: mystreams,
 	});
 
