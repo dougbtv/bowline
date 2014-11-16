@@ -335,7 +335,7 @@
 														<input ng-model="entry.enter_minute" ng-enter="addMinute(entry.enter_minute)" type="text" class="form-control" placeholder="">
 													</div>
 													<div class="col-sm-7">
-														<button type="button" class="btn btn-sm btn-info" ng-click="addMinute(enter_minute)">Add Minute</button>
+														<button type="button" class="btn btn-sm btn-info" ng-click="addMinute(entry.enter_minute)">Add Minute</button>
 														<validator variable="enter_minute" emptyok="true" regex="'^([0-5][0-9]|[0-9])$'" message="'Minutes on the clock dial only'">
 													</div>
 													<div class="col-sm-1">

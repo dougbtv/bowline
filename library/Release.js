@@ -127,7 +127,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 	}, 'check_minutes must have at least one value, and all values must be between 0 and 59');
 
 	this.updateReleaseProperties = function(source,dest,callback) {
-		
+
 		dest.slug = source.slug;
 		dest.method = source.method;
 		dest.docker_tag = source.docker_tag;
@@ -157,16 +157,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.store_dockerhub = source.store_dockerhub;
 		dest.store_local = source.store_local;
 
-		// Default the check minutes if it's not at least partially valid.
-		if (typeof source.check_minutes !== 'array') {
-			source.check_minutes = [0];
-		} else {
-			if (source.check_minutes.length < 1) {
-				source.check_minutes = [0];
-			}
-		}
+		if (source.method == 'http') {
 
-		dest.check_minutes = source.check_minutes;
+			dest.check_minutes = source.check_minutes;
+			
+		}
 
 		dest.save(function(err){
 			callback(err);
