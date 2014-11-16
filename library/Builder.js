@@ -98,53 +98,64 @@ module.exports = function(bowline,opts,log) {
 		this.verifyRelease(function(err){
 			if (!err) {
 
-				// Check for update once, then, once it's updated, schedule the job to recur.
-				this.checkForUpdate(function(err,initialupdate){
+				this.started = true;
 
-					if (!err) {
+				switch(initial_release.method) {
 
-						this.started = true;
-						callback(null);
-				
+					// We start polling if it's an HTTP update.
+					case "http":
+						// Check for update once, then, once it's updated, schedule the job to recur.
+						this.pollHTTPForUpdate(function(err,initialupdate){
 
-						if (initialupdate) {
-							this.performUpdate();
-						}
+							if (!err) {
 
-						// Create a range
-						// that runs every other unit.
-						var rule = new schedule.RecurrenceRule();
-						// rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
-						rule.minute = this.release.check_minutes;
+								callback(null);
 						
 
-						job = schedule.scheduleJob(rule, function(){
-
-							// Update the last time we checked.
-							this.last_check = new moment();
-
-							log.it("release_check",{slug: this.release.slug});
-
-							this.checkForUpdate(function(err,updated){
-
-								if (updated) {
-									// Ok, kick it off!
+								if (initialupdate) {
 									this.performUpdate();
 								}
 
-							}.bind(this));
-						
+								// Create a range
+								// that runs every other unit.
+								var rule = new schedule.RecurrenceRule();
+								// rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+								rule.minute = this.release.check_minutes;
+								
+
+								job = schedule.scheduleJob(rule, function(){
+
+									// Update the last time we checked.
+									this.last_check = new moment();
+
+									log.it("release_check",{slug: this.release.slug});
+
+									this.pollHTTPForUpdate(function(err,updated){
+
+										if (updated) {
+											// Ok, kick it off!
+											this.performUpdate();
+										}
+
+									}.bind(this));
+								
+								}.bind(this));
+
+							} else {
+
+								log.warn("http_check_error",err);
+								this.last_error = err;
+								callback(err);
+
+							}
+
 						}.bind(this));
+						break;
 
-					} else {
+					default:
+						break;
 
-						log.warn("http_check_error",err);
-						this.last_error = err;
-						callback(err);
-
-					}
-
-				}.bind(this));
+				}
 
 			} else {
 
@@ -577,7 +588,7 @@ module.exports = function(bowline,opts,log) {
 
 	}.bind(this);
 
-	this.checkForUpdate = function(callback) {
+	this.pollHTTPForUpdate = function(callback) {
 
 		var options = {method: 'HEAD', host: this.release.host, port: 80, path: this.release.url_path};
 		var req = http.request(options, function(res) {

@@ -324,7 +324,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// Ok, string together the username and namespace
 		var docker_tag = username + "/" + namespace;
 
-		console.log("!trace search? ",{ docker_tag: docker_tag });
+		// console.log("!trace search? ",{ docker_tag: docker_tag });
 
 		// Hrmmm, more than one can exist.
 		// But, that's OK, it's just gotta be registered at least once.
