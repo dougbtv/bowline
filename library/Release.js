@@ -24,7 +24,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 				// Who owns this?
 		active: Boolean,											  				// Is this currently active?
 		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
-		docker_tag: {type: String, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
+		docker_tag: {type: String, required: true, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
 		dockerfile: String,
 		
 		// --------------- Storage options
@@ -44,12 +44,12 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 
 		// ----------- Git variables.
-		git_method: String,															// What git method do we use? (pure git or github)
-		git_enabled: Boolean,														// Do we upate the git repo?
-		git_repo: { type: String, match: new RegExp(validator.git_repo) },			// What's the git repo?
-		git_path: {type: String, match: new RegExp(validator.git_path) },			// This is the path to the dockerfile in the git repo
-		branch_name: String,														// What's the NEW branch name you'd like?
-		branch_master: String,														// What's your master branch name?
+		git_method: String,																	// What git method do we use? (pure git or github)
+		git_enabled: Boolean,																// Do we upate the git repo?
+		git_repo: { type: String, required: true, match: new RegExp(validator.git_repo) },	// What's the git repo?
+		git_path: { type: String, required: true, match: new RegExp(validator.git_path) },	// This is the path to the dockerfile in the git repo
+		branch_name: { type: String, required: true },										// What's the NEW branch name you'd like?
+		branch_master: { type: String, required: true },										// What's your master branch name?
 
 		// github specific variables
 		github_oauth: String,
@@ -165,7 +165,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 		this.updateReleaseProperties(inrelease,release,function(err){
 
-			callback(err);
+			callback(err,release._id);
 
 		});
 

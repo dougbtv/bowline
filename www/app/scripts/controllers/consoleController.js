@@ -10,7 +10,7 @@
  */
 bowlineApp.controller('consoleController', ['$scope', '$location', '$http', 'loginModule', 'ENV', function($scope,$location,$http,login,ENV) {
 
-  	console.log("!trace console controller");
+  	// console.log("!trace console controller");
 
   	$scope.logOut = function() {
 

@@ -9,7 +9,7 @@ bowlineApp.directive('navbar', function(){
 		templateUrl: 'views/navbar.html',
 		controller: ['$scope','$http','$attrs','$location','ENV', 'loginModule', function ($scope,$http,$attrs,$location,ENV,login) {
 
-			console.log("!trace woot NAVBAR directive.");
+			// console.log("!trace woot NAVBAR directive.");
 
 			$scope.navClass = function (page) {
 	

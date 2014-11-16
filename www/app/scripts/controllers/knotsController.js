@@ -2,6 +2,9 @@
 
 bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$sce,$location,$http,login,release,$timeout,ENV) {
 
+		// Default our mode.
+		$scope.mode = "status";
+
 		$scope.params = $location.search();
 		$scope.is_owner = false;
 
@@ -13,10 +16,16 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		if ($scope.params.add) {
 			$scope.form_edit = true;
 			$scope.loading = false;
+
 			// initial the single
+			// ...with some friendly defaults
 			$scope.single = {
 				hook_secret: lil.uuid(),
+				branch_name: "autobuild",
+				branch_master: "master",
 			};
+
+			$scope.mode = "properties";
 		}
 
 
@@ -175,8 +184,6 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		};
 
-		$scope.mode = "status";
-
 		$scope.changeMode = function(mode) {
 
 			$scope.mode = mode;
@@ -215,6 +222,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			release.getSingleRelease($scope.params.details,function(err,single){
 
+				// Which which are required.
+
 				if (!err) {
 
 					$scope.socketSubscribe(single);
@@ -229,7 +238,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 					// figure out the readme.
 					// Strip the Dockerfile from the path.
-					var path_readme = single.git_path.replace(/Dockerfile/,'README.md');
+					var path_readme = '';
+					if (single.git_path) {
+						path_readme = single.git_path.replace(/Dockerfile/,'README.md');	
+					}
 					
 					// Ok, let's compile a github URL.
 					// var url_github = 'https://github.com/' + release.git_repo + '/tree/' + release.branch_master + path_readme;
@@ -366,15 +378,20 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			
 
-			release.editRelease($scope.single,$scope.params.add,function(err){
+			release.editRelease($scope.single,$scope.params.add,function(err,releaseid){
 				if (!err) {
 
 					// Ok, that's good, now we can reload.
 					// Let's start the job.
-					$scope.startJob($scope.single._id,function(){
+					$scope.startJob(releaseid,function(){
 						
 						$scope.form_edit = false;
 						$scope.save_success = true;
+
+						// Let's reload with details.
+						// !bang
+						$scope.showDetails(releaseid);
+
 						$timeout(function(){
 							$scope.save_success = false;
 						},1250);
@@ -518,8 +535,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		// Ok bring up the details link.
 		$scope.showDetails = function(id) {
-			$location.search('details', id);
 			$location.search('add', null);
+			$location.search('details', id);
 		};
 
 		// And instantiate.

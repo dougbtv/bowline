@@ -27,10 +27,10 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 		if (add_release) {
 
 			$http.post(ENV.api_url + '/api/addRelease', { release: release, session: login.sessionpack })
-				.success(function(release){
+				.success(function(addresult){
 
 					// console.log("!trace addRelease data",release);
-					callback(null,release);
+					callback(addresult.error,addresult.releaseid);
 
 				}.bind(this)).error(function(data){
 
@@ -44,7 +44,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 				.success(function(release){
 
 					// console.log("!trace editRelease data",release);
-					callback(null,release);
+					callback(release.error,release);
 
 				}.bind(this)).error(function(data){
 
