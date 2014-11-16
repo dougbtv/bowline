@@ -56,6 +56,22 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	};
 
+	this.searchCollaborators = function(searchstring,callback) {
+
+		$http.post(ENV.api_url + '/api/searchCollaborators', { session: login.sessionpack, search: searchstring })
+			.success(function(users){
+
+				// console.log("!trace searchCollaborators release",release);
+				callback(null,users);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with searchCollaborators from API");
+
+			}.bind(this));
+
+	}
+
 	// This just gets all releases.
 	this.getSingleRelease = function(id,callback) {
 

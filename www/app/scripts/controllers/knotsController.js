@@ -406,6 +406,50 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		};
 
+		$scope.collaborators = [];
+
+		$scope.searchCollaborators = function(searchstring) {
+
+			console.log("!trace searchCollaborators??? ",searchstring);
+
+			if (searchstring) {
+				if (searchstring.length >= 3) {
+					release.searchCollaborators(searchstring,function(err,users){
+						console.log("searched for %s, found: %j",searchstring,users);
+						if (users) {
+							if (users.length) {
+								console.log("DINGER DINGER DINGER  searched for %s, found: %j",searchstring,users);
+								$scope.collaborators = users;
+							} else {
+								$scope.collaborators = [];
+							}
+						} else {
+							$scope.collaborators = [];
+						}
+					});
+				} else {
+					$scope.collaborators =  [];
+				}
+			} else {
+				$scope.collaborators = [];
+			}
+
+			/* return $http.get('http://maps.googleapis.com/maps/api/geocode/json', {
+					params: {
+						address: val,
+						sensor: false
+					}
+				}).then(function(response){
+					return response.data.results.map(function(item){
+						return item.formatted_address;
+					});
+				});
+			*/
+
+
+		};
+
+
 		$scope.deleteMinute = function(minute) {
 
 			// Keep everything but this minute.

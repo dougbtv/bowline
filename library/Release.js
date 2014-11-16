@@ -27,6 +27,13 @@ module.exports = function(bowline,opts,log,mongoose) {
 		docker_tag: {type: String, required: true, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
 		dockerfile: String,
 		
+		// -------------- Colaborators
+		collaborators: [
+			{ type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+		],
+
+		private: Boolean,
+
 		// --------------- Storage options
 		store_dockerhub: Boolean,
 		store_local: Boolean,

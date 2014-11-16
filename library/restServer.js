@@ -94,6 +94,10 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/addRelease', this.addRelease);
 		server.head('/api/addRelease', this.addRelease);
 
+		server.get('/api/searchCollaborators', this.searchCollaborators);
+		server.post('/api/searchCollaborators', this.searchCollaborators);
+		server.head('/api/searchCollaborators', this.searchCollaborators);
+
 		server.get('/api/forceUpdate', this.forceUpdate);
 		server.post('/api/forceUpdate', this.forceUpdate);
 		server.head('/api/forceUpdate', this.forceUpdate);
@@ -232,6 +236,29 @@ module.exports = function(bowline, opts, log) {
 
 		}
 
+	}
+
+	this.searchCollaborators = function(req, res, next) {
+
+		var input = req.params;
+
+		bowline.user.validateSession(input.session,function(validpack){
+			if (validpack.isvalid) {
+
+				bowline.user.searchCollaborators(input.search,function(err,users){
+					res.contentType = 'json';
+					if (err) {
+						res.send({error: err});
+					} else {
+						res.send(users);
+					}
+				});
+
+			} else {
+				callback(false);
+				res.send({error: "Invalid credentials"});
+			}
+		});
 	}
 
 	this.ownsRelease = function(releaseid,session,res,callback) {

@@ -121,6 +121,35 @@ module.exports = function(bowline, log, opts, mongoose) {
 
 	}
 
+	this.searchCollaborators = function(searchstring,callback) {
+
+		// Make a regex for search string.
+		var searchregex = new RegExp(searchstring,"i");
+
+		User.find({
+			email: searchregex,
+			username: searchregex,
+		},
+		'username _id',
+		function(err,users){
+
+			if (!err) {
+
+				callback(null,users);
+
+			} else {
+				log.error('mongo_error_searchcollab',{query: {
+					email: searchregex,
+					username: searchregex,
+				}});
+
+				callback("mongo_error_searchcollab");
+			}
+
+		});
+
+	}
+
 	this.forgotPassword = function(email,callback) {
 
 		User.findOne({email: email},function(err,user){

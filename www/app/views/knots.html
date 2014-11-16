@@ -181,6 +181,24 @@
 
 						<div class="panel panel-info">
 							<div class="knotproperties-header panel-heading">
+								<h3 class="panel-title">Collaborator</h3>
+							</div>
+							<div class="panel-body">
+								<pre>Model: {{asyncSelected | json}}</pre>
+								<pre>List: {{collaborators | json}}</pre>
+								
+    <input type="text" ng-model="asyncSelected" placeholder="Locations loaded via $http" typeahead="user.username for user in collaborators" ng-change="searchCollaborators(asyncSelected)" typeahead-loading="loadingLocations" class="form-control">
+								<table class="table table-striped">
+									<tr>
+										<td>d00d</td>
+										<td>[remove]</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<div class="panel panel-info">
+							<div class="knotproperties-header panel-heading">
 								<h3 class="panel-title">Git Repo</h3>
 							</div>
 							<div class="panel-body">
