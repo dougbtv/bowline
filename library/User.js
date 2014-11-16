@@ -126,12 +126,17 @@ module.exports = function(bowline, log, opts, mongoose) {
 		// Make a regex for search string.
 		var searchregex = new RegExp(searchstring,"i");
 
-		User.find({
-			email: searchregex,
-			username: searchregex,
-		},
+		var searchpack = {
+			$or: [ {email: searchregex},{ username: searchregex } ]
+		};
+
+		// console.log("!trace searchCollaborators searchpack: ",searchpack);
+
+		User.find(searchpack,
 		'username _id',
 		function(err,users){
+
+			// console.log("!trace searchCollaborators FOUND: ",users);
 
 			if (!err) {
 

@@ -44,7 +44,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 				.success(function(release){
 
 					// console.log("!trace editRelease data",release);
-					callback(release.error,release);
+					callback(release.error,release.releaseid);
 
 				}.bind(this)).error(function(data){
 

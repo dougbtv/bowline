@@ -181,17 +181,35 @@
 
 						<div class="panel panel-info">
 							<div class="knotproperties-header panel-heading">
-								<h3 class="panel-title">Collaborator</h3>
+								<h3 class="panel-title">Collaborators</h3>
 							</div>
 							<div class="panel-body">
-								<pre>Model: {{asyncSelected | json}}</pre>
-								<pre>List: {{collaborators | json}}</pre>
+								<!-- 
+									<pre>Model: {{selectedcollab.collaborator | json}}</pre>
+									<pre>List: {{collaborators | json}}</pre>
+								-->
 								
-    <input type="text" ng-model="asyncSelected" placeholder="Locations loaded via $http" typeahead="user.username for user in collaborators" ng-change="searchCollaborators(asyncSelected)" typeahead-loading="loadingLocations" class="form-control">
+								<div ng-show="!formEnabled()" class="row" style="padding-bottom: 15px;">
+									<div class="col-md-8">
+										<input type="text" 
+											ng-model="selectedcollab.collaborator"
+											placeholder="Search by username or email" 
+											typeahead="user.username for user in collaborators" 
+											ng-change="searchCollaborators(selectedcollab.collaborator)" 
+											typeahead-loading="loadingLocations" 
+											class="form-control" 
+										/>
+									</div>
+									<div class="col-md-4">
+										<button type="button" class="btn btn-sm btn-info" ng-click="addCollaborator(selectedcollab.collaborator)">Add Collaborator</button>
+									</div>
+								</div>
 								<table class="table table-striped">
-									<tr>
-										<td>d00d</td>
-										<td>[remove]</td>
+									<tr ng-repeat="user in single.collaborators">
+										<td>{{user.username}}</td>
+										<td ng-show="!formEnabled()">
+											<button type="button" class="btn btn-sm btn-info" ng-click="deleteCollaborator(user._id)">Delete</button>
+										</td>
 									</tr>
 								</table>
 							</div>

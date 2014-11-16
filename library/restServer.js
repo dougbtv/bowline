@@ -308,12 +308,13 @@ module.exports = function(bowline, opts, log) {
 
 		this.ownsRelease(input.release._id,input.session,res,function(releaseowner){
 			if (releaseowner) {
-				bowline.release.editRelease(input.release,function(err){
+				bowline.release.editRelease(input.release,function(err,releaseid){
 					res.contentType = 'json';
 					if (err) {
 						res.send({error: err});
 					} else {
-						res.send({});
+						// console.log("!trace RETURN RELEASEID: ",releaseid);
+						res.send({releaseid: releaseid});
 					}
 					
 				});

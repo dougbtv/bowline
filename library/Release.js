@@ -142,6 +142,18 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.branch_name = source.branch_name;
 		dest.branch_master = source.branch_master;
 
+		// Iteratively add collabs.
+		dest.collaborators = [];
+		if (source.collaborators) {
+			if (source.collaborators.length) {
+				for (var i = 0; i < source.collaborators.length; i++) {
+					dest.collaborators.push(
+						mongoose.Types.ObjectId(source.collaborators[i]._id)
+					);
+				}
+			}
+		}
+
 		dest.store_dockerhub = source.store_dockerhub;
 		dest.store_local = source.store_local;
 
@@ -188,7 +200,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 				
 				this.updateReleaseProperties(inrelease,release,function(err){
 
-					callback(err);
+					callback(err,inrelease._id);
 
 				});
 
@@ -278,30 +290,32 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// console.log("!trace filter : ",filter);
 
 		// TODO: This will be filtered in the future.
-		Release.find(filter,function(err,rels){
+		Release.find(filter)
+			.populate('collaborators','_id username')
+			.exec(function(err,rels){
 		
-			if (!err) {
+				if (!err) {
 
-				async.map(rels, function(item,callback){
+					async.map(rels, function(item,callback){
 
-					bowline.manager.jobProperties(item.slug,function(err,props){
-						item.job = props;
-						// console.log("!trace jobProperties full: ",item);
-						callback(err,item.toObject());
+						bowline.manager.jobProperties(item.slug,function(err,props){
+							item.job = props;
+							// console.log("!trace jobProperties full: ",item);
+							callback(err,item.toObject());
+						});
+
+					}, function(err, results){
+					    // results is now an array of stats for each file
+					    callback(results);
+
 					});
 
-				}, function(err, results){
-				    // results is now an array of stats for each file
-				    callback(results);
 
-				});
+				} else {
+					callback("Mongo error, couldn't getReleases: " + err);
+				}
 
-
-			} else {
-				callback("Mongo error, couldn't getReleases: " + err);
-			}
-
-		});
+			});
 
 	}
 

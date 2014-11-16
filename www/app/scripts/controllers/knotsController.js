@@ -65,6 +65,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.selectedlog = {};
 		$scope.selectedlog.logid = '';
 		$scope.selectedlog.log = {};
+
+		$scope.selectedcollab = {};
+		$scope.selectedcollab.collaborator = '';
+
 		
 		$scope.getLogs = function(callback) {
 			release.getLogs($scope.params.details,function(err,data){
@@ -390,8 +394,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 						// Let's reload with details.
 						// !bang
-						$scope.showDetails(releaseid);
-
+						if ($scope.params.add) {
+							$scope.showDetails(releaseid);
+						}
+						
 						$timeout(function(){
 							$scope.save_success = false;
 						},1250);
@@ -410,15 +416,15 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.searchCollaborators = function(searchstring) {
 
-			console.log("!trace searchCollaborators??? ",searchstring);
+			// console.log("!trace searchCollaborators??? ",searchstring);
 
 			if (searchstring) {
 				if (searchstring.length >= 3) {
 					release.searchCollaborators(searchstring,function(err,users){
-						console.log("searched for %s, found: %j",searchstring,users);
+						// console.log("searched for %s, found: %j",searchstring,users);
 						if (users) {
 							if (users.length) {
-								console.log("DINGER DINGER DINGER  searched for %s, found: %j",searchstring,users);
+								// console.log("DINGER DINGER DINGER  searched for %s, found: %j",searchstring,users);
 								$scope.collaborators = users;
 							} else {
 								$scope.collaborators = [];
@@ -434,20 +440,61 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				$scope.collaborators = [];
 			}
 
-			/* return $http.get('http://maps.googleapis.com/maps/api/geocode/json', {
-					params: {
-						address: val,
-						sensor: false
-					}
-				}).then(function(response){
-					return response.data.results.map(function(item){
-						return item.formatted_address;
-					});
-				});
-			*/
-
-
 		};
+
+		$scope.addCollaborator = function(add_username) {
+
+			// Ok, let's pick this out of the last collabs
+
+			var found = null;
+			for (var i = 0; i < $scope.collaborators.length; i++) {
+				if ($scope.collaborators[i].username == add_username) {
+					found = $scope.collaborators[i];
+					break;
+				}
+			}
+
+			if (found) {
+
+				var isdupe = false;
+				for (var j = 0; j < $scope.single.collaborators.length; j++) {
+					if ($scope.single.collaborators[j]._id == found._id) {
+						isdupe = true;
+					}
+				}
+
+				if ($scope.single.owner == found._id) {
+					isdupe = true;
+				}
+
+				if (!isdupe) {
+					$scope.single.collaborators.push({
+						_id: found._id,
+						username: add_username,
+					});				
+				}
+			}
+
+			// console.log("!trace addCollaborator: ",$scope.selectedcollab.collaborator);
+			$scope.selectedcollab.collaborator = "";
+
+
+		
+			
+		}
+
+		$scope.deleteCollaborator = function(userid) {
+
+			var keep = [];
+			for (var i = 0; i < $scope.single.collaborators.length; i++) {
+				if ($scope.single.collaborators[i]._id != userid) {
+					keep.push($scope.single.collaborators[i]);
+				}
+			}
+
+			$scope.single.collaborators = keep;
+
+		}
 
 
 		$scope.deleteMinute = function(minute) {
