@@ -227,6 +227,25 @@
 												<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
 											</td>
 										</tr>
+										<tr>
+											<td class="vert-align">Master Branch</td>
+											<td class="vert-align text-center">
+												<validator variable="single.branch_master" required='true' >
+											</td>
+											<td>
+												<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
+											</td>
+										</tr>
+
+										<tr>
+											<td class="vert-align">New Branch Name (prefix)</td>
+											<td class="vert-align text-center">
+												<validator variable="single.branch_name" required='true'>
+											</td>
+											<td>
+												<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="newly created branch names">
+											</td>
+										</tr>
 									</tbody>
 								</table>
 							</div>
@@ -309,25 +328,6 @@
 											</td>
 										</tr>
 
-										<tr>
-											<td class="vert-align">Master Branch</td>
-											<td class="vert-align text-center">
-												<validator variable="single.branch_master" required='true' >
-											</td>
-											<td>
-												<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
-											</td>
-										</tr>
-
-										<tr>
-											<td class="vert-align">New Branch Name (prefix)</td>
-											<td class="vert-align text-center">
-												<validator variable="single.branch_name" required='true'>
-											</td>
-											<td>
-												<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="newly created branch names">
-											</td>
-										</tr>
 									</tbody>
 								</table>
 							</div>
