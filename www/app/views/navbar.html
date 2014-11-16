@@ -40,10 +40,10 @@
                     <li ng-class="navClass('login')" ng-hide="loggedin"><a ng-href="#/login">Login</a></li>
                     <li ng-class="navClass('register')" ng-hide="loggedin"><a ng-href="#/register">Register</a></li>
 
-                    <li class="dropdown dropdown-toggle" on-toggle="toggled(open)" ng-show="loggedin">
+                    <li class="dropdown dropdown-toggle" on-toggle="toggledAlerts(open)" ng-show="loggedin">
                       
                         <a href class="dropdown dropdown-toggle" >
-                          Alerts <span class="badge">12</span>
+                          <i class="fa fa-comment-o" style="font-size: 16px;"></i> <span  class="badge">12</span>
                         </a>
                         <ul class="dropdown-menu">
                           <li ng-repeat="choice in [1,2,3]">

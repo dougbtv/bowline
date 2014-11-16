@@ -24,6 +24,11 @@ bowlineApp.directive('navbar', function(){
 				
 				return page === currentRoute ? 'active' : '';
 			};
+
+			// Ok it's been opened.
+			$scope.toggledAlerts = function(open) {
+				// console.log("!trace opened? ",open);
+			}
 			
 		}],
 	};
