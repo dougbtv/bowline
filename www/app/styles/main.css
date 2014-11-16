@@ -68,6 +68,10 @@ body {
   -webkit-user-select: none;
 }
 
+.logactive {
+  background-color: #ABCFED !important;
+}
+
 /* ---------------------------- validator */
 
 .validator-error {

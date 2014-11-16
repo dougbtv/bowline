@@ -151,7 +151,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.logHighlight = function(logid) {
 
 			if ($scope.selectedlog.logid == logid) {
-				return "active";
+				return "active logactive";
 			} else {
 				return "";
 			}
