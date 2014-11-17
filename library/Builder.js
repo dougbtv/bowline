@@ -153,6 +153,7 @@ module.exports = function(bowline,opts,log) {
 						break;
 
 					default:
+						callback(null);
 						break;
 
 				}

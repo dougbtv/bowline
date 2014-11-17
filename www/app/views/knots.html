@@ -316,7 +316,7 @@
 												<div class="col-sm-8">
 													<input ng-model="single.hook_secret" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="a uuid">
 												</div>
-												<div class="col-sm-4">
+												<div class="col-sm-4" ng-show="!formEnabled()">
 													<button type="button" class="btn btn-sm btn-info" ng-click="generateUUID()">Generate</button>
 												</div>
 											</td>
