@@ -190,5 +190,10 @@ module.exports = {
 		});
 		
 	},
+	serverKill: function(test) {
+		bowline.kill();
+		test.ok(true, "Server killed");
+		test.done();
+	}
 
 };
