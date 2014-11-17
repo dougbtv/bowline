@@ -402,21 +402,39 @@ module.exports = function(bowline, log, opts, mongoose) {
 
 		var email = sessionpack.username;
 		var sessionid = sessionpack.session;
-		
-		// Ok, let's look for a result.
-		// email or username is OK.
-		var searchpack = { $or: [ {email: email}, {username: email} ], session_id: sessionid };
 
-		// go through the general validator with our searchpack.
-		this.userValidator(searchpack,function(validpack){
-			if (!validpack.isvalid) {
-				log.warn("validate_session",{note: "Vanilla user validation failed", searchpack: searchpack});
-			}
+		// Typical, session auth.
+		if (sessionid) {
 			
-			// console.log("!trace valid pack??? ",validpack);
+			// Ok, let's look for a result.
+			// email or username is OK.
+			var searchpack = { $or: [ {email: email}, {username: email} ], session_id: sessionid };
 
-			callback(validpack);
-		});
+			// go through the general validator with our searchpack.
+			this.userValidator(searchpack,function(validpack){
+				if (!validpack.isvalid) {
+					log.warn("validate_session",{note: "Vanilla user validation failed", searchpack: searchpack});
+				}
+				
+				// console.log("!trace valid pack??? ",validpack);
+
+				callback(validpack);
+			});
+
+		} else {
+	
+			// This is user/pass creds.
+			this.authenticate(sessionpack.username,sessionpack.password,false,function(auth){
+				if (auth) {
+					// That's great, it's a success this way.
+					callback({ isvalid: true, fulluser: auth.fulluser });
+				} else {
+					log.warn("username_session",{failed: true, username: sessionpack.username});
+					callback({ isvalid: false, fulluser: {}});
+				}
+			});
+
+		}
 
 	}
 
