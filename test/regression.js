@@ -11,7 +11,7 @@ var TEST_PASSWORD = 'testertester';
 
 // Start up bowline.
 var bowline;
-bowline = fork('./../bowline.js',['--logfile','/tmp/bowline.log']);
+bowline = fork('./bowline.js',['--logfile','/tmp/bowline.log']);
 
 exports.waitForServer = function(test) {
 	setTimeout(function(){
