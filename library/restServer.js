@@ -94,6 +94,10 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/addRelease', this.addRelease);
 		server.head('/api/addRelease', this.addRelease);
 
+		server.get('/api/deleteRelease', this.deleteRelease);
+		server.post('/api/deleteRelease', this.deleteRelease);
+		server.head('/api/deleteRelease', this.deleteRelease);
+
 		server.get('/api/searchCollaborators', this.searchCollaborators);
 		server.post('/api/searchCollaborators', this.searchCollaborators);
 		server.head('/api/searchCollaborators', this.searchCollaborators);
@@ -320,6 +324,27 @@ module.exports = function(bowline, opts, log) {
 					} else {
 						// console.log("!trace RETURN RELEASEID: ",releaseid);
 						res.send({releaseid: releaseid});
+					}
+					
+				});
+			}
+		});
+
+	}.bind(this);
+
+	this.deleteRelease = function(req, res, next) {
+
+		var input = req.params;
+
+		this.ownsRelease(input.releaseid,input.session,res,function(releaseowner){
+			if (releaseowner) {
+				bowline.release.deleteRelease(input.releaseid,function(err){
+					res.contentType = 'json';
+					if (err) {
+						res.send({error: err});
+					} else {
+						// console.log("!trace RETURN RELEASEID: ",releaseid);
+						res.send({});
 					}
 					
 				});

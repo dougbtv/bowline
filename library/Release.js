@@ -233,6 +233,19 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	};
 
+	this.deleteRelease = function(releaseid,callback) {
+
+		Release.find({ _id: releaseid })
+			.remove()
+			.exec(function(err){
+				if (err) {
+					log.error("delete_release",{err: err});
+				}
+				callback(err);
+			});
+
+	}
+
 	this.updateDockerfile = function(releaseid,dockerfile,callback) {
 
 		Release.update(
