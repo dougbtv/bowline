@@ -1,4 +1,4 @@
-/* global bowlineApp */
+/* global bowlineApp, moment, io */
 bowlineApp.directive('navbar', function(){
 
 	return {
@@ -9,7 +9,9 @@ bowlineApp.directive('navbar', function(){
 		templateUrl: 'views/navbar.html',
 		controller: ['$scope','$http','$attrs','$location','ENV', 'loginModule', function ($scope,$http,$attrs,$location,ENV,login) {
 
-			var socket = io.connect(ENV.api_url); 
+			var socket = io.connect(ENV.api_url);
+
+			$scope.messages = [];
 			
 			$scope.$on("loginStatus",function(event,status){
 				socket.emit('subscribe_user',{ session: login.sessionpack });
@@ -17,6 +19,14 @@ bowlineApp.directive('navbar', function(){
 
 				socket.on("buildbegins",function(data){
 					console.log("!trace buildbegins TRACE IT",data);
+					$scope.messages.push({
+						mode: "buildbegins",
+						slug: data.slug,
+						releaseid: data.releaseid,
+						read: false,
+						indate: new Date(),
+					});
+					$scope.$apply();
 				});
 			});
 
@@ -33,6 +43,12 @@ bowlineApp.directive('navbar', function(){
 				
 				return page === currentRoute ? 'active' : '';
 			};
+
+			$scope.secondsAgo = function(indate) {
+
+				return moment(indate).fromNow();
+
+			}
 
 			// Ok it's been opened.
 			$scope.toggledAlerts = function(open) {
