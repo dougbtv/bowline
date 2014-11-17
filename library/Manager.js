@@ -159,7 +159,7 @@ module.exports = function(bowline,opts,log) {
 		// Ok, find that release.
 		bowline.release.findByHookSecret(hook_secret,function(err,rel){
 
-			if (!err) {
+			if (!err && rel) {
 
 				this.jobExists(rel.slug,function(exists){
 					
@@ -179,7 +179,7 @@ module.exports = function(bowline,opts,log) {
 			} else {
 
 				// that's a bummer.
-				callback(err);
+				callback("Hook not found: " + err);
 
 			}
 

@@ -308,6 +308,17 @@
 										<!-- - - - - - - - - - - - hook -->
 
 										<tr ng-show="selected_method.value == 'hook'">
+											<td class="vert-align">Hook URL</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<code style="font-size: 80%;">{{ HOOKURL + single.hook_secret }}</code>
+											</td>
+										</tr>
+
+
+										<tr ng-show="selected_method.value == 'hook'">
 											<td class="vert-align">Secret Key</td>
 											<td class="vert-align text-center">
 												<validator variable="single.hook_secret" regex="validator.hook_secret" required='true' message="'Numbers, letters, dashes (must be unique)'">

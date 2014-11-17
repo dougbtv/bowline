@@ -28,6 +28,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.mode = "properties";
 		}
 
+		// 
+		$scope.HOOKURL = ENV.githook_url;
+
 
 		$scope.save_error = false;
 
