@@ -153,6 +153,10 @@ module.exports = function() {
 				flag: true,
 				help: 'Disable logging (for unit tests, usually)'
 			})
+			.option('skipautostart', {
+				flag: true,
+				help: 'Skip starting up all releases (for unit tests, usually)'
+			})
 			.option('forceupdate', {
 				flag: true,
 				help: 'Force an update automatically.'

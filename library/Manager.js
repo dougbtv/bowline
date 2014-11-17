@@ -83,7 +83,13 @@ module.exports = function(bowline,opts,log) {
 
 	}
 
-	this.initializeActiveSearches(function(){});
+	if (!opts.skipautostart) {
+		this.initializeActiveSearches(function(){});
+	} else {
+		log.warn("skipautostart_enabled",{note: "no searches activated, usually for unit testing"});
+	}
+
+	
 
 	// Let's compile a list of properties about this job.
 	this.jobProperties = function(findslug,callback) {
