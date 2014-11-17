@@ -9,7 +9,16 @@ bowlineApp.directive('navbar', function(){
 		templateUrl: 'views/navbar.html',
 		controller: ['$scope','$http','$attrs','$location','ENV', 'loginModule', function ($scope,$http,$attrs,$location,ENV,login) {
 
-			// console.log("!trace woot NAVBAR directive.");
+			var socket = io.connect(ENV.api_url); 
+			
+			$scope.$on("loginStatus",function(event,status){
+				socket.emit('subscribe_user',{ session: login.sessionpack });
+				// console.log("!trace woot NAVBAR directive.");
+
+				socket.on("buildbegins",function(data){
+					console.log("!trace buildbegins TRACE IT",data);
+				});
+			});
 
 			$scope.navClass = function (page) {
 	

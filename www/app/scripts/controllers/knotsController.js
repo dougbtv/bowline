@@ -239,7 +239,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					// console.log("!trace checking single release owner: ",single.owner,login.fulluser._id,(single.owner == login.fulluser._id));
 					
 					// Are we the owner of this release?
-					if (single.owner == login.fulluser._id) {
+					if (single.owner._id == login.fulluser._id) {
 						$scope.is_owner = true;
 					}
 

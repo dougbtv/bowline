@@ -327,6 +327,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// TODO: This will be filtered in the future.
 		Release.find(filter)
 			.populate('collaborators','_id username')
+			.populate('owner','_id username')
 			.exec(function(err,rels){
 		
 				if (!err) {

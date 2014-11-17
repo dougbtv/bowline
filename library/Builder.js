@@ -289,7 +289,10 @@ module.exports = function(bowline,opts,log) {
 			// pull the dockers
 			// build the docker image
 			// push the docker image
-			this.logit("We're starting to perform an update");
+			log.it("build_begins",{releaseid: this.release._id, note: "We're starting to perform an update"});
+			bowline.messenger.buildBegins(this.release._id,function(){});
+
+			// We're going to push a message to the users of this build.
 
 			// Let's make a build time for this.
 			var buildstamp = new moment().unix();
@@ -328,7 +331,7 @@ module.exports = function(bowline,opts,log) {
 							callback(err);	
 						});
 					} else {
-						this.logit("We skipped the build, by a debug flag.");
+						log.it("builder_note",{note: "We skipped the build, by a debug flag."});
 						callback(null);
 					}
 					
@@ -339,9 +342,9 @@ module.exports = function(bowline,opts,log) {
 				// We're done with this running job.
 				this.in_progress = false;
 				if (!err) {
-					this.logit("Looking good -- appears we have a successful build!");
+					log.it("builder_success",{releaseid: this.release._id, note: "Looking good -- appears we have a successful build!"});
 				} else {
-					this.logit("ERROR: Failed to performUpdate -- " + err);
+					log.error("builder_error",{releaseid: this.release._id, err: err});
 				}
 			}.bind(this));
 

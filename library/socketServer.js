@@ -30,6 +30,23 @@ module.exports = function(bowline,opts,log) {
 
 
 		}.bind(this));
+
+		socket.on('subscribe_user', function (data) {
+			// console.log("!trace subscribe_user call socket: ",data);
+
+			bowline.user.validateSession(data.session,function(validpack){
+				if (validpack.isvalid) {
+					// we can subscribe them to their username.
+					log.it("socket_join_success",validpack);
+					socket.join(validpack.fulluser.username);
+				}
+			});
+			
+			socket.join(data.slug);
+			// Ok, let's make a room for this.
+
+
+		}.bind(this));
 	
 	}.bind(this));
 
@@ -44,6 +61,13 @@ module.exports = function(bowline,opts,log) {
 
 		// log.it("debug_emit",{slug: slug,logline: logline});
 		io.to(slug).emit('buildfinished',{success: success});
+
+	}
+
+	this.buildBegins = function(slug,username,releaseid) {
+
+		console.log("!trace buildbegins in Messenger",slug,username,releaseid);
+		io.to(username).emit('buildbegins',{slug: slug, releaseid: releaseid});		
 
 	}
 
