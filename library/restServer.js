@@ -494,7 +494,7 @@ module.exports = function(bowline, opts, log) {
 			} else {
 
 				// That failed.
-				res.send({session: auth});
+				res.send({session: auth, failed: true});
 
 			}
 

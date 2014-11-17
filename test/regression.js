@@ -6,9 +6,12 @@ var client = restify.createJsonClient({
 
 var fork = require('child_process').fork;
 
+var TEST_USERNAME = 'tester';
+var TEST_PASSWORD = 'testertester';
+
 // Start up bowline.
 var bowline;
-bowline = fork('./../bowline.js',['--logdisable']);
+bowline = fork('./../bowline.js',['--logfile','/tmp/bowline.log']);
 
 exports.waitForServer = function(test) {
 	setTimeout(function(){
@@ -33,10 +36,52 @@ exports.testMethodExists = function(test){
 	
 };
 
+exports.loginFailure = function(test){
+	
+	client.post('/api/login',{
+		email: 'doooofer1dge',
+		password: 'somethingFAKE',
+	}, function(err, req, res, data) {
+
+		var result = JSON.parse(res.body);
+
+		if (!err) {
+			test.ok(result.failed, "Login failure");
+		} else {
+			test.ok(false, "Restify error: " + err);
+		}
+		test.done();
+	});
+	
+};
+
+
+exports.loginSuccessful = function(test){
+	
+	client.post('/api/login',{
+		email: TEST_USERNAME,
+		password: TEST_PASSWORD
+	}, function(err, req, res, data) {
+
+		var result = JSON.parse(res.body);
+		
+		if (!err) {
+			test.ok(result.fulluser.active, "Login succeeded");
+			// console.log(res.body);
+		} else {
+			test.ok(false, "Restify error: " + err);
+		}
+		test.done();
+	});
+	
+};
+
+/*
 exports.testSomethingElse = function(test){
 	test.ok(false, "this assertion should fail");
 	test.done();
 };
+*/
 
 exports.killServer = function(test){
 	bowline.kill();
