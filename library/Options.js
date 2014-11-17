@@ -126,6 +126,9 @@ module.exports = function() {
 				// default: "auto@builder.com",
 				help: 'The IRC network to connect to'
 			})
+			.option('logfile', {
+				help: 'Instead of logging to stdout, log to this file'
+			})
 			.option('git_setname', {
 				// default: "Your loyal autobuilder",
 				help: 'The IRC network to connect to'

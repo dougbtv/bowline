@@ -13,6 +13,14 @@ module.exports = function(opts) {
 		stream: prettyStdOut
 	}];
 
+	if (opts.logfile) {
+		// Set to this logfile.
+		mystreams = [{
+			level: 'debug',
+			path: opts.logfile
+		}];
+	}
+
 	// disable the log if need be.
 	if (opts.logdisable) {
 		mystreams = [];
