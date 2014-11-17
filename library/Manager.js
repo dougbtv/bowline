@@ -161,20 +161,26 @@ module.exports = function(bowline,opts,log) {
 
 			if (!err && rel) {
 
-				this.jobExists(rel.slug,function(exists){
-					
-					if (exists) {
+				if (rel.method == 'hook') {
 
-						// Great, we can begin it.
-						jobs[rel.slug].forceUpdate(function(err){
-							callback(null);
-						});
+					this.jobExists(rel.slug,function(exists){
 						
-					} else {
-						callback("no job found for slug: " + findslug);
-					}
+						if (exists) {
 
-				}.bind(this));
+							// Great, we can begin it.
+							jobs[rel.slug].forceUpdate(function(err){
+								callback(null);
+							});
+							
+						} else {
+							callback("no job found for slug: " + findslug);
+						}
+
+					}.bind(this));
+
+				} else {
+					callback("Git hooks not enabled for " + rel.slug);
+				}
 
 			} else {
 
