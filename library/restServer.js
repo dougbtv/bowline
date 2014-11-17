@@ -293,6 +293,7 @@ module.exports = function(bowline, opts, log) {
 		bowline.user.validateSession(input.session,function(validpack){
 			if (validpack.isvalid) {
 				bowline.release.addRelease(input.release,validpack.fulluser._id,function(err,releaseid){
+					// console.log("!trace ADD RELEASE??? ",releaseid);
 					res.contentType = 'json';
 					if (err) {
 						res.send({error: err});

@@ -108,6 +108,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 	// the check minutes must be a list, and all values must be between 0 and 59.
 	Release.schema.path('check_minutes').validate(function (value) {
 
+		// This only applies for http method.
+		if (this.method != 'http') {
+			return true;
+		}
+
 		if (value.length) {
 			for (var i = 0; i < value.length; i++) {
 				if (typeof value[i] == 'number') {
@@ -189,13 +194,17 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	this.addRelease = function(inrelease,userid,callback) {
 
-		console.log("!trace addRelease: userid: %s | inrelease",userid,inrelease);
+		// console.log("!trace addRelease: userid: %s | inrelease",userid,inrelease);
 
 		var release = new Release;
 		release.owner = mongoose.Types.ObjectId(userid);
 		release.active = true;
 
 		this.updateReleaseProperties(inrelease,release,function(err){
+
+			if (err) {
+				log.error("add_release",{err: err});
+			}
 
 			callback(err,release._id);
 
