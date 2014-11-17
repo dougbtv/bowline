@@ -169,6 +169,24 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
+	this.findByHookSecret = function(hook_secret,callback) {
+
+		var searchpack = {hook_secret: hook_secret};
+		// console.log("!trace findByHookSecret searchpack: ",searchpack);
+
+		this.getReleases(searchpack,function(rels){
+
+			if (rels) {
+				callback(null,rels[0]);
+			} else {
+				log.it("hook_secret_notfound",{hook_secret: hook_secret});
+				callback("hook_secret_notfound");
+			}
+			
+		});
+
+	}
+
 	this.addRelease = function(inrelease,userid,callback) {
 
 		console.log("!trace addRelease: userid: %s | inrelease",userid,inrelease);

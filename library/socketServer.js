@@ -8,7 +8,7 @@ module.exports = function(bowline,opts,log) {
 
 	io.on('connection', function (socket) {
 
-		log.it("socket_io_connection",{remove: 'this thing'});
+		// log.it("socket_io_connection",{remove: 'this thing'});
 
 		// -- a few examples.
 		// This goes to everyone but the person who requested.
@@ -23,9 +23,8 @@ module.exports = function(bowline,opts,log) {
 
 		// When they manually get an smc (e.g. when they first visit the page)
 		socket.on('subscribe_build', function (data) {
-			console.log("!trace subscribe_build call socket: ",data);
-			// this.individualSMCRequest(socket);
-
+			// console.log("!trace subscribe_build call socket: ",data);
+			
 			socket.join(data.slug);
 			// Ok, let's make a room for this.
 

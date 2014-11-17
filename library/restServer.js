@@ -102,6 +102,10 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/forceUpdate', this.forceUpdate);
 		server.head('/api/forceUpdate', this.forceUpdate);
 
+		server.get('/api/gitHookUpdate/:hook_secret', this.gitHookUpdate);
+		server.post('/api/gitHookUpdate/:hook_secret', this.gitHookUpdate);
+		server.head('/api/gitHookUpdate/:hook_secret', this.gitHookUpdate);
+
 		server.get('/api/getLogs', this.getLogs);
 		server.post('/api/getLogs', this.getLogs);
 		server.head('/api/getLogs', this.getLogs);
@@ -365,6 +369,23 @@ module.exports = function(bowline, opts, log) {
 					res.contentType = 'json';
 					res.send({});
 				});
+			}
+		});
+
+	}.bind(this);
+
+	this.gitHookUpdate = function(req, res, next) {
+
+		log.it("git_hook_update",req.params);
+
+		var input = req.params;
+
+		bowline.manager.updateByHook(input.hook_secret,function(err){
+			res.contentType = 'json';
+			if (!err) {
+				res.send({});
+			} else {
+				res.send({error: err});
 			}
 		});
 

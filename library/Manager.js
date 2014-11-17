@@ -154,6 +154,39 @@ module.exports = function(bowline,opts,log) {
 
 	}
 
+	this.updateByHook = function(hook_secret,callback) {
+
+		// Ok, find that release.
+		bowline.release.findByHookSecret(hook_secret,function(err,rel){
+
+			if (!err) {
+
+				this.jobExists(rel.slug,function(exists){
+					
+					if (exists) {
+
+						// Great, we can begin it.
+						jobs[rel.slug].forceUpdate(function(err){
+							callback(null);
+						});
+						
+					} else {
+						callback("no job found for slug: " + findslug);
+					}
+
+				}.bind(this));
+
+			} else {
+
+				// that's a bummer.
+				callback(err);
+
+			}
+
+		}.bind(this));
+
+	}
+
 	this.forceUpdate = function(releaseid,callback) {
 
 		bowline.release.getSlug(releaseid,function(err,findslug){
