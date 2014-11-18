@@ -420,7 +420,7 @@ module.exports = function(bowline,opts,log) {
 				// When did we start?
 				build_start = new Date();
 
-				var relative_gitpath = this.release.git_path.replace(/^\/(.+)Dockerfile$/,"$1");
+				var relative_gitpath = this.release.git_path.replace(/^\/(.*)Dockerfile$/,"$1");
 				var path_dockerfile = this.release.clone_path + relative_gitpath;
 
 				log.it("docker_build_begin",{releaseid: this.release._id, note: "And we begin the docker build"});
