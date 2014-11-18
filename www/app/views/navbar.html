@@ -27,18 +27,27 @@
                     <li class="dropdown dropdown-toggle" on-toggle="toggledAlerts(open)" ng-show="loggedin">
                       
                         <a href class="dropdown dropdown-toggle" >
-                          <i class="fa fa-comment-o" style="font-size: 16px;"></i> <span ng-show="messages.length" class="badge">{{messages.length}}</span>
+                          <i class="fa fa-comment-o" style="font-size: 16px;"></i> <span ng-show="numberUnread()" class="badge">{{numberUnread()}}</span>
                         </a>
                         <ul class="dropdown-menu">
                           <li ng-repeat="message in messages">
-                            <a href ng-click="clickMessage(message)">
-                              <span ng-show="message.mode == 'buildbegins'"><i class="fa fa-space-shuttle"></i> </span>
-                              <strong>{{ message.slug }}</strong> 
+                            <a href ng-click="clickMessage($index)">
+                              
+                              <span ng-show="message.mode == 'buildbegins'">
+                                <i class="fa fa-space-shuttle" ng-class="messageReadClass(message.read)"></i>
+                              </span>
+                              
+                              <span ng-show="message.mode == 'buildcomplete'">
+                                <i ng-show="message.success" class="fa fa-check" ng-class="messageReadClass(message.read)"></i>
+                                <i ng-hide="message.success" class="fa fa-times" ng-class="messageReadClass(message.read)"></i>
+                              </span>
+                              
+                              <strong ng-class="messageReadClass(message.read)">{{ message.slug }}</strong> 
                               <BR /><span style="font-size: 70%;">{{secondsAgo(message.indate)}}</span>
                             </a>
                           </li>
                           <li ng-show="messages.length" class="divider"></li>
-                          <li ng-show="messages.length" ><a href>Mark all read</a></i>
+                          <li ng-show="messages.length" ><a href ng-click="clearMessages()">Clear Alerts</a></i>
                           <li ng-hide="messages.length" ><a href>No alerts right now.</a></i>
                         </ul>
                       

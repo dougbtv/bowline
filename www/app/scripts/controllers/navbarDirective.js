@@ -18,8 +18,8 @@ bowlineApp.directive('navbar', function(){
 				// console.log("!trace woot NAVBAR directive.");
 
 				socket.on("buildbegins",function(data){
-					console.log("!trace buildbegins TRACE IT",data);
-					$scope.messages.push({
+					// console.log("!trace buildbegins SOCKET",data);
+					$scope.messages.unshift({
 						mode: "buildbegins",
 						slug: data.slug,
 						releaseid: data.releaseid,
@@ -28,23 +28,68 @@ bowlineApp.directive('navbar', function(){
 					});
 					$scope.$apply();
 				});
+
+				socket.on("buildcomplete",function(data){
+					// console.log("!trace buildcomplete SOCKET",data);
+					$scope.messages.unshift({
+						mode: "buildcomplete",
+						slug: data.slug,
+						releaseid: data.releaseid,
+						success: data.success,
+						read: false,
+						indate: new Date(),
+					});
+					$scope.$apply();
+				});
+				
 			});
 
-			$scope.clickMessage = function(message){
+			$scope.numberUnread = function() {
+				if ($scope.messages.length) {
+					var counted = 0;
+					$scope.messages.forEach(function(message){
+						if (!message.read) {
+							counted++;
+						}
+					});
+					return counted;
+				} else {
+					return 0;
+				}
+			}
 
-				switch (message.mode) {
+			$scope.clearMessages = function() {
+				$scope.messages = [];
+			}
+
+			$scope.clickMessage = function(index){
+
+				switch ($scope.messages[index].mode) {
 
 					case "buildbegins":
+					case "buildcomplete":
 						// Let's build a location for the knot build in progress.
 						$location.path("/knots");
-						$location.search("details",message.releaseid);
+						$location.search("details",$scope.messages[index].releaseid);
 						$location.search("showbuild","true");
-						
-						break;
-					default:
-						console.log("!ERROR: clickMessage mode doesn't exist: ",message.mode);
 						break;
 
+					default:
+						console.log("!ERROR: clickMessage mode doesn't exist: ",$scope.messages[index].mode);
+						break;
+
+				}
+
+				$scope.messages[index].read = true;
+
+			}
+
+			$scope.messageReadClass = function(read) {
+
+				if (read) {
+					return "message-read";
+				} else {
+					return "message-unread";
 				}
 
 			}

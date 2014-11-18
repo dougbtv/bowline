@@ -66,40 +66,17 @@ module.exports = function(bowline,opts,log) {
 
 	this.buildBegins = function(slug,username,releaseid) {
 
-		console.log("!trace buildbegins in Messenger",slug,username,releaseid);
+		// console.log("!trace buildbegins in Messenger",slug,username,releaseid);
 		io.to(username).emit('buildbegins',{slug: slug, releaseid: releaseid});		
 
 	}
 
-	// When the SMC is updated server-side, we emit that globally.
-	/*
-	this.smcUpdate = function() {
+	
+	this.buildComplete = function(slug,username,success,releaseid) {
 
-		io.emit('pushsmc', this.askSMCObject());
-
-	}
-
-	// Otherwise, sometimes just one person needs it (say it's the first time they come to the page.)
-	this.individualSMCRequest = function(socket) {
-
-		socket.emit('pushsmc', this.askSMCObject());
+		io.to(username).emit('buildcomplete',{slug: slug, releaseid: releaseid, success: success});
 
 	}
-
-	this.askSMCObject = function() {
-
-		var returner = false;
-
-		var smc = smcman.smc.getSMC();
-
-		if (smc.phase) {
-			returner = smc;
-		}
-
-		return returner;
-
-	}
-	*/
 
 
 }

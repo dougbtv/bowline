@@ -72,6 +72,16 @@ body {
   background-color: #ABCFED !important;
 }
 
+/* ---------------------------- messages */
+
+.message-read {
+  color: gray;
+}
+
+.message-unread {
+  color: blue;
+}
+
 /* ---------------------------- validator */
 
 .validator-error {

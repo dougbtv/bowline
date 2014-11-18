@@ -10,7 +10,7 @@ module.exports = function(bowline,opts,log) {
 
 			if (rel) {
 
-				console.log("!trace buildBegins rel: ",rel);
+				// console.log("!trace buildBegins rel: ",rel);
 				// Ok, send a message for each user.
 				this.getCollaborators(rel,function(collabs){
 
@@ -23,7 +23,34 @@ module.exports = function(bowline,opts,log) {
 
 			} else {
 				log.error("messenger_beginfail",{releaseid: releaseid, note: "not found"});
-				callback("release not found for messaging");
+				callback("release not found for messaging buildBegins");
+			}
+
+		}.bind(this));
+
+	}
+
+	this.buildComplete = function(releaseid,success,callback) {
+
+		bowline.release.getReleases({ _id: releaseid },function(rels){
+
+			var rel = rels[0];
+
+			if (rel) {
+
+				// Ok, send a message for each user.
+				this.getCollaborators(rel,function(collabs){
+
+					collabs.forEach(function(collab){
+						bowline.socketserver.buildComplete(rel.slug,collab.username,success,rel._id);
+					});
+
+				}.bind(this));
+				
+
+			} else {
+				log.error("messenger_completefail",{releaseid: releaseid, note: "not found"});
+				callback("release not found for messaging buildComplete");
 			}
 
 		}.bind(this));
@@ -42,5 +69,7 @@ module.exports = function(bowline,opts,log) {
 		callback(collabs);
 
 	}
+
+
 
 }

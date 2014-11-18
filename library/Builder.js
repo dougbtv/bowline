@@ -236,7 +236,6 @@ module.exports = function(bowline,opts,log) {
 				update_dockerfile: function(callback) {
 
 					fs.readFile(path_dockerfile, 'utf8', function (err, dockerfile_contents) {
-						// !bang
 						if (!err) {
 
 							bowline.release.updateDockerfile(this.release._id,dockerfile_contents,function(err){
@@ -431,7 +430,7 @@ module.exports = function(bowline,opts,log) {
 				var relative_gitpath = this.release.git_path.replace(/^\/(.+)Dockerfile$/,"$1");
 				var path_dockerfile = this.release.clone_path + relative_gitpath;
 
-				this.logit("And we begin the docker build");
+				log.it("docker_build_begin",{releaseid: this.release._id, note: "And we begin the docker build"});
 
 				tail.on("line", function(data) {
 					// sometimes we get dupes, omit those.
@@ -480,7 +479,7 @@ module.exports = function(bowline,opts,log) {
 			
 			docker_push_local: function(callback) {
 				if (this.release.store_local) {
-					this.logit("Pushing to bowling registry");
+					log.it("push_bowline",{releaseid: this.release._id});
 					var localtag = opts.docker_localhost + '/' + this.release.docker_tag;
 					execlog('docker tag ' + this.release.docker_tag + ' ' + localtag,function(err,stdout,stderr){
 						if (!err) {
@@ -502,7 +501,7 @@ module.exports = function(bowline,opts,log) {
 
 			docker_push_dockerhub: function(callback) {
 				if (this.release.store_dockerhub) {
-					this.logit("Pushing to dockerhub");
+					log.it("push_dockerhub",{releaseid: this.release._id});
 					execlog('docker push ' + this.release.docker_tag,function(err,stdout,stderr){
 						callback(err,{stdout: stdout, stderr: stderr});
 					});
@@ -517,11 +516,8 @@ module.exports = function(bowline,opts,log) {
 
 			tail.unwatch();
 
-			if (!err) { 
-				this.logit("Grreeeat! Docker build & push successful");
-			} else {
-				this.logit("Docker build failed with: " + err);
-				console.log("!trace results for docker build: ",results);
+			if (err) {
+				log.warn("build_fail",{releaseid: this.release._id, err: err, results: results});
 			}
 
 			// Let's read the log file, and post to pasteall
@@ -544,6 +540,11 @@ module.exports = function(bowline,opts,log) {
 						end: new Date(),
 						success: !is_error
 					});
+
+					// Now we can send a emssage about it, now that we're done.
+					// !bang
+					bowline.messenger.buildComplete(this.release._id,!is_error,function(){});
+
 
 				}.bind(this));
 
