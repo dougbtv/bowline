@@ -31,7 +31,7 @@
                         </a>
                         <ul class="dropdown-menu">
                           <li ng-repeat="message in messages">
-                            <a href>
+                            <a href ng-click="clickMessage(message)">
                               <span ng-show="message.mode == 'buildbegins'"><i class="fa fa-space-shuttle"></i> </span>
                               <strong>{{ message.slug }}</strong> 
                               <BR /><span style="font-size: 70%;">{{secondsAgo(message.indate)}}</span>

@@ -230,13 +230,36 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			release.getSingleRelease($scope.params.details,function(err,single){
 
 				// Which which are required.
+				// console.log("!trace GET SINGLE: ",single);
 
 				if (!err) {
 
 					$scope.socketSubscribe(single);
-					
+
 					$scope.single = single;
 					// console.log("!trace checking single release owner: ",single.owner,login.fulluser._id,(single.owner == login.fulluser._id));
+
+					// Sometimes we show build info, e.g. when clicking in from messages.
+					if ($scope.params.showbuild) {
+
+						// Is the job still running?
+						if ($scope.single.job.in_progress) {
+
+							$scope.single.job.in_progress = true;
+							// show the logs screen.
+							$scope.mode = "in_progress";
+
+						} else {
+
+							// If it's not running, let's show the latest job.
+							$scope.getLogs(function(){
+								$scope.mode = "logs";
+								$scope.selectLog($scope.logs[0]._id);
+							});
+
+						}
+						
+					}
 					
 					// Are we the owner of this release?
 					if (single.owner._id == login.fulluser._id) {

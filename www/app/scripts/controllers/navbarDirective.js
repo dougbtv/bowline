@@ -30,6 +30,25 @@ bowlineApp.directive('navbar', function(){
 				});
 			});
 
+			$scope.clickMessage = function(message){
+
+				switch (message.mode) {
+
+					case "buildbegins":
+						// Let's build a location for the knot build in progress.
+						$location.path("/knots");
+						$location.search("details",message.releaseid);
+						$location.search("showbuild","true");
+						
+						break;
+					default:
+						console.log("!ERROR: clickMessage mode doesn't exist: ",message.mode);
+						break;
+
+				}
+
+			}
+
 			$scope.navClass = function (page) {
 	
 				// Get the route.
