@@ -533,19 +533,21 @@
 					</div>
 					
 					<hr />
-					<div style="overflow: auto; max-height: 450px;" id="logdiv">
-						<table class="table table-striped">
-							<tbody>
-								<tr ng-repeat="eachline in selectedlog.lines track by $index">
-									<td class="coded">
-										<pre class="unpre">{{ eachline }}</pre>
-										<span ng-hide="eachline">
-											&nbsp;
-										</span>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+					<div spinner="log_loading">
+						<div style="overflow: auto; max-height: 450px;" id="logdiv">
+							<table class="table table-striped">
+								<tbody>
+									<tr ng-repeat="eachline in selectedlog.lines track by $index">
+										<td class="coded">
+											<pre class="unpre">{{ eachline }}</pre>
+											<span ng-hide="eachline">
+												&nbsp;
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</span>
 

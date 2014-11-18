@@ -12,6 +12,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.loading = true;
 
+		$scope.log_loading = true;
+
 		// switch defaults if adding new knot
 		if ($scope.params.add) {
 			$scope.form_edit = true;
@@ -184,12 +186,24 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					if ($scope.logs[i]._id == logid) {
 						$scope.selectedlog.logid = $scope.logs[i]._id;
 						$scope.selectedlog.log = $scope.logs[i];
-						$scope.selectedlog.lines = $scope.logs[i].log.split("\n");
 						break;
 					}
 				}
 
 			}
+
+			// Ok, now let's load the log text on it's own.
+			$scope.log_loading = true;
+
+			release.getLogText($scope.single._id,$scope.selectedlog.logid,function(err,logtext){
+
+				$scope.log_loading = false;
+
+				if (!err) {
+					$scope.selectedlog.lines = logtext.split("\n");
+				}
+				
+			});
 
 		};
 

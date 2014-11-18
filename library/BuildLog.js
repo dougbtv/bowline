@@ -34,9 +34,27 @@ module.exports = function(mongoose,log) {
 		
 	}
 
+	this.getLogText = function(releaseid,logid,callback) {
+
+		// console.log("!trace getLogText",releaseid,logid);
+
+		BuildLog.findOne({_id: mongoose.Types.ObjectId(logid)},'log',function(err,blog){
+
+			if (!err) {
+				callback(null,blog.log);
+			} else {
+				log.error("buildlog_getlogtext",err);
+				callback(err);	
+			}
+
+		});
+
+	}
+
+	// Get a list of logs, minus the actual log text (it can be huuuuuge)
 	this.getLogs = function(releaseid,callback) {
 
-		BuildLog.find({release: releaseid})
+		BuildLog.find({release: releaseid},'-log')
 			.sort({enddate: -1})
 			.exec(function(err,logs){
 

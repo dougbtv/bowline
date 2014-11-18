@@ -283,6 +283,14 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
+	this.getLogText = function(releaseid,logid,callback) {
+
+		buildlog.getLogText(releaseid,logid,function(err,logtext){
+			callback(err,logtext);
+		});
+
+	}
+
 	this.isOwner = function(userid,releaseid,callback) {
 		Release.findOne({
 			$or: [{owner: userid},{collaborators: userid}],

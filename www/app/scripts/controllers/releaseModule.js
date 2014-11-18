@@ -129,6 +129,27 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	};
 
+	this.getLogText = function(releaseid,logid,callback) {
+
+		$http.post(ENV.api_url + '/api/getLogText', { releaseid: releaseid, logid: logid, session: login.sessionpack })
+			.success(function(data){
+
+				var err = null;
+				if (data.error) {
+					err = data.error;
+				}
+
+				// console.log("!trace getLogText data",data);
+				callback(err,data.log);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with getLogText from API");
+
+			}.bind(this));
+
+	}
+
 	this.getLogs = function(id,callback){
 
 		$http.post(ENV.api_url + '/api/getLogs', { id: id, session: login.sessionpack })

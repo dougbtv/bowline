@@ -114,6 +114,10 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/getLogs', this.getLogs);
 		server.head('/api/getLogs', this.getLogs);
 
+		server.get('/api/getLogText', this.getLogText);
+		server.post('/api/getLogText', this.getLogText);
+		server.head('/api/getLogText', this.getLogText);
+
 		server.get('/api/stopJob', this.stopJob);
 		server.post('/api/stopJob', this.stopJob);
 		server.head('/api/stopJob', this.stopJob);
@@ -431,6 +435,22 @@ module.exports = function(bowline, opts, log) {
 		});
 
 	}.bind(this);
+
+	this.getLogText = function(req, res, next) {
+
+		var input = req.params;
+
+		this.ownsRelease(input.releaseid,input.session,res,function(jobowner){
+			if (jobowner) {
+				bowline.release.getLogText(input.releaseid,input.logid,function(err,logtext){
+					res.contentType = 'json';
+					res.send({log: logtext});
+				});
+			}
+		});
+
+	}.bind(this);
+
 
 	this.getLogs = function(req, res, next) {
 
