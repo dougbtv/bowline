@@ -24,10 +24,7 @@ module.exports = function(bowline,opts,log) {
 	// Is there a build in progress?
 	this.in_progress = false;
 
-	// for Breaking up the repo options
-	var repo_username = "";
-	var repo_name = "";
-
+	
 	// Our job
 	var job;
 
@@ -59,10 +56,6 @@ module.exports = function(bowline,opts,log) {
 		// Let's set it's local variables.
 		this.release.clone_path = TMP_DIR + this.release.slug + "/";
 		this.release.log_docker = TMP_DIR + this.release.slug + ".docker.log";
-
-		// Ok, we need to do a little work on those git repo names to break it apart.
-		repo_username = this.release.git_repo.replace(/^(.+)\/.+$/,"$1");
-		repo_name = this.release.git_repo.replace(/^.+\/(.+)$/,"$1");
 
 		// Alright, so... what's our git method?
 		switch (this.release.git_method) {
@@ -545,6 +538,8 @@ module.exports = function(bowline,opts,log) {
 					// !bang
 					bowline.messenger.buildComplete(this.release._id,!is_error,function(){});
 
+					// And update the time stamp.
+					bowline.release.updateLastBuildStamp(this.release._id);
 
 				}.bind(this));
 

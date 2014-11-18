@@ -15,6 +15,11 @@ module.exports = function(inrelease,bowline,opts,log) {
 	var exec = require('child_process').exec;
 	var request = require("request");
 
+	// for Breaking up the repo options
+	// Ok, we need to do a little work on those git repo names to break it apart.
+	repo_username = this.release.git_repo.replace(/^(.+)\/.+$/,"$1");
+	repo_name = this.release.git_repo.replace(/^.+\/(.+)$/,"$1");
+
 	this.clone = function(callback) {
 
 		async.series({

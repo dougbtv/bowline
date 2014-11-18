@@ -61,6 +61,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// github specific variables
 		github_oauth: String,
 
+		// temporal properties
+		last_build: Date,
+
 		// ------------ Job properties.
 		job: {						// Here's our associate job.
 			exists: Boolean,		// Is there a job at all?
@@ -299,6 +302,30 @@ module.exports = function(bowline,opts,log,mongoose) {
 		});
 	}
 
+	this.updateLastBuildStamp = function(releaseid,callback) {
+
+		if (typeof callback == 'undefined') {
+			callback = function(){};
+		}
+
+		Release.findOne({ _id: releaseid},function(err,rel){
+
+			if (!err && rel) {
+
+ 				rel.last_build = new Date();
+ 				rel.save(function(err){
+ 					callback(err);
+ 				});
+
+			} else {
+				log.error("release_update_lastbuildstamp",{note: "wasn't found", err: err});
+				callback("release wasn't foudn for last buildstamp");
+			}
+
+		});
+
+	}
+
 	this.getActive = function(callback) {
 
 		Release.find({active: true},function(err,rels){
@@ -328,6 +355,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 		Release.find(filter)
 			.populate('collaborators','_id username')
 			.populate('owner','_id username')
+			.sort({last_build: -1})
+			.sort({docker_tag: 1})
 			.exec(function(err,rels){
 		
 				if (!err) {

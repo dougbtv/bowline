@@ -125,8 +125,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					// Ok, the build is finished, let's show 'em the log.
 					$scope.getLogs(function(){
 						// Alright, we refreshed the logs, let's move 'em to the right page
-						$scope.mode = "logs";
-						$scope.selectLog($scope.logs[0]._id);
+						$timeout(function(){
+							$scope.mode = "logs";
+							$scope.selectLog($scope.logs[0]._id);
+						},120);
 					});
 				});
 
