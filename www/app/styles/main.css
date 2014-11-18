@@ -73,6 +73,7 @@ body {
 }
 
 .gitlink {
+    font-family: "Courier New", Courier, monospace;
     text-decoration: none !important;
 }
 
