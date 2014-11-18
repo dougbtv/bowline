@@ -77,6 +77,14 @@ body {
     text-decoration: none !important;
 }
 
+.ansicolored {
+  color: red;
+}
+
+.thin-table-rows {
+  padding: 4px !important;
+}
+
 /* ---------------------------- messages */
 
 .message-read {

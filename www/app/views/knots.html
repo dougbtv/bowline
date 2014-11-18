@@ -477,8 +477,13 @@
 					<table class="table table-striped">
 						<tbody>
 							<tr ng-repeat="eachline in log_lines track by $index">
-								<td class="coded">
-									<pre class="unpre">{{ eachline }}</pre>
+								<td class="coded thin-table-rows">
+									<span ng-hide="eachline.colored">
+										<pre class="unpre">{{ eachline.line }}</pre>
+									</span>
+									<span ng-show="eachline.colored">
+										<pre class="unpre ansicolored">{{ eachline.line }}</pre>
+									</span>
 									<span ng-hide="eachline">
 										&nbsp;
 									</span>
@@ -538,8 +543,13 @@
 							<table class="table table-striped">
 								<tbody>
 									<tr ng-repeat="eachline in selectedlog.lines track by $index">
-										<td class="coded">
-											<pre class="unpre">{{ eachline }}</pre>
+										<td class="coded thin-table-rows">
+											<span ng-hide="eachline.colored">
+												<pre class="unpre">{{ eachline.text }}</pre>
+											</span>
+											<span ng-show="eachline.colored">
+												<pre class="unpre ansicolored">{{ eachline.text }}</pre>
+											</span>
 											<span ng-hide="eachline">
 												&nbsp;
 											</span>

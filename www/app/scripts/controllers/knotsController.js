@@ -115,7 +115,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				socket.on('buildlogline',function(logline){
 					// console.log("!trace buildlogline: ",logline);
 					$scope.$apply(function(){
-						$scope.log_lines.push(logline);	
+
+						$scope.log_lines.push($scope.getColoredLine(logline));	
 						$timeout(function(){
 							$('#logdiv').scrollTop($('#logdiv').prop('scrollHeight'));
 						},50);
@@ -200,12 +201,55 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				$scope.log_loading = false;
 
 				if (!err) {
-					$scope.selectedlog.lines = logtext.split("\n");
+					var templines = logtext.split("\n");
+				}
+
+				$scope.selectedlog.lines = [];
+
+				// color lines that you want.
+				for (var i = 0; i < templines.length; i++) {
+					
+					var color = $scope.getColoredLine(templines[i]);
+					
+					$scope.selectedlog.lines.push({
+						text: color.line,
+						colored: color.colored,
+					});
+
 				}
 				
 			});
 
 		};
+
+		// Now what about colorizing those ANSI colors?
+		// TODO: This is a quick hack.
+		// Escape.js -- google it, nice, designed for ANSI art.
+		// We'll just strip these codes and color red if it's colored.
+
+		$scope.getColoredLine = function(line) {
+
+			var colored = false;
+
+			// Does it have an escape sequence?
+			// \x1b will match ascii code 27.
+
+			// Let's strip reset first.
+			line = line.replace(/\x1b\[0m/g, "", line);
+
+			// If we stripped reset first, and something is here, let's mark it as colored.
+			if (line.match(/\x1b/)) {
+				colored = true;
+				// console.log("!trace line: ",line);
+				// Ok, cycle this line....
+				// console.log("!trace charAt: ",line.charCodeAt(0));
+				// ... remove the escape sequence.
+				line = line.replace(/\x1b\[\d+m/g, "", line);
+			}
+
+			return { line: line, colored: colored };
+
+		}
 
 		$scope.changeMode = function(mode) {
 
