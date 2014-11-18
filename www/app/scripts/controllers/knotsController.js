@@ -418,14 +418,14 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			release.editRelease($scope.single,$scope.params.add,function(err,releaseid){
 
+				$scope.loading = false;
+
 				if (!err) {
 
 					// Ok, that's good, now we can reload.
 					// Let's start the job.
 					$scope.startJob(releaseid,function(){
 
-						$scope.loading = false;
-						
 						$scope.form_edit = false;
 						$scope.save_success = true;
 
