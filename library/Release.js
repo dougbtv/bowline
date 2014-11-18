@@ -63,6 +63,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 		// temporal properties
 		last_build: Date,
+		last_commit: String,
 
 		// ------------ Job properties.
 		job: {						// Here's our associate job.
@@ -266,9 +267,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
-	this.addBuild = function(releaseid,start,end,log,success,callback) {
+	this.addBuild = function(releaseid,commit,start,end,log,success,callback) {
 
-		buildlog.addBuildLog(releaseid,start,end,log,success,function(err){
+		buildlog.addBuildLog(releaseid,commit,start,end,log,success,function(err){
 			callback(err);
 		});
 
@@ -302,7 +303,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		});
 	}
 
-	this.updateLastBuildStamp = function(releaseid,callback) {
+	this.updateLastBuildStamp = function(releaseid,commit,callback) {
 
 		if (typeof callback == 'undefined') {
 			callback = function(){};
@@ -313,6 +314,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 			if (!err && rel) {
 
  				rel.last_build = new Date();
+ 				rel.last_commit = commit;
  				rel.save(function(err){
  					callback(err);
  				});

@@ -523,7 +523,7 @@ module.exports = function(bowline,opts,log) {
 					is_error = true;
 				}
 
-				bowline.release.addBuild(this.release._id,build_start,new Date(),logcontents,!is_error,function(err){
+				bowline.release.addBuild(this.release._id,this.git.commit,build_start,new Date(),logcontents,!is_error,function(err){
 
 					// Ok, let's see if this worked!
 					log.it("build_complete",{
@@ -531,6 +531,7 @@ module.exports = function(bowline,opts,log) {
 						id: this.release._id,
 						start: build_start,
 						end: new Date(),
+						commit: this.git.commit,
 						success: !is_error
 					});
 
@@ -539,7 +540,7 @@ module.exports = function(bowline,opts,log) {
 					bowline.messenger.buildComplete(this.release._id,!is_error,function(){});
 
 					// And update the time stamp.
-					bowline.release.updateLastBuildStamp(this.release._id);
+					bowline.release.updateLastBuildStamp(this.release._id,this.git.commit);
 
 				}.bind(this));
 

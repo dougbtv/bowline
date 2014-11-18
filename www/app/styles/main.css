@@ -72,6 +72,10 @@ body {
   background-color: #ABCFED !important;
 }
 
+.gitlink {
+    text-decoration: none !important;
+}
+
 /* ---------------------------- messages */
 
 .message-read {

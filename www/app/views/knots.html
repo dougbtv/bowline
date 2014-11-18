@@ -72,6 +72,22 @@
 									</td>
 								</tr>
 
+								<tr ng-show="single.git_method == 'github' && single">
+									<td>
+										<strong>Last Commit Built: </strong>
+									</td>
+									<td class="text-center">
+										<span ng-show="single.last_commit">
+											<a target="_new" class="gitlink" ng-href="{{ gitHubCommitURL(single.last_commit) }}">
+												<i class="fa fa-github-alt"></i>
+												{{ shortCommit(single.last_commit) }}
+											</a>
+										</span>
+										<span ng-hide="single.last_commit">
+											-
+										</span>
+									</td>
+								</tr>
 								<tr ng-show="single.method == 'http'">
 									<td>
 										<strong>Last HTTP Poll: </strong>
@@ -492,10 +508,24 @@
 							<p>
 								Build took {{ logDuration(selectedlog.log.startdate,selectedlog.log.enddate) }}
 							</p>
+							<p>
+								Built commit: 
+								<span ng-show="single.git_method == 'github'">
+									<a target="_new" class="gitlink" ng-href="{{ gitHubCommitURL(selectedlog.log.commit) }}">
+										<i class="fa fa-github-alt"></i>
+										{{ shortCommit(selectedlog.log.commit) }}
+									</a>
+								</span>	
+								<span ng-hide="single.git_method == 'github'">
+									{{ shortCommit(selectedlog.log.commit) }}
+								</span>			
+							</p>
 						</div>
 						<div class="col-md-4">
 							<p>
-								Started @ {{ logFormateDayDate(selectedlog.log.startdate) }}<BR />
+								Started @ {{ logFormateDayDate(selectedlog.log.startdate) }}
+							</p>
+							<p>
 								Finished @ {{ logFormateDayDate(selectedlog.log.enddate) }}
 							</p>
 						</div>

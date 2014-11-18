@@ -562,6 +562,25 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		    return (n < 10) ? ("0" + n) : n;
 		};
 
+		// https://github.com/dougbtv/bowline/commit/b64a5431a2f7562fb615839378dfa53f6172af62
+
+		$scope.gitHubCommitURL = function(commit) {
+			if ($scope.single) {
+				if ($scope.single.git_repo) {
+					return "https://github.com/" + $scope.single.git_repo + "/commit/" + commit;
+				}
+			}
+			return "";
+		}
+
+		$scope.shortCommit = function(commit) {
+			if (commit) {
+				return commit.substring(0,7);
+			} else {
+				return "";
+			}
+		}
+
 		$scope.enableForm = function() {
 
 			// hack for re-draw

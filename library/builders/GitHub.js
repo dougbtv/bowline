@@ -6,6 +6,9 @@ module.exports = function(inrelease,bowline,opts,log) {
 	// we'll reference this when we comment on a PR.
 	this.last_pullrequest = 0;
 
+	// What's the HEAD commit-ish?
+	this.commit = '';
+
 	// -- constants
 	var DEPTH = 1; 		// how deep?
 
@@ -63,6 +66,22 @@ module.exports = function(inrelease,bowline,opts,log) {
 						callback(err,stdout);	
 					}
 				});
+			}.bind(this),
+
+			get_headcommit: function(callback){
+				// this.logit("Beginning git clone.");`
+				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
+				exec('git rev-parse HEAD',
+					{cwd: this.release.clone_path},
+					function(err,stdout,stderr){
+						if (err) {
+							log.warn("github_get_headcommit_failed",{release: this.release});
+							callback("GitHub get head commit failed");
+						} else {
+							this.commit = stdout.trim();
+							callback(err,this.commit);
+						}
+					}.bind(this));
 			}.bind(this),
 
 		},function(err,results){

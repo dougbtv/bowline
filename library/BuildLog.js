@@ -8,17 +8,19 @@ module.exports = function(mongoose,log) {
 		success: Boolean,
 		startdate: Date,
 		enddate: Date,
+		commit: String,
 		log: String,
 	}, { collection: 'buildlogs' });
 
 	var BuildLog = mongoose.model('BuildLog', buildLogScheme);
 
-	this.addBuildLog = function(releaseid,start,end,log,success,callback) {
+	this.addBuildLog = function(releaseid,commit,start,end,log,success,callback) {
 
 		var build = new BuildLog;
 
 		build.release = mongoose.Types.ObjectId(releaseid);
 		build.success = success;
+		build.commit = commit;
 		build.log = log;
 		build.startdate = start;
 		build.enddate = end;

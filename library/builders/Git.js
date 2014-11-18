@@ -3,6 +3,10 @@ module.exports = function(inrelease,bowline,opts,log) {
 	// an instance of the applicable release.
 	this.release = inrelease;
 
+	// our working head commit
+	this.commit = '';
+
+
 	// our deps.
 	var moment = require('moment');
 	var async = require('async');
