@@ -100,8 +100,6 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				});
 		};
 
-		$scope.getMoreLogs = function() {}
-
 		if ($scope.params.details) {
 
 			socket.on('build_slug',function(id,msg){
@@ -220,23 +218,29 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 				$scope.log_loading = false;
 
+				var templines;
+
 				if (!err) {
-					var templines = logtext.split("\n");
+					templines = logtext.split("\n");
+					$scope.selectedlog.lines = [];
+
+					// color lines that you want.
+					for (var i = 0; i < templines.length; i++) {
+						
+						var color = $scope.getColoredLine(templines[i]);
+						
+						$scope.selectedlog.lines.push({
+							text: color.line,
+							colored: color.colored,
+						});
+
+					}
+
+				} else {
+					console.log("!ERROR: Couldn't get log text: ",err);
 				}
 
-				$scope.selectedlog.lines = [];
-
-				// color lines that you want.
-				for (var i = 0; i < templines.length; i++) {
-					
-					var color = $scope.getColoredLine(templines[i]);
-					
-					$scope.selectedlog.lines.push({
-						text: color.line,
-						colored: color.colored,
-					});
-
-				}
+				
 				
 			});
 
@@ -269,7 +273,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			return { line: line, colored: colored };
 
-		}
+		};
 
 		$scope.changeMode = function(mode) {
 
@@ -595,7 +599,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		
 			
-		}
+		};
 
 		$scope.deleteCollaborator = function(userid) {
 
@@ -608,7 +612,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			$scope.single.collaborators = keep;
 
-		}
+		};
 
 
 		$scope.deleteMinute = function(minute) {
@@ -649,7 +653,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				}
 			}
 			return "";
-		}
+		};
 
 		$scope.shortCommit = function(commit) {
 			if (commit) {
@@ -657,7 +661,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			} else {
 				return "";
 			}
-		}
+		};
 
 		$scope.enableForm = function() {
 

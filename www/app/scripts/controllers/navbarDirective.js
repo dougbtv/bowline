@@ -56,11 +56,11 @@ bowlineApp.directive('navbar', function(){
 				} else {
 					return 0;
 				}
-			}
+			};
 
 			$scope.clearMessages = function() {
 				$scope.messages = [];
-			}
+			};
 
 			$scope.clickMessage = function(index){
 
@@ -82,7 +82,7 @@ bowlineApp.directive('navbar', function(){
 
 				$scope.messages[index].read = true;
 
-			}
+			};
 
 			$scope.messageReadClass = function(read) {
 
@@ -92,7 +92,7 @@ bowlineApp.directive('navbar', function(){
 					return "message-unread";
 				}
 
-			}
+			};
 
 			$scope.navClass = function (page) {
 	
@@ -112,12 +112,12 @@ bowlineApp.directive('navbar', function(){
 
 				return moment(indate).fromNow();
 
-			}
+			};
 
 			// Ok it's been opened.
 			$scope.toggledAlerts = function(open) {
 				// console.log("!trace opened? ",open);
-			}
+			};
 			
 		}],
 	};
