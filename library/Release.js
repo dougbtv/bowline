@@ -275,9 +275,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
-	this.getLogs = function(releaseid,callback) {
+	this.getLogs = function(releaseid,startpos,endpos,callback) {
 
-		buildlog.getLogs(releaseid,function(err,logs){
+		buildlog.getLogs(releaseid,startpos,endpos,function(err,logs){
 			callback(err,logs);
 		});
 

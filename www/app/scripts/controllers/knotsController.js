@@ -65,7 +65,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		var socket = io.connect(ENV.api_url); 
 
-		$scope.logs = {};
+		$scope.logs = [];
 
 		$scope.selectedlog = {};
 		$scope.selectedlog.logid = '';
@@ -74,15 +74,33 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.selectedcollab = {};
 		$scope.selectedcollab.collaborator = '';
 
+		$scope.logs_pagestart = 0;
+		$scope.logs_pageend = 10;
+		$scope.logs_pageincrement = 10;
+		$scope.logs_found_all = false;
+
 		
 		$scope.getLogs = function(callback) {
-			release.getLogs($scope.params.details,function(err,data){
-				$scope.logs = data;
-				if (callback) {
-					callback(null);
-				}
-			});
+			release.getLogs(
+				$scope.params.details,
+				$scope.logs_pagestart,
+				$scope.logs_pageend,
+				function(err,data){
+					$scope.logs_pagestart += $scope.logs_pageincrement;
+					$scope.logs_pageend += $scope.logs_pageincrement;
+					// console.log("!getLogs data: ",data);
+					$scope.logs = $scope.logs.concat(data.logs);
+					if (data.count < $scope.logs_pageend) {
+						$scope.logs_found_all = true;
+					}
+					if (callback) {
+						callback(null);
+					}
+
+				});
 		};
+
+		$scope.getMoreLogs = function() {}
 
 		if ($scope.params.details) {
 
@@ -181,6 +199,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.selectLog = function(logid) {
 
+			$scope.mode = 'logdetail';
+
 			if ($scope.logs) {
 
 				for (var i = 0; i < $scope.logs.length; i++) {
@@ -257,9 +277,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			switch (mode) {
 				case "logs":
-					if ($scope.logs.length) {
+					/* if ($scope.logs.length) {
 						$scope.selectLog($scope.logs[0]._id);
-					}
+					} */
 					break;
 				case "readme":
 					$timeout(function(){

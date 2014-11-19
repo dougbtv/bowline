@@ -64,7 +64,7 @@
 									</td>
 									<td class="text-center">
 										<span ng-show="single.last_build">
-											{{ ago(single.last_build) }} 
+											<a href ng-click="selectLog(logs[0]._id)" class="gitlink">{{ ago(single.last_build) }}</a>
 										</span>
 										<span ng-hide="single.last_build">
 											-
@@ -496,6 +496,52 @@
 
 			<span ng-switch-when="logs">
 
+				<table class="table table-striped">
+
+					<thead>
+						<tr>
+							<th width="10%" class="text-center">Status</th>
+							<th>Finished @</th>
+							<th>Commit</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr ng-repeat="log in logs">
+							<td class="text-center">
+								<span ng-show="log.success">
+									<i class="fa fa-check-circle" style="color: green; padding-right: 12px;"></i>
+								</span>
+								<span ng-hide="log.success">
+									<i class="fa fa-times" style="color: red; padding-right: 12px;"></i>
+								</span>
+							</td>
+							<td>
+								<a href ng-click="selectLog(log._id)">
+									{{ formatLogDate(log.enddate) }}
+								</a>
+							</td>
+							<td>
+								<span ng-show="log.commit">
+									<a target="_new" class="gitlink" ng-href="{{ gitHubCommitURL(log.commit) }}">
+										<i class="fa fa-github-alt"></i>
+										{{ shortCommit(log.commit) }}
+									</a>
+								</span>
+								<span ng-hide="log.commit">
+									-
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				
+				<button type="button" class="btn btn-sm btn-info" ng-click="getLogs()" ng-disabled="logs_found_all">Show More</button>
+
+			</span>
+
+			<span ng-switch-when="logdetail">
 
 				<span ng-show="selectedlog.logid">
 					<div class="row">
@@ -572,12 +618,16 @@
 	<div class="col-sm-3" ng-hide="params.add">
 		<div class="list-group">
 
-			<a ng-click="changeMode('properties')" ng-class="navHighlight('properties')" class="list-group-item ahover">
-				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Properties
-			</a>
-
 			<a ng-click="changeMode('status')" ng-class="navHighlight('status')" class="list-group-item ahover">
 				<i class="fa fa-cogs" style="padding-right: 12px;"></i>Status
+			</a>
+
+			<a ng-click="changeMode('logs')" ng-class="navHighlight('logs')" class="list-group-item ahover">
+				<i class="fa fa-book" style="padding-right: 12px;"></i>Build Logs
+			</a>
+
+			<a ng-click="changeMode('properties')" ng-class="navHighlight('properties')" class="list-group-item ahover">
+				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Properties
 			</a>
 
 			<a ng-click="changeMode('readme')" ng-class="navHighlight('readme')" class="list-group-item ahover">
@@ -588,29 +638,10 @@
 				<i class="fa fa-cubes" style="padding-right: 12px;"></i>Dockerfile
 			</a>
 
-			<a ng-click="changeMode('logs')" ng-class="navHighlight('logs')" class="list-group-item ahover">
-				<i class="fa fa-book" style="padding-right: 12px;"></i>Build Logs
-			</a>
-
-			
-
 		</div>
 
 
-		<div ng-show="mode == 'logs'" class="list-group">
-
-			<a ng-repeat="log in logs" ng-click="selectLog(log._id)" ng-class="logHighlight(log._id)" class="list-group-item ahover">
-				<span ng-show="log.success">
-					<i class="fa fa-check-circle" style="color: green; padding-right: 12px;"></i>
-				</span>
-				<span ng-hide="log.success">
-					<i class="fa fa-times" style="color: red; padding-right: 12px;"></i>
-				</span>
-
-				{{ formatLogDate(log.enddate) }}
-			</a>
-
-		</div>
+		
 
 	</div>
 </span>

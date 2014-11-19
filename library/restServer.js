@@ -458,7 +458,7 @@ module.exports = function(bowline, opts, log) {
 
 		this.ownsRelease(input.id,input.session,res,function(jobowner){
 			if (jobowner) {
-				bowline.release.getLogs(input.id,function(err,logs){
+				bowline.release.getLogs(input.id,input.startpos,input.endpos,function(err,logs){
 					res.contentType = 'json';
 					res.send(logs);
 				});

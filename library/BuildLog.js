@@ -52,19 +52,29 @@ module.exports = function(mongoose,log) {
 	}
 
 	// Get a list of logs, minus the actual log text (it can be huuuuuge)
-	this.getLogs = function(releaseid,callback) {
+	this.getLogs = function(releaseid,startpos,endpos,callback) {
 
-		BuildLog.find({release: releaseid},'-log')
+		BuildLog.count({release: releaseid},function(err,count){
+
+			if (err) {
+				log.error("get_buildlog_mongocount_err",err);
+			}
+
+			BuildLog.find({release: releaseid},'-log')
 			.sort({enddate: -1})
+			.skip(startpos)
+			.limit((endpos-startpos))
 			.exec(function(err,logs){
 
 				if (err) {
 					log.error("get_buildlog_mongoerr",err);
 				}
 
-				callback(err,logs);
+				callback(err,{logs: logs, count: count});
 
 			});
+
+		});
 
 	}
 	

@@ -150,9 +150,9 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	}
 
-	this.getLogs = function(id,callback){
+	this.getLogs = function(id,startpos,endpos,callback){
 
-		$http.post(ENV.api_url + '/api/getLogs', { id: id, session: login.sessionpack })
+		$http.post(ENV.api_url + '/api/getLogs', { id: id, session: login.sessionpack, startpos: startpos, endpos: endpos })
 			.success(function(data){
 
 				var err = null;
