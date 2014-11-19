@@ -6,6 +6,7 @@ module.exports = function(bowline, log, opts, mongoose) {
 	var SALT_WORK_FACTOR = 10;
 
 	var uuid = require('node-uuid');
+	var md5 = require('md5');
 
 	// We use moment to figure out when their session expires.
 	var moment = require('moment');
@@ -49,6 +50,10 @@ module.exports = function(bowline, log, opts, mongoose) {
 		}
 	};
 
+	userSchema.virtual('gravatarhash')
+		.get(function () {
+			return md5.digest_s(this.email);
+		});
 
 	userSchema.virtual('resetURL')
 		.get(function () {

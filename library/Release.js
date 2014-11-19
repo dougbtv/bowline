@@ -396,8 +396,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 		// TODO: This will be filtered in the future.
 		Release.find(filter)
-			.populate('collaborators','_id username')
-			.populate('owner','_id username')
+			.populate('collaborators','_id username gravatarhash')
+			.populate('owner','_id username gravatarhash')
 			.sort({last_build: -1})
 			.sort({docker_tag: 1})
 			.exec(function(err,rels){
@@ -409,11 +409,13 @@ module.exports = function(bowline,opts,log,mongoose) {
 						bowline.manager.jobProperties(item.slug,function(err,props){
 							item.job = props;
 							// console.log("!trace jobProperties full: ",item);
-							callback(err,item.toObject());
+							//!bang
+							callback(err,item.toObject({ virtuals: true }));
 						});
 
 					}, function(err, results){
 					    // results is now an array of stats for each file
+					    console.log("!trace GET VIRTUAL POP: ",results);
 					    callback(results);
 
 					});

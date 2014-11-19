@@ -36,7 +36,8 @@
     "restify": "*",
     "socket.io": "^1.2.0",
     "tail": "^0.4.0",
-    "always-tail": "~0.1.1"
+    "always-tail": "~0.1.1",
+    "md5": "~1.0.0"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
