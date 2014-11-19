@@ -201,7 +201,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$location.search('add','true');
 			$location.search('details',null);
 			$location.search('mine',null);
-		}
+		};
 
 		$scope.selectLog = function(logid) {
 
@@ -740,7 +740,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			release.forceUpdate(id,function(err){
 				
-				console.log("!trace re-get after forceUpdate");
+				// console.log("!trace re-get after forceUpdate");
 
 				// force that the job is in progress.
 				$scope.getSingleRelease(function(){
@@ -792,10 +792,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.knotSearchFilter = function() {
 			// If it's long enough, or if it's empty, kick off a search
-			if ($scope.knot_search.length >= 3 || $scope.knot_search == "") {
+			if ($scope.knot_search.length >= 3 || $scope.knot_search === "") {
 				$scope.getReleases();
 			}
-		}
+		};
 
 		// And instantiate.
 		if ($scope.params.add) {
