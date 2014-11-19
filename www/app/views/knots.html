@@ -721,11 +721,10 @@
 	<thead>
 		<tr>
 			<th>Docker Tag</th>
-			<th>Git Repo</th>
-			<th>Method</th>
+			<th>Owner</th>
 			<th>Last Build</th>
 			<th class="text-center">Get Details</th>
-			<th class="text-center">Status</th>
+			<th class="text-center">Health</th>
 		</tr>
 	</thead>
 
@@ -735,8 +734,7 @@
 	-->
 		<tr data-toggle="collapse" data-target="#{{ rel._id }}" ng-repeat="rel in releases">
 			<td>{{rel.docker_tag}}</td>
-			<td>{{rel.git_repo}}</td>
-			<td>{{rel.method}}</td>
+			<td>{{rel.owner.username}}</td>
 			<td>
 				<span ng-show="rel.last_build">
 					{{ ago(rel.last_build) }}

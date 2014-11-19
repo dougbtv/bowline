@@ -57,6 +57,14 @@ module.exports = function(bowline, log, opts, mongoose) {
 				"&email=" + encodeURIComponent(this.email);
 		});
 
+	userSchema.virtual('resetURLParameter')
+		.get(function () {
+			return {
+				resetpass: this.resetkey,
+				email: this.email
+			};
+		});
+
 
 	// Compile it to a model.
 	var User = mongoose.model('User', userSchema);
@@ -197,6 +205,14 @@ module.exports = function(bowline, log, opts, mongoose) {
 
 	}
 
+	this.getPasswordResetURL = function(userid,callback) {
+
+		User.findOne({_id: userid},function(err,user){
+			callback(err,user.resetURLParameter);
+		});
+
+	}
+
 	this.setPassword = function(email,password,resetkey,callback) {
 
 		// Alright, let's see what we got.
@@ -221,15 +237,23 @@ module.exports = function(bowline, log, opts, mongoose) {
 						user.resetkey = this.uniqueHash();
 
 						// Save 'em.
-						user.save();
+						user.save(function(err){
+							if (err) {
+								log.error("save_passwordchange",{err: err});
+							}
+							callback({});
+						});
 
 						// Now, let's create a session for them, because this will log them in.
+						/* 
+						// is this deprecated??? maybe.
 						this.createSession(email,function(sessionid){
 							callback({
 								sessionid: sessionid,
 								fulluser: user,
 							});
 						});
+						*/
 
 					}.bind(this));
 

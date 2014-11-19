@@ -1,8 +1,8 @@
 /* global bowlineApp */
 /* global $ */
 
-bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$timeout', '$interval', '$cookies', 'loginModule', 'ENV', 
-	function($scope,$location,$http,$timeout,$interval,$cookies,login,ENV) {
+bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$timeout', '$interval', 'loginModule', 'ENV', 
+	function($scope,$location,$http,$timeout,$interval,login,ENV) {
 
 	// Just scroll to the top.
 	$("body,html").animate({scrollTop: 0}, "slow");
@@ -21,6 +21,11 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 		// Ok, we're in a password reset mode.
 		$scope.registration_phase = "resetpass";
 
+	}
+
+	$scope.localchange = false;
+	if (loc.localchange) {
+		$scope.localchange = true;
 	}
 
 	$scope.show_forgotpass_text = false;
@@ -94,16 +99,19 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 							$scope.registration_phase = "passwordresetcomplete";
 
 							// Let's try to log them in, now.
-							login.setLoggedIn(loc.email,data.session,data.admin,data.operator,data.fulluser,function(){
-								
-								// Now that they're logged in, bring 'em to the home page?
-								// !bang
+							// likely deprecated.
+							/*
+								login.setLoggedIn(loc.email,data.session,data.admin,data.operator,data.fulluser,function(){
+									
+									// Now that they're logged in, bring 'em to the home page?
+									// !bang
 
-								login.broadcastLoginStatus(true);
-								$location.search('initiallogin', 'true');
-								$location.path("home");
-							
-							});
+									login.broadcastLoginStatus(true);
+									$location.search('initiallogin', 'true');
+									$location.path("home");
+								
+								});
+							*/
 
 						} else {
 							// Show the api error.

@@ -151,6 +151,10 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/forgotpassword', this.forgotpassword);
 		server.head('/api/forgotpassword', this.forgotpassword);
 
+		server.get('/api/resetPasswordParameters', this.resetPasswordParameters);
+		server.post('/api/resetPasswordParameters', this.resetPasswordParameters);
+		server.head('/api/resetPasswordParameters', this.resetPasswordParameters);
+
 		// -------------------- Login & Session calls.
 
 		server.get('/api/login', this.userLogin);
@@ -586,6 +590,23 @@ module.exports = function(bowline, opts, log) {
 			res.contentType = 'json';
 			res.send(auth);
 
+		});
+
+	}
+
+	this.resetPasswordParameters = function(req, res, next) {
+
+		var input = req.params;
+
+		bowline.user.validateSession(input.session,function(validpack){
+			res.contentType = 'json';
+			if (validpack.isvalid) {
+				bowline.user.getPasswordResetURL(validpack.fulluser._id,function(err,params){
+					res.send(params);
+				});
+			} else {
+				res.send({error: "ain't no good."});
+			}
 		});
 
 	}

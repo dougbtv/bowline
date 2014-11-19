@@ -159,8 +159,10 @@ function loginModule($rootScope,$http,$cookies,$cookieStore,$timeout,$store,ENV)
 		// console.log("!trace Successful admin: ",$store.get('admin'));
 
 		// Send an event.
+		if (callback) {
+			callback();
+		}		
 		
-		callback();
 
 	};
 
