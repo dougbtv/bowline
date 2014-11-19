@@ -675,16 +675,48 @@
 </span>
 
 <span ng-hide="params.details || params.add">
-<h2>Knots</h2>
 
-<p>"Knots" make up each individual project that's being built by Bowline. Here you can get a preview of the currently running jobs. Right now, all knots are public. However, the intention of making them private in the future is here. Additionally, only the creator of a knot may manage it.</p>
+<span ng-hide="params.mine">
+	<div>
+		<h2>Knots</h2>
+	</div>
+
+	<p>"Knots" make up each individual project that's being built by Bowline. Here you're seeing some of the public knots.</p>
+</span>
+
+<span ng-show="params.mine">
+
+	<div class="col-md-8">
+		<h2 class="pull-left">My Knots</h2>
+	</div>
+	<div class="col-md-4">
+		<button type="button" class="btn btn-sm btn-info pull-right" style="margin-top: 25px;" ng-click="addKnotButton()">Add Knot</button>
+	</div>
+</span>
+
+
+<div class="clearfix"></div>
+<hr />
+
+<div class="col-md-6" style="margin-top: 10px; margin-bottom: 10px;">
+	<div class="input-group">
+		<span class="input-group-addon">Filter: </span>
+		<input type="text" ng-model="knot_search" ng-change="knotSearchFilter()" class="form-control" placeholder="(Search or regex)">
+	</div>
+</div>
+
 
 <div ng-show="error" class="alert alert-danger" role="alert">
 	<strong>Oh snap!</strong> We experienced an error: {{ error }}
 </div>
 
 	<div class="col-md-12">
-	<table class="table table-striped">
+	
+	<div ng-hide="releases" class="alert alert-info" role="alert">
+		<strong>No results</strong> Sorry, we didn't find any results for you.
+	</div>
+
+	<table ng-show="releases" class="table table-striped">
 
 	<thead>
 		<tr>

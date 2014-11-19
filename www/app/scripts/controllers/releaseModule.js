@@ -6,9 +6,16 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 	this.validator = {};
 
 	// This just gets all releases.
-	this.getReleases = function(callback) {
+	this.getReleases = function(mine,search,callback) {
 
-		$http.post(ENV.api_url + '/api/getReleases', { session: login.sessionpack })
+		var loginpack = {};
+		if (login.status) {
+			loginpack = login.sessionpack;
+		}
+
+		
+
+		$http.post(ENV.api_url + '/api/getReleases', { session: loginpack, mineonly: mine, search: search })
 			.success(function(data){
 
 				// console.log("!trace getReleases data",data);

@@ -14,6 +14,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.log_loading = true;
 
+		$scope.knot_search = "";
+
 		// switch defaults if adding new knot
 		if ($scope.params.add) {
 			$scope.form_edit = true;
@@ -194,6 +196,12 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			}
 
 		};
+
+		$scope.addKnotButton = function(){
+			$location.search('add','true');
+			$location.search('details',null);
+			$location.search('mine',null);
+		}
 
 		$scope.selectLog = function(logid) {
 
@@ -767,6 +775,24 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$location.search('details', id);
 		};
 
+		$scope.getReleases = function() {
+			release.getReleases($scope.params.mine,$scope.knot_search,function(err,rels){
+				if (!err) {
+					$scope.releases = rels;
+					// console.log("!trace checking releases: ",rels);
+				} else {
+					$scope.error = err;
+				}
+			});
+		};
+
+		$scope.knotSearchFilter = function() {
+			// If it's long enough, or if it's empty, kick off a search
+			if ($scope.knot_search.length >= 3 || $scope.knot_search == "") {
+				$scope.getReleases();
+			}
+		}
+
 		// And instantiate.
 		if ($scope.params.add) {
 
@@ -780,18 +806,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			} else {
 
-				release.getReleases(function(err,rels){
-
-					if (!err) {
-
-						$scope.releases = rels;
-						// console.log("!trace checking releases: ",rels);
-					} else {
-						$scope.error = err;
-					}
-					
-
-				});
+				$scope.getReleases();
 
 			}
 

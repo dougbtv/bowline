@@ -12,6 +12,7 @@ module.exports = function(bowline, opts, log) {
 
 	var fs = require('fs');
 	var io = require('socket.io');
+	var async = require('async');
 
 	var restify = require('restify');
 	var server = restify.createServer();
@@ -487,9 +488,33 @@ module.exports = function(bowline, opts, log) {
 
 		var input = req.params;
 
-		bowline.release.getReleases(false,function(rels){
-			res.contentType = 'json';
-			res.send(rels);
+		// console.log("!trace getReleases input: ",input);
+
+		var userid = null;
+
+		async.series({
+
+			check_session: function(callback){
+				if (input.session && input.mineonly) {
+					bowline.user.validateSession(input.session,function(validpack){
+						if (validpack.isvalid) {
+							userid = validpack.fulluser._id;
+						}
+						callback(null);
+					});
+				} else {
+					callback(null);
+				}
+			}
+
+		},function(err,result){
+
+			bowline.release.getReleaseList(userid,input.search,function(rels){
+				// console.log("!trace getReleaseList: ",rels);
+				res.contentType = 'json';
+				res.send(rels);
+			});
+
 		});
 
 	}

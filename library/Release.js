@@ -353,6 +353,39 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
+	this.getReleaseList = function(userid,search,callback) {
+
+		var andarray = [];
+
+		// Get for a specific user or collaborator if userid is defined.
+		if (userid) {
+			andarray.push({ $or: [{owner: userid},{collaborators: userid}] });
+		}
+
+		// We'll also search by a regex if search is defined.
+		if (search) {
+			var sregex = new RegExp(search,"ig");
+			andarray.push({ $or: [
+				{ slug: sregex },
+				{ docker_tag: sregex }
+			]});
+		}
+
+		var searchpack = {};
+
+		if (userid || search) {
+			searchpack = { $and: andarray };
+		}
+
+		// console.log("!trace getReleaseList input: ",userid,search);
+		// console.log("!trace getReleaseList searchpack: %j",searchpack);
+
+		this.getReleases(searchpack,function(results){
+			callback(results);
+		});
+
+	}
+
 	this.getReleases = function(filter,callback) {
 
 		if (!filter) {
