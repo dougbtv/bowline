@@ -118,6 +118,36 @@ bowlineApp.directive('navbar', function(){
 			$scope.toggledAlerts = function(open) {
 				// console.log("!trace opened? ",open);
 			};
+
+			$scope.myKnots = function() {
+				$location.path("/knots");
+				$location.search('mine','true');
+				$location.search('add',null);
+				$location.search('details',null);
+			};
+
+			$scope.addKnot = function() {
+				$location.path("/knots");
+				$location.search('add','true');
+				$location.search('mine',null);
+				$location.search('details',null);
+			};
+
+			$scope.goConsole = function() {
+				$location.path("/console");
+			};
+
+			$scope.goProfile = function() {
+				$location.path("/profile");
+			};
+
+			$scope.logOut = function() {
+
+				login.setLoggedOut(function(){
+					$location.path("/");
+				});
+
+			};
 			
 		}],
 	};

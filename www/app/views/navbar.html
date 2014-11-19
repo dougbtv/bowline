@@ -19,10 +19,22 @@
                     <li ng-class="navClass('knots')"><a ng-href="#/knots">Knots</a></li>
                     <li ng-class="navClass('docs')"><a ng-href="#/docs">Docs</a></li>
 
-                    <li ng-class="navClass('console')" ng-show="loggedin"><a ng-href="#/console">My Console</a></li>
-                    
                     <li ng-class="navClass('login')" ng-hide="loggedin"><a ng-href="#/login">Login</a></li>
                     <li ng-class="navClass('register')" ng-hide="loggedin"><a ng-href="#/register">Register</a></li>
+
+                    <li class="dropdown dropdown-toggle" ng-class="navClass('console')" ng-show="loggedin">
+                        <a href class="dropdown dropdown-toggle" >
+                          My Account
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li><a href ng-click="myKnots()">My knots</a></li>
+                          <li><a href ng-click="addKnot()">Add a knot</a></li>
+                          <li><a href ng-click="goProfile()">My Profile</a></li>
+                          <li><a href ng-click="goConsole()">Account Settings</a></li>
+                          <li class="divider"></li>
+                          <li><a href ng-click="logOut()">Log Out</a></li>
+                        </ul>
+                    </li>                    
 
                     <li class="dropdown dropdown-toggle" on-toggle="toggledAlerts(open)" ng-show="loggedin">
                       

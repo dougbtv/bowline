@@ -12,12 +12,6 @@ bowlineApp.controller('consoleController', ['$scope', '$location', '$http', 'log
 
   	// console.log("!trace console controller");
 
-  	$scope.logOut = function() {
-
-  		login.setLoggedOut(function(){
-  			$location.path("/");
-  		});
-
-  	};
+  	
 
 }]);
