@@ -695,8 +695,12 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					if (!$scope.form_edit) {
 						return true;
 					} else {
-						if ($scope.single.job.exists) {
-							return true;
+						if ($scope.single.job) {
+							if ($scope.single.job.exists) {
+								return true;
+							} else {
+								return false;
+							}
 						} else {
 							return false;
 						}
