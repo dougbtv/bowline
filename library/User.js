@@ -58,11 +58,6 @@ module.exports = function(bowline, log, opts, mongoose) {
 		}
 	};
 
-	userSchema.virtual('gravatarhash')
-		.get(function () {
-			return md5.digest_s(this.email);
-		});
-
 	userSchema.virtual('resetURL')
 		.get(function () {
 			return URL_SET_PASSWORD + 
@@ -141,6 +136,84 @@ module.exports = function(bowline, log, opts, mongoose) {
 		}.bind(this));
 
 	}
+
+	// just show public things.
+	this.getPublicProfile = function(username,callback) {
+
+		User.findOne({ username: username },'profile.gravatar_hash profile.website profile.twitter_user profile.github_user',function(err,user){
+
+			if (!err && user) {
+
+				callback(err,user.profile);
+
+			} else {
+
+				log.error('user_getpublicprofile_notfound',{userid: userid, err: err});
+				callback("user_getpublicprofile_notfound");
+			}
+
+		});
+
+	}
+
+	// you can show private things, like email here, it's authenticated.
+	this.getProfile = function(userid,callback) {
+
+		User.findOne({ _id: mongoose.Types.ObjectId(userid) },'profile',function(err,user){
+
+			if (!err && user) {
+
+				callback(err,user.profile);
+
+			} else {
+
+				log.error('user_getprofile_notfound',{userid: userid, err: err});
+				callback("user_getprofile_notfound");
+			}
+
+		});
+
+	}
+
+	this.setProfile = function(userid,inprofile,callback) {
+
+		User.findOne({ _id: mongoose.Types.ObjectId(userid) },function(err,user){
+
+			if (!err && user) {
+
+				// this is required.
+				if (inprofile.gravatar_email) {
+
+					user.profile.gravatar_email = inprofile.gravatar_email;
+					user.profile.gravatar_hash = md5.digest_s(inprofile.gravatar_email);
+					user.profile.twitter_user = inprofile.twitter_user;
+					user.profile.github_user = inprofile.github_user;
+					user.profile.website = inprofile.website;
+
+					user.save(function(err){
+						if (err) {
+							log.error('user_setprofile_sav',{userid: userid, err: err});
+						}
+						callback(err);
+					});
+
+
+				} else {
+
+					callback("gravatar email is required, if you don't have a gravatar account, that's OK. just enter anything.");
+
+				}
+
+			} else {
+
+				log.error('user_setprofile',{userid: userid, err: err});
+				callback("user_setprofile");
+			}
+
+		});
+
+	}
+
 
 	this.searchCollaborators = function(searchstring,callback) {
 

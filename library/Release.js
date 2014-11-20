@@ -396,8 +396,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 		// TODO: This will be filtered in the future.
 		Release.find(filter)
-			.populate('collaborators','_id username gravatarhash')
-			.populate('owner','_id username gravatarhash')
+			.populate('collaborators','_id username profile.gravatar_hash')
+			.populate('owner','_id username profile.gravatar_hash')
 			.sort({last_build: -1})
 			.sort({docker_tag: 1})
 			.exec(function(err,rels){

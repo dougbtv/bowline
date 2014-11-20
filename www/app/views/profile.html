@@ -1,21 +1,72 @@
 <h3></h3>
 
-<div class="panel panel-info">
-	<div class="panel-heading">
-		<h3 class="panel-title">Your profile</h3>
-	</div>
-	<div class="panel-body">
-		<table class="table table-striped">
-			<tbody>
-				<tr>
-					<td class="vert-align">Gravatar Email</td>
-					<td>
-						<input type="text" class="form-control" placeholder="email for gravatar">
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<button type="button" class="btn btn-primary" ng-click="saveProfile()">Save Profile</button>
-	</div>
+<div ng-show="error" class="alert alert-danger" role="alert">
+	<strong>Ooops!</strong> {{error}}
 </div>
+
+<span ng-hide="error">
+
+	<span ng-hide="edit">
+		<h2>{{username}}</h2>
+		<div class="col-sm-2">
+			<img class="image-responsive" ng-src="http://www.gravatar.com/avatar/{{profile.gravatar_hash}}?s=175&d=retro"/>
+		</div>
+		<div class="col-sm-9">
+			<p ng-show="profile.github_user"><strong>Github: </strong><a target="_new" ng-href="https://github.com/{{profile.github_user}}">{{profile.github_user}}</a></p>
+			<p ng-show="profile.twitter_user"><strong>Twitter: </strong><a target="_new" ng-href="https://twitter.com/{{profile.twitter_user}}">{{profile.twitter_user}}</a></p>
+			<p ng-show="profile.website"><strong>Website: </strong><a target="_new" ng-href="{{profile.website}}">{{profile.website}}</a></p>
+		</div>
+		
+	</span>
+
+	<span ng-show="edit">
+
+		<div ng-show="save_error" class="alert alert-warning" role="alert">
+			<strong>Ooops!</strong> {{save_error}}
+		</div>
+
+		<div ng-show="save_success" class="alert alert-info getfaded" role="alert">
+			<strong>Saved!</strong> Your profile has been saved
+		</div>
+
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Your profile</h3>
+			</div>
+
+			<div class="panel-body">
+				<table class="table table-striped">
+					<tbody>
+						<tr>
+							<td class="vert-align">Gravatar Email</td>
+							<td>
+								<input type="text" class="form-control" ng-model="profile.gravatar_email" placeholder="email for gravatar">
+							</td>
+						</tr>
+						<tr>
+							<td class="vert-align">GitHub Username</td>
+							<td>
+								<input type="text" class="form-control" ng-model="profile.github_user" placeholder="your github username">
+							</td>
+						</tr>
+						<tr>
+							<td class="vert-align">Twitter Username</td>
+							<td>
+								<input type="text" class="form-control" ng-model="profile.twitter_user" placeholder="twitter username">
+							</td>
+						</tr>
+						<tr>
+							<td class="vert-align">Website</td>
+							<td>
+								<input type="text" class="form-control" ng-model="profile.website" placeholder="twitter username">
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<button type="button" class="btn btn-primary" ng-click="saveProfile()">Save Profile</button>
+			</div>
+		</div>
+	</span>
+
+</span>
 

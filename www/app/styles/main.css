@@ -85,6 +85,15 @@ body {
   padding: 4px !important;
 }
 
+.dropdownicon {
+  padding-right: 8px;
+}
+
+.dropiconspacer {
+  display: inline-block; 
+  width: 28px;
+}
+
 /* ---------------------------- messages */
 
 .message-read {

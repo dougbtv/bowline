@@ -137,6 +137,20 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/foo', this.testFunction);
 		server.head('/api/foo', this.testFunction);
 
+		// ----------------- Social calls.
+		
+		server.get('/api/getPublicProfile', this.getPublicProfile);
+		server.post('/api/getPublicProfile', this.getPublicProfile);
+		server.head('/api/getPublicProfile', this.getPublicProfile);
+
+		server.get('/api/getProfile', this.getProfile);
+		server.post('/api/getProfile', this.getProfile);
+		server.head('/api/getProfile', this.getProfile);
+
+		server.get('/api/setProfile', this.setProfile);
+		server.post('/api/setProfile', this.setProfile);
+		server.head('/api/setProfile', this.setProfile);
+
 		// ----------------- Registration calls.
 
 		server.get('/api/register', this.register);
@@ -549,6 +563,56 @@ module.exports = function(bowline, opts, log) {
 
 	}
 
+	this.getPublicProfile = function(req, res, next) {
+
+		var input = req.params;
+
+		bowline.user.getPublicProfile(input.username,function(err,profile){
+			res.send(profile);
+		});
+		
+	}
+
+	this.getProfile = function(req, res, next) {
+
+		var input = req.params;
+
+		bowline.user.validateSession(input.session,function(validpack){
+			res.contentType = 'json';
+			if (validpack.isvalid) {
+				bowline.user.getProfile(validpack.fulluser._id,function(err,profile){
+					res.send(profile);
+				});
+			} else {
+				res.send({error: "invalid login"});
+			}
+		});
+
+	}
+
+	this.setProfile = function(req, res, next) {
+
+		var input = req.params;
+
+		bowline.user.validateSession(input.session,function(validpack){
+			res.contentType = 'json';
+			if (validpack.isvalid) {
+				bowline.user.setProfile(validpack.fulluser._id,input.profile,function(err){
+					var result = {};
+					if (err) {
+						result.error = err;
+					}
+					res.send(result);
+				});
+			} else {
+				res.send({error: "invalid login"});
+			}
+		});
+
+	}
+
+
+
 	this.userLogin = function(req, res, next) {
 
 		var input = req.params;
@@ -605,7 +669,7 @@ module.exports = function(bowline, opts, log) {
 					res.send(params);
 				});
 			} else {
-				res.send({error: "ain't no good."});
+				res.send({error: "invalid login"});
 			}
 		});
 
