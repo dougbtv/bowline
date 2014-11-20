@@ -31,6 +31,14 @@ module.exports = function(bowline, log, opts, mongoose) {
 		resetkey: String,		// The key to reset it (register or forgot password.)
 		active: Boolean,		// Is this user activated? (Important because of email verification)
 		indate: Date,			// Created @ time.
+
+		profile: {
+			gravatar_email: String,
+			gravatar_hash: String,
+			github_user: String,
+			twitter_user: String,
+			website: String,
+		},
 		
 		session_id: String,		// After authenticating, we give a (quasi-public) session ID.
 		session_expires: Date,	// When the session expires.
