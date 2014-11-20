@@ -13,8 +13,7 @@ bowlineApp.directive('knotlist', function(){
 
 			// Ok bring up the details link.
 			$scope.showDetails = function(id) {
-				$location.search('add', null);
-				$location.search('details', id);
+				$location.path('/knots').search('details', id);
 			};
 
 			$scope.getReleases = function() {

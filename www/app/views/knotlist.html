@@ -20,7 +20,7 @@
 		<thead>
 			<tr>
 				<th>Docker Tag</th>
-				<th>Owner</th>
+				<th ng-hide="username">Owner</th>
 				<th>Last Build</th>
 				<th class="text-center">Get Details</th>
 				<th class="text-center">Health</th>
@@ -31,7 +31,7 @@
 
 			<tr data-toggle="collapse" data-target="#{{ rel._id }}" ng-repeat="rel in releases">
 				<td>{{rel.docker_tag}}</td>
-				<td>
+				<td ng-hide="username">
 					<a ng-href="#/profile/{{rel.owner.username}}" class="nolinelink">
 						<img class="image-responsive" ng-src="http://www.gravatar.com/avatar/{{rel.owner.profile.gravatar_hash}}?s=20&d=retro"/>
 						{{rel.owner.username}}

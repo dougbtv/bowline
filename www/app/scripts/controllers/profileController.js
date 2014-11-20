@@ -41,6 +41,10 @@ bowlineApp.controller('profileController',
 
 		};
 
+		$scope.viewProfile = function() {
+			$location.path('/profile/' + $scope.username);
+		}
+
 		$scope.getPublicProfile = function() {
 
 			$http.post(ENV.api_url + '/api/getPublicProfile', { username: $scope.username, session: login.sessionpack })
