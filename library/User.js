@@ -401,7 +401,7 @@ module.exports = function(bowline, log, opts, mongoose) {
 		User.findOne({username: username},function(err,user){
 
 			if (user) {
-				callback(true);
+				callback(user._id);
 			} else {
 				callback(false);
 			}

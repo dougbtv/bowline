@@ -353,6 +353,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
+	// TODO: This doesn't account for privacy (as with a lot)
 	this.getReleaseList = function(userid,search,callback) {
 
 		var andarray = [];
@@ -415,7 +416,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 					}, function(err, results){
 					    // results is now an array of stats for each file
-					    console.log("!trace GET VIRTUAL POP: ",results);
+					    // console.log("!trace GET VIRTUAL POP: ",results);
 					    callback(results);
 
 					});

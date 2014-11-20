@@ -698,85 +698,9 @@
 <div class="clearfix"></div>
 <hr />
 
-<div class="col-md-6" style="margin-top: 10px; margin-bottom: 10px;">
-	<div class="input-group">
-		<span class="input-group-addon">Filter: </span>
-		<input type="text" ng-model="knot_search" ng-change="knotSearchFilter()" class="form-control" placeholder="(Search or regex)">
-	</div>
-</div>
+<knotlist mine="params.mine"></knotlist>
 
 
-<div ng-show="error" class="alert alert-danger" role="alert">
-	<strong>Oh snap!</strong> We experienced an error: {{ error }}
-</div>
-
-	<div class="col-md-12">
-	
-	<div ng-hide="releases" class="alert alert-info" role="alert">
-		<strong>No results</strong> Sorry, we didn't find any results for you.
-	</div>
-
-	<table ng-show="releases" class="table table-striped">
-
-	<thead>
-		<tr>
-			<th>Docker Tag</th>
-			<th>Owner</th>
-			<th>Last Build</th>
-			<th class="text-center">Get Details</th>
-			<th class="text-center">Health</th>
-		</tr>
-	</thead>
-
-	<tbody>
-		<!--
-<tr >
-	-->
-		<tr data-toggle="collapse" data-target="#{{ rel._id }}" ng-repeat="rel in releases">
-			<td>{{rel.docker_tag}}</td>
-			<td>{{rel.owner.username}}</td>
-			<td>
-				<span ng-show="rel.last_build">
-					{{ ago(rel.last_build) }}
-				</span>
-				<span ng-hide="rel.last_build">
-					-
-				</span>
-			</td>
-			<td class="text-center">
-				<button type="button" class="btn btn-sm btn-info" ng-click="showDetails(rel._id)">Details</button>
-			</td>
-			<td class="text-center">
-				<span ng-show="rel.job.active"><i class="fa fa-check-circle icon-status-green"></i></span>
-				<span ng-show="rel.job.error"><i class="fa fa-times-circle icon-status-red"></i></span>
-				<span ng-hide="rel.job.exists"><i class="fa fa-pause icon-status-grey"></i></span>
-			</td>
-
-		</tr>
-	
-		<!-- 
-		<tr ng-repeat-end>
-			<td colspan="5" class="hiddenRow">
-				<div class="accordion-body collapse" id="{{ rel._id }}">
-						
-						<div ng-show="rel.job.error" class="alert alert-danger col-md-6" role="alert">
-							<i class="fa fa-times-circle icon-status-red"></i> 
-							<strong>Uh oh.</strong> {{ rel.job.error }}
-						</div>
-
-						<div ng-hide="rel.job.error">
-							(other info)
-						</div>
-					
-				</div>
-			</td>
-		</tr>
-		-->
-	      
-   	</tbody>
-
-  </table>
-</div>
 </div>
 </span>
 </div>

@@ -77,6 +77,11 @@ body {
     text-decoration: none !important;
 }
 
+.nolinelink {
+    text-decoration: none !important;
+}
+
+
 .ansicolored {
   color: red;
 }

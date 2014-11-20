@@ -773,29 +773,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			
 		};
 
-		// Ok bring up the details link.
-		$scope.showDetails = function(id) {
-			$location.search('add', null);
-			$location.search('details', id);
-		};
-
-		$scope.getReleases = function() {
-			release.getReleases($scope.params.mine,$scope.knot_search,function(err,rels){
-				if (!err) {
-					$scope.releases = rels;
-					// console.log("!trace checking releases: ",rels);
-				} else {
-					$scope.error = err;
-				}
-			});
-		};
-
-		$scope.knotSearchFilter = function() {
-			// If it's long enough, or if it's empty, kick off a search
-			if ($scope.knot_search.length >= 3 || $scope.knot_search === "") {
-				$scope.getReleases();
-			}
-		};
+		
 
 		// And instantiate.
 		if ($scope.params.add) {
@@ -807,10 +785,6 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			if ($scope.params.details) {
 
 				$scope.getSingleRelease();
-
-			} else {
-
-				$scope.getReleases();
 
 			}
 

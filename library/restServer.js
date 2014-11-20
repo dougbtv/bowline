@@ -513,6 +513,8 @@ module.exports = function(bowline, opts, log) {
 		async.series({
 
 			check_session: function(callback){
+				// If it's for mine only...
+				// That overrides all.
 				if (input.session && input.mineonly) {
 					bowline.user.validateSession(input.session,function(validpack){
 						if (validpack.isvalid) {
@@ -521,7 +523,23 @@ module.exports = function(bowline, opts, log) {
 						callback(null);
 					});
 				} else {
-					callback(null);
+					// Do we have a specific username set?
+					if (input.username) {
+						// That's great, let's pick up their id.
+						// we can do it via public profile?
+						// TODO: This doesn't account for privacy (as with a lot)
+						bowline.user.existsUsername(input.username,function(exists){
+							// Exists, great!
+							// Doesn't exist? doesn't matter. just show public.
+							if (exists) {
+								userid = exists;
+							}
+							callback(null);
+						});
+					} else {
+						// Finally, it can be the public list.
+						callback(null);
+					}
 				}
 			}
 

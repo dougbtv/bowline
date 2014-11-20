@@ -4,7 +4,7 @@ bowlineApp.controller('profileController',
 	['$scope', '$sce', '$location', '$http', '$routeParams', 'loginModule', 'releaseModule', '$timeout', 'ENV', 
 	function($scope,$sce,$location,$http,$routeParams,login,release,$timeout,ENV) {
 
-		console.log("!trace profileController init (routeParams)",$routeParams);
+		// console.log("!trace profileController init (routeParams)",$routeParams);
 
 		// Is it edit mode?
 		$scope.edit = false;
