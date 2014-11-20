@@ -1,3 +1,4 @@
+/* global bowlineApp, moment */
 bowlineApp.directive('knotlist', function(){
 
 	return {
@@ -45,5 +46,6 @@ bowlineApp.directive('knotlist', function(){
 			$scope.getReleases();
 
 		}]
-	}
+	};
+	
 });

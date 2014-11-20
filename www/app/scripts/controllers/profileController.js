@@ -43,7 +43,7 @@ bowlineApp.controller('profileController',
 
 		$scope.viewProfile = function() {
 			$location.path('/profile/' + $scope.username);
-		}
+		};
 
 		$scope.getPublicProfile = function() {
 
