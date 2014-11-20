@@ -7,16 +7,36 @@
 <span ng-hide="error">
 
 	<span ng-hide="edit">
-		<h2>{{username}}</h2>
-		<div class="col-sm-2">
-			<img class="image-responsive" ng-src="http://www.gravatar.com/avatar/{{profile.gravatar_hash}}?s=175&d=retro"/>
+		<div class="row">
+			<div class="col-sm-12">
+				<h2>{{username}}</h2>
+			</div>
 		</div>
-		<div class="col-sm-9">
-			<p ng-show="profile.github_user"><strong>Github: </strong><a target="_new" ng-href="https://github.com/{{profile.github_user}}">{{profile.github_user}}</a></p>
-			<p ng-show="profile.twitter_user"><strong>Twitter: </strong><a target="_new" ng-href="https://twitter.com/{{profile.twitter_user}}">{{profile.twitter_user}}</a></p>
-			<p ng-show="profile.website"><strong>Website: </strong><a target="_new" ng-href="{{profile.website}}">{{profile.website}}</a></p>
+		<div class="row">
+			<div class="col-sm-2">
+				<img class="image-responsive" ng-src="http://www.gravatar.com/avatar/{{profile.gravatar_hash}}?s=150&d=retro"/>
+			</div>
+			<div class="col-sm-9">
+				<table class="table">
+					<tr ng-show="profile.github_user">
+						<td width="10%"><i class="fa fa-github"></i></td>
+						<td width="20%"><strong>Github</strong></td>
+						<td><a target="_new" ng-href="https://github.com/{{profile.github_user}}">{{profile.github_user}}</a></td>
+					</tr>
+					<tr ng-show="profile.twitter_user">
+						<td width="10%"><i class="fa fa-twitter"></i></td>
+						<td width="20%"><strong>Twitter</strong></td>
+						<td><a target="_new" ng-href="https://twitter.com/{{profile.twitter_user}}">{{profile.twitter_user}}</a></td>
+					</tr>
+					<tr ng-show="profile.website">
+						<td width="10%"><i class="fa fa-external-link"></i></td>
+						<td width="20%"><strong>Website</strong></td>
+						<td><a target="_new" ng-href="{{profile.website}}">{{profile.website}}</a></td>
+					</tr>
+				</table>
+			</div>
 		</div>
-		
+
 	</span>
 
 	<span ng-show="edit">

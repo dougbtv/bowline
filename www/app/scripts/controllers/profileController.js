@@ -39,17 +39,14 @@ bowlineApp.controller('profileController',
 			}
 
 
-		}
-
-
-		console.log("Determined username: ",$scope.username);
+		};
 
 		$scope.getPublicProfile = function() {
 
 			$http.post(ENV.api_url + '/api/getPublicProfile', { username: $scope.username, session: login.sessionpack })
 				.success(function(profile){
 
-					console.log("!trace getPublicProfile data",profile);
+					// console.log("!trace getPublicProfile data",profile);
 					$scope.profile = profile;
 					
 				}.bind(this)).error(function(data){
@@ -58,14 +55,14 @@ bowlineApp.controller('profileController',
 
 				}.bind(this));
 
-		}
+		};
 
 		$scope.getProfile = function() {
 
 			$http.post(ENV.api_url + '/api/getProfile', { username: $scope.username, session: login.sessionpack })
 				.success(function(profile){
 
-					console.log("!trace getProfile data",profile);
+					// console.log("!trace getProfile data",profile);
 					$scope.profile = profile;
 					
 				}.bind(this)).error(function(data){
@@ -74,7 +71,7 @@ bowlineApp.controller('profileController',
 
 				}.bind(this));
 
-		}
+		};
 
 		$scope.saveProfile = function() {
 
@@ -101,7 +98,7 @@ bowlineApp.controller('profileController',
 
 				}.bind(this));
 
-		}
+		};
 
 		// and instantiate it.
 		this.initializer();
