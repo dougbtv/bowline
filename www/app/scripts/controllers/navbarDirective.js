@@ -69,9 +69,10 @@ bowlineApp.directive('navbar', function(){
 					case "buildbegins":
 					case "buildcomplete":
 						// Let's build a location for the knot build in progress.
-						$location.path("/knots");
-						$location.search("details",$scope.messages[index].releaseid);
-						$location.search("showbuild","true");
+						$location.path("/knots")
+							.search("details",$scope.messages[index].releaseid)
+							.search('add',null)
+							.search("showbuild","true");
 						break;
 
 					default:
@@ -120,17 +121,19 @@ bowlineApp.directive('navbar', function(){
 			};
 
 			$scope.myKnots = function() {
-				$location.path("/knots");
-				$location.search('mine','true');
-				$location.search('add',null);
-				$location.search('details',null);
+				$location.path("/knots")
+					.search('mine','true')
+					.search('add',null)
+					.search('showbuild',null)
+					.search('details',null);
 			};
 
 			$scope.addKnot = function() {
-				$location.path("/knots");
-				$location.search('add','true');
-				$location.search('mine',null);
-				$location.search('details',null);
+				$location.path("/knots")
+					.search('add','true')
+					.search('mine',null)
+					.search('showbuild',null)
+					.search('details',null);
 			};
 
 			$scope.goConsole = function() {
