@@ -529,7 +529,7 @@ module.exports = function(bowline,opts,log) {
 
 						push_master: function(callback){
 
-							execlog('docker push ' + localtag,function(err,stdout,stderr){
+							execlog('docker push ' + localtag + ':latest',function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							}.bind(this));
 
@@ -590,7 +590,7 @@ module.exports = function(bowline,opts,log) {
 
 						push_master: function(callback){
 
-							execlog('docker push ' + this.release.docker_tag,function(err,stdout,stderr){
+							execlog('docker push ' + this.release.docker_tag + ':latest',function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							});
 
