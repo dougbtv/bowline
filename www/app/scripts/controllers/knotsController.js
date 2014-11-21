@@ -211,6 +211,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		};
 
+		$scope.showDetails = function(id) {
+			$location.path('/knots').search('details', id);
+		};
+
 		$scope.addKnotButton = function(){
 			$location.search('add','true');
 			$location.search('details',null);
