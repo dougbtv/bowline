@@ -67,19 +67,24 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		var socket = io.connect(ENV.api_url); 
 
-		$scope.logs = [];
-
-		$scope.selectedlog = {};
-		$scope.selectedlog.logid = '';
-		$scope.selectedlog.log = {};
-
 		$scope.selectedcollab = {};
 		$scope.selectedcollab.collaborator = '';
 
-		$scope.logs_pagestart = 0;
-		$scope.logs_pageend = 10;
-		$scope.logs_pageincrement = 10;
-		$scope.logs_found_all = false;
+		$scope.logSetDefaults = function() {
+
+			$scope.logs = [];
+
+			$scope.selectedlog = {};
+			$scope.selectedlog.logid = '';
+			$scope.selectedlog.log = {};
+
+			$scope.logs_pagestart = 0;
+			$scope.logs_pageend = 10;
+			$scope.logs_pageincrement = 10;
+			$scope.logs_found_all = false;
+		}
+
+		$scope.logSetDefaults();
 
 		
 		$scope.getLogs = function(callback) {
@@ -108,6 +113,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				console.log("!trace build_slug",id,msg);
 			});
 
+			$scope.logSetDefaults();
 			$scope.getLogs();
 
 			/*
@@ -144,6 +150,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 				socket.on('buildfinished',function(logline){
 					// Ok, the build is finished, let's show 'em the log.
+					$scope.logSetDefaults();
 					$scope.getLogs(function(){
 						// Alright, we refreshed the logs, let's move 'em to the right page
 						$timeout(function(){
@@ -344,6 +351,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 						} else {
 
 							// If it's not running, let's show the latest job.
+							$scope.logSetDefaults();
 							$scope.getLogs(function(){
 								$scope.mode = "logs";
 								$scope.selectLog($scope.logs[0]._id);
