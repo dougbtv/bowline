@@ -125,6 +125,10 @@ body {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+.coded-bowlinedefine {
+  color: #CF7C29;
+}
+
 .coded-comment {
   color: #ADADAD;
 }

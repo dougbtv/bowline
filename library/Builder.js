@@ -31,6 +31,9 @@ module.exports = function(bowline,opts,log) {
 	// The this.release we're associated with
 	this.release;
 
+	// The tag we're working on.
+	this.tag = null;
+
 	// We can't start until we're validated.
 	this.started = false;
 
@@ -202,6 +205,12 @@ module.exports = function(bowline,opts,log) {
 
 				}.bind(this),
 
+				/*
+
+				// DEPRECATED.
+				// TODO: Remove or turn into warning?
+				// ...it's OK to not have this, it's just nice.
+
 				has_env_var: function(callback) {
 
 					// Ok, check that it has the env var.
@@ -224,6 +233,7 @@ module.exports = function(bowline,opts,log) {
 					});
 
 				}.bind(this),
+				*/
 
 				// Update the dockerfile for this release.
 				update_dockerfile: function(callback) {
@@ -289,6 +299,8 @@ module.exports = function(bowline,opts,log) {
 			// Let's make a build time for this.
 			var buildstamp = new moment().unix();
 
+			// We're also going to need to keep around the tag?
+
 			async.series({
 
 				clone: function(callback) {
@@ -302,6 +314,14 @@ module.exports = function(bowline,opts,log) {
 				update_build_stamp: function(callback) {
 
 					this.updateBuildStamp(buildstamp,function(err){
+						callback(err);
+					});
+
+				}.bind(this),
+
+				get_dockerfile_tag: function(callback) {
+
+					this.getDockerfileTag(function(err){
 						callback(err);
 					});
 
@@ -472,20 +492,71 @@ module.exports = function(bowline,opts,log) {
 			
 			docker_push_local: function(callback) {
 				if (this.release.store_local) {
-					log.it("push_bowline",{releaseid: this.release._id});
+
+					log.it("push_bowline",{releaseid: this.release._id, tag: this.tag});
+					
 					var localtag = opts.docker_localhost + '/' + this.release.docker_tag;
-					execlog('docker tag ' + this.release.docker_tag + ' ' + localtag,function(err,stdout,stderr){
-						if (!err) {
+					var specifictag = null;
+
+					// Are we going to specifically tag this?
+					if (this.tag) {
+						specifictag = localtag + ":" + this.tag;
+					}
+
+					// Ok, we need to give extra tags, and make extra pushes if need be.
+					async.series({
+
+						tag_bowline: function(callback){
+
+							execlog('docker tag ' + this.release.docker_tag + ' ' + localtag,function(err,stdout,stderr){
+								callback(err,{stdout: stdout, stderr: stderr});
+							}.bind(this));
+
+						}.bind(this),
+
+						tag_specific: function(callback){
+
+							if (specifictag) {
+
+								execlog('docker tag ' + this.release.docker_tag + ' ' + specifictag,function(err,stdout,stderr){
+									callback(err,{stdout: stdout, stderr: stderr});
+								}.bind(this));
+
+							} else {
+								callback(null);
+							}
+							
+						}.bind(this),
+
+						push_master: function(callback){
 
 							execlog('docker push ' + localtag,function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							}.bind(this));
 
-						} else {
-							callback("docker tag error: " + err);
-						}
+						}.bind(this),
+
+						push_tag: function(callback){
+
+							if (specifictag) {
+
+								execlog('docker push ' + specifictag,function(err,stdout,stderr){
+									callback(err,{stdout: stdout, stderr: stderr});
+								}.bind(this));
+
+							} else {
+								callback(null);
+							}
+
+						}.bind(this),
+
+					},function(err,results){
+
+						// Alright, see if it was OK.
+						callback(err);
+
 					}.bind(this));
-					
+
 				} else {
 					// this.logit("NOTICE: No docker push (by options)");
 					callback(null);
@@ -536,7 +607,6 @@ module.exports = function(bowline,opts,log) {
 					});
 
 					// Now we can send a emssage about it, now that we're done.
-					// !bang
 					bowline.messenger.buildComplete(this.release._id,!is_error,function(){});
 
 					// And update the time stamp.
@@ -570,6 +640,51 @@ module.exports = function(bowline,opts,log) {
 		}.bind(this));
 		
 	}
+
+	this.getDockerfileTag = function(callback) {
+
+		var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
+		var path_dockerfile = this.release.clone_path + relative_gitpath;
+
+
+		// !bang
+		fs.readFile(path_dockerfile, 'utf8', function (err, filecontents) {
+
+			// console.log("!trace a: ",path_dockerfile);
+			// console.log("!trace a: ",filecontents);
+
+			if (err) {
+				log.error("read_dockerfile_tag",{err: err});
+			}
+
+			// Set the release tag to null.
+			this.tag = null;
+			
+			// Split by new lines, and look for #bowline
+
+			filecontents.split("\n").forEach(function(line){
+
+				if (line.match(/\#bowline/)) {
+					// Ok, it's got bowline, let's break it up.
+					var pts = line.split(/\s+/);
+					if (pts[0] == "#bowline" && pts[1] == "tag") {
+						// Then use the third element.
+						var tag = pts[2];
+						if (tag.match(/^[\d\.\-]+$/)) {
+							// Ok, we can use that tag.
+							this.tag = tag;
+							// log.it("parsed_tag",{tag: this.tag});
+						}
+					}
+				}
+
+			}.bind(this));
+
+			callback(err);
+
+		}.bind(this));
+
+	}.bind(this);
 
 
 	this.updateBuildStamp = function(buildstamp,callback){

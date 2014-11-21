@@ -450,8 +450,13 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		$scope.syntaxHighlight = function(dockerline) {
 
 			if (/^[\s]*#/.test(dockerline)) {
-				// That's a remark
-				return $sce.trustAsHtml(dockerline.replace(dockerline, '<span class="coded-comment">$&</span>'));
+				// Is it a bowline specific tag?
+				if (/^#bowline/.test(dockerline)) {
+					return $sce.trustAsHtml(dockerline.replace(dockerline, '<span class="coded-bowlinedefine">$&</span>'));
+				} else {
+					// That's a remark
+					return $sce.trustAsHtml(dockerline.replace(dockerline, '<span class="coded-comment">$&</span>'));
+				}
 			} else {
 				var dockerhtml = dockerline;
 				for (var i = 0; i < dockercmds.length; i++) {
