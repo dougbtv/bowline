@@ -502,7 +502,6 @@ module.exports = function(bowline,opts,log) {
 					if (this.tag) {
 						specifictag = localtag + ":" + this.tag;
 					}
-
 					// Ok, we need to give extra tags, and make extra pushes if need be.
 					async.series({
 
@@ -565,10 +564,57 @@ module.exports = function(bowline,opts,log) {
 
 			docker_push_dockerhub: function(callback) {
 				if (this.release.store_dockerhub) {
-					log.it("push_dockerhub",{releaseid: this.release._id});
-					execlog('docker push ' + this.release.docker_tag,function(err,stdout,stderr){
-						callback(err,{stdout: stdout, stderr: stderr});
-					});
+
+					log.it("push_dockerhub",{releaseid: this.release._id, tag: this.tag});
+							
+					var specifictag = null;
+
+					// Are we going to specifically tag this?
+					if (this.tag) {
+						specifictag = this.release.docker_tag + ":" + this.tag;
+					}
+
+					async.series({
+
+						specific_tag: function(callback){
+
+							if (specifictag) {
+								execlog('docker tag ' + this.release.docker_tag + ' ' + specifictag,function(err,stdout,stderr){
+									callback(err,{stdout: stdout, stderr: stderr});
+								}.bind(this));
+							} else {
+								callback(null);
+							}
+
+						}.bind(this),
+
+						push_master: function(callback){
+
+							execlog('docker push ' + this.release.docker_tag,function(err,stdout,stderr){
+								callback(err,{stdout: stdout, stderr: stderr});
+							});
+
+						}.bind(this),
+
+						push_tag: function(callback){
+
+							if (specifictag) {
+								execlog('docker push ' + specifictag,function(err,stdout,stderr){
+									callback(err,{stdout: stdout, stderr: stderr});
+								});
+							} else {
+								callback(null);
+							}
+
+						}.bind(this),
+
+
+					},function(err,results){
+
+						callback(err,results);
+
+					}.bind(this));
+					
 				} else {
 					// this.logit("NOTICE: No docker push (by options)");
 					callback(null);
