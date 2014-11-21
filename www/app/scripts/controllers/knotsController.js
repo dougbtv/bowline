@@ -150,13 +150,18 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 				socket.on('buildfinished',function(logline){
 					// Ok, the build is finished, let's show 'em the log.
-					$scope.logSetDefaults();
-					$scope.getLogs(function(){
-						// Alright, we refreshed the logs, let's move 'em to the right page
-						$timeout(function(){
-							$scope.mode = "logs";
-							$scope.selectLog($scope.logs[0]._id);
-						},120);
+					// ... We also need to refresh the single.
+					$scope.getSingleRelease(function(){
+	
+						$scope.logSetDefaults();
+						$scope.getLogs(function(){
+							// Alright, we refreshed the logs, let's move 'em to the right page
+							$timeout(function(){
+								$scope.mode = "logs";
+								$scope.selectLog($scope.logs[0]._id);
+							},120);
+						});
+
 					});
 				});
 
@@ -528,7 +533,6 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 						$scope.save_success = true;
 
 						// Let's reload with details.
-						// !bang
 						if ($scope.params.add) {
 							$scope.showDetails(releaseid);
 						}

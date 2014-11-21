@@ -471,7 +471,7 @@
 			</span>
 
 			<span ng-switch-when="in_progress">
-				<h3>Job in progress!</h3>
+				<h3>Build in progress!</h3>
 				<hr />
 				<div style="overflow: auto; max-height: 450px;" id="logdiv">
 					<table class="table table-striped">
@@ -617,6 +617,10 @@
 
 	<div class="col-sm-3" ng-hide="params.add">
 		<div class="list-group">
+
+			<a ng-show="single.job.in_progress" ng-click="changeMode('in_progress')" ng-class="navHighlight('in_progress')" class="list-group-item ahover">
+				<i class="fa fa-fire" style="padding-right: 12px;"></i>Build in progress
+			</a>
 
 			<a ng-click="changeMode('status')" ng-class="navHighlight('status')" class="list-group-item ahover">
 				<i class="fa fa-cogs" style="padding-right: 12px;"></i>Status
