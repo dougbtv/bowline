@@ -94,6 +94,23 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 
 	};
 
+	// Get the tags for a release.
+	this.getTags = function(id,callback) {
+
+		$http.post(ENV.api_url + '/api/getTags', { releaseid: id, session: login.sessionpack })
+			.success(function(tags){
+
+				console.log("!trace getTags tags",tags);
+				callback(null,tags);
+
+			}.bind(this)).error(function(data){
+
+				callback("Had trouble with getTags from API");
+
+			}.bind(this));
+
+	};
+
 	// Get the validator for releases.
 	this.getReleaseValidator = function(callback) {
 

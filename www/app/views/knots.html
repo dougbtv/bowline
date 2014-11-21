@@ -441,6 +441,33 @@
 
 			</span>
 
+			<span ng-switch-when="tags">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Tags</h3>
+					</div>
+					<div class="panel-body" role='flatdoc'>
+						<table class="table">
+							<thead>
+								<th>Tag</th>
+								<th>Last Update</th>
+								<th>Image ID</th>
+							</thead>
+							<tbody>
+								<tr ng-repeat="tag in tags">
+									<td>{{tag.tag}}</td>
+									<td>{{ago(tag.lastupdate)}}</td>
+									<td>{{tag.imageid.substring(0,8)}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</span>
+
+
 			<span ng-switch-when="readme">
 
 				<div class="panel panel-default">
@@ -633,6 +660,11 @@
 			<a ng-click="changeMode('properties')" ng-class="navHighlight('properties')" class="list-group-item ahover">
 				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Properties
 			</a>
+
+			<a ng-show="single.store_local" ng-click="changeMode('tags')" ng-class="navHighlight('tags')" class="list-group-item ahover">
+				<i class="fa fa-tags" style="padding-right: 12px;"></i>Tags
+			</a>
+
 
 			<a ng-click="changeMode('readme')" ng-class="navHighlight('readme')" class="list-group-item ahover">
 				<i class="fa fa-newspaper-o" style="padding-right: 12px;"></i>Readme

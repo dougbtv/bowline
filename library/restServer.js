@@ -115,6 +115,10 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/getLogs', this.getLogs);
 		server.head('/api/getLogs', this.getLogs);
 
+		server.get('/api/getTags', this.getTags);
+		server.post('/api/getTags', this.getTags);
+		server.head('/api/getTags', this.getTags);
+
 		server.get('/api/getLogText', this.getLogText);
 		server.post('/api/getLogText', this.getLogText);
 		server.head('/api/getLogText', this.getLogText);
@@ -465,6 +469,24 @@ module.exports = function(bowline, opts, log) {
 					res.contentType = 'json';
 					res.send({log: logtext});
 				});
+			}
+		});
+
+	}.bind(this);
+
+	this.getTags = function(req, res, next) {
+
+		var input = req.params;
+
+		bowline.user.validateSession(input.session,function(validpack){
+			if (validpack.isvalid) {
+				bowline.dockerRegistry.getTags(input.releaseid,function(err,tags){
+					res.contentType = 'json';
+					res.send(tags);
+				});
+			} else {
+				res.contentType = 'json';
+				res.send({error: "invalid creds"});
 			}
 		});
 

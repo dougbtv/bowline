@@ -10,6 +10,7 @@
 	"docker_localuser": "bowlineadmin",
 	"docker_localpassword": "bowline",
 	"docker_localhost": "dockertest.com",
+	"docker_registryurl": "localhost:5000",
 	"docker_user": "dougbtv",
 	"docker_email": "d00d@d00d.com",
 	"docker_password": "aaaaaaaaaaaaaa",

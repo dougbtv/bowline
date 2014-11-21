@@ -16,6 +16,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.knot_search = "";
 
+		$scope.tags = [];
+
 		// switch defaults if adding new knot
 		if ($scope.params.add) {
 			$scope.form_edit = true;
@@ -300,6 +302,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.mode = mode;
 
 			switch (mode) {
+				case "tags":
+					$scope.getTags();
+					break;
 				case "logs":
 					/* if ($scope.logs.length) {
 						$scope.selectLog($scope.logs[0]._id);
@@ -423,6 +428,12 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 			});
 
+		};
+
+		$scope.getTags = function(){
+			release.getTags($scope.params.details,function(err,tags){
+				$scope.tags = tags;
+			});
 		};
 
 		$scope.generateUUID = function() {
