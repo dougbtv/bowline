@@ -462,12 +462,6 @@ module.exports = function(bowline,opts,log) {
 				
 			}.bind(this),
 
-			docker_show_images: function(callback) {
-				execlog('docker images | grep "' + this.release.docker_tag + '"',function(err,stdout,stderr){
-					callback(err,{stdout: stdout, stderr: stderr});
-				});
-			}.bind(this),
-
 			// TODO: So these aren't really atomic
 			// so, we should do them less scoped to these atomic actions.
 			/*
@@ -619,6 +613,12 @@ module.exports = function(bowline,opts,log) {
 					// this.logit("NOTICE: No docker push (by options)");
 					callback(null);
 				}
+			}.bind(this),
+
+			docker_show_images: function(callback) {
+				execlog('docker images | grep "' + this.release.docker_tag + '"',function(err,stdout,stderr){
+					callback(err,{stdout: stdout, stderr: stderr});
+				});
 			}.bind(this),
 
 			

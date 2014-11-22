@@ -446,45 +446,6 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		};
 
-		var dockercmds = [
-			'FROM',
-			'MAINTAINER',
-			'RUN',
-			'CMD',
-			'EXPOSE',
-			'ENV',
-			'ADD',
-			'COPY',
-			'ENTRYPOINT',
-			'VOLUME',
-			'USER',
-			'WORKDIR',
-			'ONBUILD',
-		];
-
-		$scope.syntaxHighlight = function(dockerline) {
-
-			if (/^[\s]*#/.test(dockerline)) {
-				// Is it a bowline specific tag?
-				if (/^#bowline/.test(dockerline)) {
-					return $sce.trustAsHtml(dockerline.replace(dockerline, '<span class="coded-bowlinedefine">$&</span>'));
-				} else {
-					// That's a remark
-					return $sce.trustAsHtml(dockerline.replace(dockerline, '<span class="coded-comment">$&</span>'));
-				}
-			} else {
-				var dockerhtml = dockerline;
-				for (var i = 0; i < dockercmds.length; i++) {
-					dockerhtml = dockerhtml.replace(new RegExp(dockercmds[i], 'g'), '<span class="coded-highlight">$&</span>');
-				}
-
-				dockerhtml = dockerhtml.replace(new RegExp('AUTOBUILD_UNIXTIME', 'g'), '<span class="coded-autobuild">$&</span>');
-
-				return $sce.trustAsHtml(dockerhtml);
-			}
-
-		};
-
 		
 		$scope.cancelChanges = function() {
 			$scope.loading = true;
