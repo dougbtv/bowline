@@ -63,7 +63,7 @@ bowlineApp.directive('dockersyntax', function(){
 							// ok it matches that command,
 							// we need to put that part
 							var eachtext = dockerline.replace(new RegExp(dockercmds[i], 'g'),'');
-							collection.push({ text: dockercmds[i] + " ", style: "coded-highlight"});
+							collection.push({ text: dockercmds[i], style: "coded-highlight"});
 							collection.push({ text: eachtext, style: "coded"});
 						}
 					}
@@ -77,7 +77,7 @@ bowlineApp.directive('dockersyntax', function(){
 
 						var eachtext = useline.replace(new RegExp('AUTOBUILD_UNIXTIME', 'g'),'');
 
-						collection.push({ text: 'AUTOBUILD_UNIXTIME' + " ", style: "coded-autobuild"});
+						collection.push({ text: ' AUTOBUILD_UNIXTIME' + " ", style: "coded-autobuild"});
 						collection.push({ text: eachtext, style: "coded"});
 						
 					}
