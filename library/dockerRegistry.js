@@ -151,11 +151,12 @@ module.exports = function(bowline, opts, log) {
 			if (rels) {
 				var docker_tag = rels[0].docker_tag;
 
-				console.log("!trace GOOOD DOCKER TAG: ",docker_tag);
+				// console.log("!trace GOOOD DOCKER TAG: ",docker_tag);
 
 				// curl -X GET http://localhost:5000/v1/repositories/dougbtv/testautobuilder/tags
 				client.get('/v1/repositories/' + docker_tag + '/tags', function(err, req, res, data) {
 
+					// console.log("!trace got repos: ",err);
 					var rawtags = JSON.parse(res.body);
 
 					// Let's make a list from those rawtags.
