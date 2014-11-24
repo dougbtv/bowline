@@ -10,7 +10,7 @@
   "main": "./bowline.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dougbtv/docker-asterisk"
+    "url": "https://github.com/dougbtv/bowline"
   },
   "keywords": [
     "docker",
@@ -19,14 +19,28 @@
   ],
   "dependencies": {
     "async": "*",
+    "bcrypt": "*",
+    "bunyan": "*",
+    "bunyan-prettystream": "*",
     "github": "*",
-    "mongoose": "*",
-    "moment": "*",
-    "pasteall": "*",
     "irc": "*",
+    "moment": "*",
+    "mongoose": "*",
     "node-schedule": "*",
-    "prompt" : "*",
-    "request" : "*",
-    "nomnom": "*"
+    "node-uuid": "*",
+    "nodemailer": "*",
+    "nomnom": "*",
+    "pasteall": "*",
+    "prompt": "*",
+    "request": "*",
+    "restify": "*",
+    "socket.io": "^1.2.0",
+    "tail": "^0.4.0",
+    "always-tail": "~0.1.1",
+    "md5": "~1.0.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-nodeunit": "~0.4.1"
   }
 }

@@ -31,13 +31,13 @@ module.exports = function() {
 					if (!err) {
 						var configs = JSON.parse(data);
 
-						console.log("Configuration loaded successfully: ",configs.CONFIG_NAME);
-
-						callback(configs);
+						callback(null,configs);
 
 
 					} else {
-						throw '!ERROR: FATAL, READING FILE FAILED: ' + err;
+
+						callback(err);
+						// throw '!ERROR: FATAL, READING FILE FAILED: ' + err;
 					}
 
 				});
@@ -45,7 +45,9 @@ module.exports = function() {
 			} else {
 
 				// Unconfigured.
-				callback({});
+				// which is kind of expected.
+				callback(null,{});
+
 			}
 
 		});
@@ -54,7 +56,7 @@ module.exports = function() {
 
 	this.parse = function(callback) {
 
-		this.loadConfig(function(configs){
+		this.loadConfig(function(err,configs){
 
 			var opts = require("nomnom")
 			.option('gituser', {
@@ -124,6 +126,9 @@ module.exports = function() {
 				// default: "auto@builder.com",
 				help: 'The IRC network to connect to'
 			})
+			.option('logfile', {
+				help: 'Instead of logging to stdout, log to this file'
+			})
 			.option('git_setname', {
 				// default: "Your loyal autobuilder",
 				help: 'The IRC network to connect to'
@@ -144,9 +149,22 @@ module.exports = function() {
 				flag: true,
 				help: 'Do not push to dockerhub'
 			})
+			.option('logdisable', {
+				flag: true,
+				help: 'Disable logging (for unit tests, usually)'
+			})
+			.option('skipautostart', {
+				flag: true,
+				help: 'Skip starting up all releases (for unit tests, usually)'
+			})
 			.option('forceupdate', {
 				flag: true,
 				help: 'Force an update automatically.'
+			})
+			.option('cli', {
+				abbr: 'c',
+				flag: true,
+				help: 'Enable the CLI'
 			})
 			.parse();
 
@@ -172,7 +190,7 @@ module.exports = function() {
 				}
 			});
 
-			callback(configs);
+			callback(err,configs);
 
 		});
 

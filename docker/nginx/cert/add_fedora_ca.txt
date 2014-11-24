@@ -1,0 +1,7 @@
+This is a bummer to test with a self-signed cert.
+So... Add this CA as trusted.
+
+[doug@localhost bowline]$ sudo cp ~/ca.pem /etc/pki/ca-trust/source/anchors/
+[doug@localhost bowline]$ sudo update-ca-trust
+[doug@localhost bowline]$ curl https://dockertest/api/foo
+

@@ -1,0 +1,737 @@
+<div class="container">
+
+<span ng-show="params.details || params.add">
+	<h3 ng-hide="params.add">{{single.docker_tag}}</h3>
+	<h2 ng-show="params.add">Adding Knot<span ng-show="single.docker_tag">: {{single.docker_tag}}</span></h2>
+
+	<div class="col-sm-9">
+		<span ng-switch="mode">
+
+			<span ng-switch-when="status">
+				<div class="panel panel-primary"><!-- status -->
+					<div class="panel-heading">
+						<h3 class="panel-title">Status</h3>
+					</div>
+
+					<div class="panel-body">
+					
+						<div ng-show="single.job.error">
+							<div class="alert alert-danger" ng-hide="loading" role="alert">
+								<i class="fa fa-times-circle icon-status-red"></i> 
+								<strong>Uh oh.</strong> {{ single.job.error }}
+							</div>
+						</div>
+
+						<table class="table table-striped">
+							<tbody>
+								<tr ng-show="is_owner">
+									<td><strong>Automatic Updates</strong></td>
+									<td style="width: 50%;" class="text-center">
+
+										<div spinner="loading">
+
+											<button ng-hide="single.job.exists" type="button" class="btn btn-xs btn-info" ng-click="startJob(single._id)">
+												Start Automatic Updates
+											</button>
+											
+											<button ng-show="single.job.active" type="button" class="btn btn-xs btn-danger" ng-click="stopJob(single._id)">
+												Stop Automatic Updates
+											</button>
+											
+											<button ng-show="single.job.error" type="button" class="btn btn-xs btn-info" ng-click="validateJob(single._id)">
+												Re-Validate
+											</button>
+										</div>
+
+									</td>
+								</tr>
+
+								<tr ng-show="is_owner">
+									<td><strong>Manual Update</strong></td>
+									<td style="width: 50%;" class="text-center">
+										<button ng-show="single.job.active && !single.job.in_progress" type="button" class="btn btn-xs btn-warning" ng-click="forceUpdate(single._id)">
+											Begin Manual Update
+										</button>
+										<span ng-show="single.job.in_progress">
+											-
+										</span>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<strong>Last Build: </strong>
+									</td>
+									<td class="text-center">
+										<span ng-show="single.last_build">
+											<a href ng-click="selectLog(logs[0]._id)" class="nolinelink">{{ ago(single.last_build) }}</a>
+										</span>
+										<span ng-hide="single.last_build">
+											-
+										</span>
+									</td>
+								</tr>
+
+								<tr ng-show="single.git_method == 'github' && single">
+									<td>
+										<strong>Last Commit Built: </strong>
+									</td>
+									<td class="text-center">
+										<span ng-show="single.last_commit">
+											<a target="_new" class="gitlink" ng-href="{{ gitHubCommitURL(single.last_commit) }}">
+												<i class="fa fa-github-alt"></i>
+												{{ shortCommit(single.last_commit) }}
+											</a>
+										</span>
+										<span ng-hide="single.last_commit">
+											-
+										</span>
+									</td>
+								</tr>
+								<tr ng-show="single.method == 'http'">
+									<td>
+										<strong>Last HTTP Poll: </strong>
+									</td>
+									<td class="text-center">
+										<span ng-show="single.job.active">
+											{{ ago(single.job.last_check) }} 
+										</span>
+										<span ng-hide="single.job.active">
+											-
+										</span>
+									</td>
+								</tr>
+
+
+							</tbody>
+						</table>
+					
+						
+					</div>
+				</div><!-- status -->
+
+			</span>
+
+			<span ng-switch-when="properties">
+
+				<div class="panel panel-info"><!-- properties -->
+					<div class="panel-heading">
+						<h3 class="panel-title">Properties <i class="fa fa-edit pull-right ahover" ng-show="is_owner" ng-click="enableForm()"></i></h3>
+
+					</div>
+					<div class="panel-body">
+
+						<div ng-show="save_error">
+							<div class="alert alert-danger" ng-hide="loading" role="alert">
+								<i class="fa fa-times-circle icon-status-red"></i> 
+								<strong>Validation failed</strong> check the required fields and values and save again.
+							</div>
+						</div>
+
+						<div ng-show="save_success" class="alert alert-info getfaded" role="alert">
+							<strong>Great</strong> we saved this successfully.
+						</div>
+
+						<div class="row" style="padding-right: 15px;">
+							<div ng-show="!formEnabled()" spinner="loading" style="width: 100%;">
+								<span class="pull-right" style="padding-bottom: 15px;">
+									<button type="button" class="btn btn-sm btn-primary" ng-click="saveRelease(selected_gitmethod,selected_method)">Save</button>
+									<button type="button" class="btn btn-sm btn-default" ng-hide="params.add" ng-click="cancelChanges()">Cancel Changes</button>
+								</span>
+							</div>
+
+							<span ng-show="form_edit">
+								<span ng-show="single.job.exists">
+									<span class="pull-right" style="padding-bottom: 15px;">
+										In order to edit, you must <button type="button" class="btn btn-sm btn-warning" ng-click="stopJob(single._id,true)">Stop Automatic Updates</button>
+									</span>
+								</span>
+							</span>
+						</div>
+
+						<div class="panel panel-info">
+							<div class="knotproperties-header panel-heading">
+								<h3 class="panel-title">General</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-striped">
+									<tbody>
+										<tr>
+											<td class="vert-align">Nickname</td>
+											<td class="vert-align text-center">
+												<validator variable="single.slug" regex="validator.slug" required='true' message="'Use just letters, numbers and underscores'">
+											</td>
+											<td>
+												<input ng-model="single.slug" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="nickname">
+											</td>
+										</tr>
+
+										<tr>
+											<td class="vert-align">Docker tag</td>
+											<td class="vert-align text-center">
+												<validator variable="single.docker_tag" regex="validator.docker_tag" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
+											</td>
+											<td class="vert-align text-center col-sm-6">
+												<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="panel panel-info">
+							<div class="knotproperties-header panel-heading">
+								<h3 class="panel-title">Registry / Storage</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-striped">
+									<tbody>
+										<tr>
+											<td class="vert-align">Store on dockerhub</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<input type="checkbox" ng-model="single.store_dockerhub" ng-disabled="formEnabled()">
+											</td>
+										</tr>
+
+										<tr>
+											<td class="vert-align">Store on bowline registry</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<input type="checkbox" ng-model="single.store_local" ng-disabled="formEnabled()">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="panel panel-info">
+							<div class="knotproperties-header panel-heading">
+								<h3 class="panel-title">Collaborators</h3>
+							</div>
+							<div class="panel-body">
+								<!-- 
+									<pre>Model: {{selectedcollab.collaborator | json}}</pre>
+									<pre>List: {{collaborators | json}}</pre>
+								-->
+								
+								<div ng-show="!formEnabled()" class="row" style="padding-bottom: 15px;">
+									<div class="col-md-8">
+										<input type="text" 
+											ng-model="selectedcollab.collaborator"
+											placeholder="Search by username or email" 
+											typeahead="user.username for user in collaborators" 
+											ng-change="searchCollaborators(selectedcollab.collaborator)" 
+											typeahead-loading="loadingLocations" 
+											class="form-control" 
+										/>
+									</div>
+									<div class="col-md-4">
+										<button type="button" class="btn btn-sm btn-info" ng-click="addCollaborator(selectedcollab.collaborator)">Add Collaborator</button>
+									</div>
+								</div>
+								<table class="table table-striped">
+									<tr ng-repeat="user in single.collaborators">
+										<td>{{user.username}}</td>
+										<td ng-show="!formEnabled()">
+											<button type="button" class="btn btn-sm btn-info" ng-click="deleteCollaborator(user._id)">Delete</button>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<div class="panel panel-info">
+							<div class="knotproperties-header panel-heading">
+								<h3 class="panel-title">Git Repo</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-striped">
+									<tbody>
+
+										<tr>
+											<td class="vert-align">Git Method</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												 <select ng-model="selected_gitmethod" ng-disabled="formEnabled()" ng-options="method.label for method in gitmethods" class="form-control">
+												 </select>
+											</td>
+										</tr>
+
+										<tr ng-show="selected_gitmethod.value == 'github'">
+											<td class="vert-align">Automatically update Github</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<input type="checkbox" ng-model="single.git_enabled" ng-disabled="formEnabled()">
+											</td>
+										</tr>
+
+										<tr>
+											<td class="vert-align">Github Repo</td>
+											<td class="vert-align text-center">
+												<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
+											</td>
+											<td>
+												<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+											</td>
+										</tr>
+
+										<tr>
+											<td class="vert-align">Git Path</td>
+											<td class="vert-align text-center">
+												<validator variable="single.git_path" regex="validator.git_path" required='true' message="'Use a normal filename, that is just weird'">
+											</td>
+											<td>
+												<input ng-model="single.git_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/to/Dockerfile">
+											</td>
+										</tr>
+										<tr>
+											<td class="vert-align">Master Branch</td>
+											<td class="vert-align text-center">
+												<validator variable="single.branch_master" required='true' >
+											</td>
+											<td>
+												<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
+											</td>
+										</tr>
+
+										<tr>
+											<td class="vert-align">New Branch Name (prefix)</td>
+											<td class="vert-align text-center">
+												<validator variable="single.branch_name" required='true'>
+											</td>
+											<td>
+												<input ng-model="single.branch_name" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="newly created branch names">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="panel panel-info">
+							<div class="knotproperties-header panel-heading">
+								<h3 class="panel-title">Update Method</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-striped">
+									<tbody>
+										<tr>
+											<td class="vert-align">Update Method</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												 <select ng-model="selected_method" ng-disabled="formEnabled()" ng-options="method.label for method in methods" class="form-control">
+												 </select>
+											</td>
+										</tr>
+
+										<!-- - - - - - - - - - - - hook -->
+
+										<tr ng-show="selected_method.value == 'hook'">
+											<td class="vert-align">Hook URL</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<code style="font-size: 80%;">{{ HOOKURL + single.hook_secret }}</code>
+											</td>
+										</tr>
+
+
+										<tr ng-show="selected_method.value == 'hook'">
+											<td class="vert-align">Secret Key</td>
+											<td class="vert-align text-center">
+												<validator variable="single.hook_secret" regex="validator.hook_secret" required='true' message="'Numbers, letters, dashes (must be unique)'">
+											</td>
+											<td>
+												<div class="col-sm-8">
+													<input ng-model="single.hook_secret" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="a uuid">
+												</div>
+												<div class="col-sm-4" ng-show="!formEnabled()">
+													<button type="button" class="btn btn-sm btn-info" ng-click="generateUUID()">Generate</button>
+												</div>
+											</td>
+										</tr>
+
+										<!-- - - - - - - - - - - - http -->
+
+										<tr ng-show="selected_method.value == 'http'">
+											<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<div class="row" ng-show="!formEnabled()">
+													<div class="col-sm-4">
+														<input ng-model="entry.enter_minute" ng-enter="addMinute(entry.enter_minute)" type="text" class="form-control" placeholder="">
+													</div>
+													<div class="col-sm-7">
+														<button type="button" class="btn btn-sm btn-info" ng-click="addMinute(entry.enter_minute)">Add Minute</button>
+														<validator variable="enter_minute" emptyok="true" regex="'^([0-5][0-9]|[0-9])$'" message="'Minutes on the clock dial only'">
+													</div>
+													<div class="col-sm-1">
+														
+													</div>
+													
+												</div>
+												<hr ng-show="!formEnabled()">
+												
+												<!-- hackish! work-around labels get fucked up on edit. show two versions. -->
+												<div class="row no-select" style="margin-left: 0px;">
+													<div ng-repeat="minute in single.check_minutes" class="col-md-2" style="margin:1px; padding:3px;">
+														<span class="label label-info">
+															<span >
+																{{padZero(minute)}}
+																<span ng-show="showCloseMinute()"> 
+																	<i ng-click="deleteMinute(minute)" style="" class="fa fa-close ahover"></i>
+																</span>
+															</span>
+														</span>
+													</div>
+												</div>
+											
+
+											</td>
+										</tr>
+
+										<tr ng-show="selected_method.value == 'http'">
+											<td class="vert-align">HTTP Host</td>
+											<td class="vert-align text-center">
+												<validator variable="single.host" regex="validator.host" required='true' message="'A domain name, please'">
+											</td>
+											<td>
+												<input ng-model="single.host" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="some.domain.com">
+											</td>
+										</tr>
+
+										<tr ng-show="selected_method.value == 'http'">
+											<td class="vert-align">HTTP Path</td>
+											<td class="vert-align text-center">
+												<validator variable="single.url_path" required='true' message="'No regex'">
+											</td>
+											<td>
+												<input ng-model="single.url_path" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="/path/via/http/to/file.tar.gz">
+											</td>
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						
+						
+
+
+					</div>
+				</div><!-- properties -->
+
+
+			</span>
+
+			<span ng-switch-when="tags">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Tags</h3>
+					</div>
+					<div class="panel-body" role='flatdoc'>
+						<table class="table">
+							<thead>
+								<th>Tag</th>
+								<th>Last Update</th>
+								<th>Image ID</th>
+							</thead>
+							<tbody>
+								<tr ng-repeat="tag in tags">
+									<td>{{tag.tag}}</td>
+									<td>{{ago(tag.lastupdate)}}</td>
+									<td>{{tag.imageid.substring(0,8)}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</span>
+
+
+			<span ng-switch-when="readme">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">README</h3>
+					</div>
+					<div class="panel-body" role='flatdoc'>
+						<div role='flatdoc-content'></div>
+					</div>
+				</div>
+
+			</span>
+
+			<span ng-switch-when="dockerfile">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Dockerfile</h3>
+					</div>
+					<div class="panel-body">
+						<dockersyntax dockerfile="single.dockerfile_array"></dockersyntax>
+					</div>
+				</div>
+			</span>
+
+			<span ng-switch-when="in_progress">
+				<h3>Build in progress!</h3>
+				<hr />
+				<div style="overflow: auto; max-height: 450px;" id="logdiv">
+					<table class="table table-striped">
+						<tbody>
+							<tr ng-repeat="eachline in log_lines track by $index">
+								<td class="coded thin-table-rows">
+									<span ng-hide="eachline.colored">
+										<pre class="unpre">{{ eachline.line }}</pre>
+									</span>
+									<span ng-show="eachline.colored">
+										<pre class="unpre ansicolored">{{ eachline.line }}</pre>
+									</span>
+									<span ng-hide="eachline">
+										&nbsp;
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</span>
+
+			<span ng-switch-when="logs">
+
+				<table class="table table-striped">
+
+					<thead>
+						<tr>
+							<th width="10%" class="text-center">Status</th>
+							<th>Finished @</th>
+							<th>Commit</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr ng-repeat="log in logs">
+							<td class="text-center">
+								<span ng-show="log.success">
+									<i class="fa fa-check-circle" style="color: green; padding-right: 12px;"></i>
+								</span>
+								<span ng-hide="log.success">
+									<i class="fa fa-times" style="color: red; padding-right: 12px;"></i>
+								</span>
+							</td>
+							<td>
+								<a href ng-click="selectLog(log._id)">
+									{{ formatLogDate(log.enddate) }}
+								</a>
+							</td>
+							<td>
+								<span ng-show="log.commit">
+									<a target="_new" class="gitlink" ng-href="{{ gitHubCommitURL(log.commit) }}">
+										<i class="fa fa-github-alt"></i>
+										{{ shortCommit(log.commit) }}
+									</a>
+								</span>
+								<span ng-hide="log.commit">
+									-
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				
+				<button type="button" class="btn btn-sm btn-info" ng-click="getLogs()" ng-disabled="logs_found_all">Show More</button>
+
+			</span>
+
+			<span ng-switch-when="logdetail">
+
+				<span ng-show="selectedlog.logid">
+					<div class="row">
+						<div class="col-md-3">
+							<p ng-show="selectedlog.log.success">
+								<i class="fa fa-check-circle" style="color: green; padding-right: 12px;"></i> 
+								Build was successful.
+							</p>
+							<p ng-hide="selectedlog.log.success">
+								<i class="fa fa-times" style="color: red; padding-right: 12px;"></i>
+								Build failed.
+							</p>
+						</div>
+						<div class="col-md-3">
+							<p>
+								Build took {{ logDuration(selectedlog.log.startdate,selectedlog.log.enddate) }}
+							</p>
+							<p>
+								Built commit: 
+								<span ng-show="single.git_method == 'github'">
+									<a target="_new" class="gitlink" ng-href="{{ gitHubCommitURL(selectedlog.log.commit) }}">
+										<i class="fa fa-github-alt"></i>
+										{{ shortCommit(selectedlog.log.commit) }}
+									</a>
+								</span>	
+								<span ng-hide="single.git_method == 'github'">
+									{{ shortCommit(selectedlog.log.commit) }}
+								</span>			
+							</p>
+						</div>
+						<div class="col-md-4">
+							<p>
+								Started @ {{ logFormateDayDate(selectedlog.log.startdate) }}
+							</p>
+							<p>
+								Finished @ {{ logFormateDayDate(selectedlog.log.enddate) }}
+							</p>
+						</div>
+						
+					</div>
+					
+					<hr />
+					<div spinner="log_loading">
+						<div style="overflow: auto; max-height: 450px;" id="logdiv">
+							<table class="table table-striped">
+								<tbody>
+									<tr ng-repeat="eachline in selectedlog.lines track by $index">
+										<td class="coded thin-table-rows">
+											<span ng-hide="eachline.colored">
+												<pre class="unpre">{{ eachline.text }}</pre>
+											</span>
+											<span ng-show="eachline.colored">
+												<pre class="unpre ansicolored">{{ eachline.text }}</pre>
+											</span>
+											<span ng-hide="eachline">
+												&nbsp;
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</span>
+
+			</span>
+
+
+
+		</span>
+	</div>
+
+
+	<div class="col-sm-3" ng-hide="params.add">
+		<div class="list-group">
+
+			<a ng-show="single.job.in_progress" ng-click="changeMode('in_progress')" ng-class="navHighlight('in_progress')" class="list-group-item ahover">
+				<i class="fa fa-fire" style="padding-right: 12px;"></i>Build in progress
+			</a>
+
+			<a ng-click="changeMode('status')" ng-class="navHighlight('status')" class="list-group-item ahover">
+				<i class="fa fa-cogs" style="padding-right: 12px;"></i>Status
+			</a>
+
+			<a ng-click="changeMode('logs')" ng-class="navHighlight('logs')" class="list-group-item ahover">
+				<i class="fa fa-book" style="padding-right: 12px;"></i>Build Logs
+			</a>
+
+			<a ng-click="changeMode('properties')" ng-class="navHighlight('properties')" class="list-group-item ahover">
+				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Properties
+			</a>
+
+			<a ng-show="single.store_local" ng-click="changeMode('tags')" ng-class="navHighlight('tags')" class="list-group-item ahover">
+				<i class="fa fa-tags" style="padding-right: 12px;"></i>Tags
+			</a>
+
+
+			<a ng-click="changeMode('readme')" ng-class="navHighlight('readme')" class="list-group-item ahover">
+				<i class="fa fa-newspaper-o" style="padding-right: 12px;"></i>Readme
+			</a>
+
+			<a ng-click="changeMode('dockerfile')" ng-class="navHighlight('dockerfile')" class="list-group-item ahover">
+				<i class="fa fa-cubes" style="padding-right: 12px;"></i>Dockerfile
+			</a>
+
+		</div>
+
+
+		
+
+	</div>
+</span>
+
+<span ng-show="params.details || params.add">
+	
+	<div class="row">
+		
+	</div>
+
+
+	<div class="row">
+
+		<div class="col-md-5" ng-hide="params.add">
+			
+
+			
+			
+		</div>
+
+		<div class="col-md-7">
+			
+
+			
+			
+		</div>
+
+
+
+	</div>
+</span>
+
+<span ng-hide="params.details || params.add">
+
+<span ng-hide="params.mine">
+	<div>
+		<h2>Knots</h2>
+	</div>
+
+	<p>"Knots" make up each individual project that's being built by Bowline. Here you're seeing some of the public knots.</p>
+</span>
+
+<span ng-show="params.mine">
+
+	<div class="col-md-8">
+		<h2 class="pull-left">My Knots</h2>
+	</div>
+	<div class="col-md-4">
+		<button type="button" class="btn btn-sm btn-info pull-right" style="margin-top: 25px;" ng-click="addKnotButton()">Add Knot</button>
+	</div>
+</span>
+
+
+<div class="clearfix"></div>
+<hr />
+
+<knotlist mine="params.mine"></knotlist>
+
+
+</div>
+</span>
+</div>

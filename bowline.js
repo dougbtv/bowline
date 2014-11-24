@@ -17,10 +17,18 @@ var options = new Options();
 
 var mongoose = require('mongoose');
 
-options.parse(function(opts){
+options.parse(function(err,opts){
 
 	// console.log("!trace opts: ",opts);
 	// -- Connect to mongo.
+
+	if (err) {
+		throw "Configuration LOAD ERROR: " + err;
+	}
+
+	// we start logging quite early.
+	var Log = require('./library/Log.js');
+	var log = new Log(opts);
 
 	mongoose.connect(opts.MONGO_CONNECT_STRING);
 
@@ -32,31 +40,14 @@ options.parse(function(opts){
 
 	db.once('open', function callback () {
 
+		log.it("configuration_loaded",{ configname: opts.CONFIG_NAME });
+
 		// We're connected to mongo, now.
-		console.log("mongo_connect",{server: opts.MONGO_CONNECT_STRING });
+		log.it("mongo_connect",{server: opts.MONGO_CONNECT_STRING });
 
-		// Now that we're connected to mongo, we can continue along.
-		// The Condor object, the meat of our dealings.
-		var IRC = require('./library/IRC.js');
-		var irc = new IRC(opts);
-
-		var Release = require('./library/Release.js');
-		var release = new Release(mongoose);
-
-		// Bowline handles our matters.		
-		var Manager = require("./library/Manager.js"); 
-		var manager = new Manager(opts,irc,release);
-
-		// Bowline handles our matters.		
+		// Bowline handles our matters.
 		var Bowline = require("./library/Bowline.js"); 
-		var bowline = new Bowline(opts,irc,release,manager);
-
-		// Connect the irc bot's listener to the builder
-		irc.bot.addListener("message", function(from, to, text, message) {
-			// Let's handle this command.
-			bowline.ircHandler(text,from,message);
-		});
-
+		var bowline = new Bowline(opts,log,mongoose);
 
 	});
 

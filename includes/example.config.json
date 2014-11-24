@@ -3,8 +3,14 @@
     "MONGO_CONNECT_STRING": "mongodb://localhost/bowline",
     "MONGO_OPTIONS": {},
     "MONGOOSE_DEBUG": false,
+    "EMAIL_ENABLED": false,
+    "SERVER_PORT": 8000,
 	"gituser": "asteriskautobuilder",
 	"gitpassword": "aaaaaaaaaaaaaaaaa",
+	"docker_localuser": "bowlineadmin",
+	"docker_localpassword": "bowline",
+	"docker_localhost": "dockertest.com",
+	"docker_registryurl": "localhost:5000",
 	"docker_user": "dougbtv",
 	"docker_email": "d00d@d00d.com",
 	"docker_password": "aaaaaaaaaaaaaa",
@@ -23,6 +29,7 @@
 	"authdisabled": false,
 	"skipclone": false,
 	"skipbuild": false,
-	"skipdockerpush": false,
+	"skippasteall": false,
+	"cli": true,
 	"forceupdate": false
 }

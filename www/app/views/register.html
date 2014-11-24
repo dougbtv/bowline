@@ -1,0 +1,150 @@
+<div class="container">
+
+	<div ng-show="login_status">
+		<p>You're already registered. Visit <a href="#/preferences">your profile</a> to change your personal details.</p>	
+	</div>
+
+	<div ng-switch="registration_phase" ng-hide="login_status">
+
+		<span ng-switch-default>
+
+			<div class="container content">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+						<form class="reg-page">
+							<div class="reg-header">
+								<h2>Register a new account</h2>
+								<p>Already Signed Up? Click <a href="#/login" class="color-green">Sign In</a> to login your account.</p>                    
+							</div>
+
+							<div ng-show="user.error_api" class="alert alert-danger" role="alert">
+								<strong>Ooops!</strong> {{user.error_api}}
+							</div>
+
+							<div ng-show="user.error_email" class="alert alert-warning" role="alert">
+								<strong>Required</strong> You must enter a valid email address.
+							</div>
+
+							<div class="input-group" style="margin-bottom: 15px;">
+								<span class="input-group-addon">Email Address</span>
+								<input type="text" class="form-control" placeholder="Enter your email address" ng-model="user.email" ng-enter="submitRegistration()">
+							</div>
+
+							<div ng-show="user.error_username" class="alert alert-warning" role="alert">
+								<strong>Required</strong> You must enter a valid username
+							</div>
+
+							<div class="input-group" style="margin-bottom: 15px;">
+								<span class="input-group-addon">Username: </span>
+								<input type="text" class="form-control" placeholder="Enter desired username" ng-model="user.username" ng-enter="submitRegistration()">
+							</div>
+							
+							<button class="btn btn-primary" type="submit" ng-click="submitRegistration()">Register</button>
+							
+						</form>
+					</div>
+				</div>
+			</div><!--/container-->
+
+		</span>
+
+		<span ng-switch-when="complete">
+			<div class="page-header">
+				<h1>Check your email.</h1>
+			</div>
+
+			<p ng-hide="show_forgotpass_text">
+				You'll receive an email from us, click the link contained therein, and you'll be prompted to set your password. 
+			</p>
+
+			<p ng-show="show_forgotpass_text">
+				You'll receive an email from us, click the link contained therein, and you'll be prompted to reset your password.
+			</p>
+		</span>
+
+		<span ng-switch-when="resetpass">
+			<div class="page-header">
+				<h1>Set your password</h1>
+			</div>
+
+			<div ng-show="user.error_api" class="alert alert-danger" role="alert">
+				<strong>Ooops!</strong> {{user.error_api}}
+			</div>
+
+			<div ng-show="user.error_passwordshort" class="alert alert-warning" role="alert">
+				<strong>Warning</strong> For your security, your password must be at least 5 characters long.
+			</div>
+
+			<div ng-show="user.error_passwordmismatch" class="alert alert-warning" role="alert">
+				<strong>Darn</strong> Your passwords don't match, try that again.
+			</div>
+
+			<p>
+				<div class="input-group">
+					<span class="input-group-addon">Type new password:</span>
+					<input type="password" class="form-control" placeholder="Password" ng-model="user.password" ng-enter="resetPassword()">
+				</div>
+			</p>
+
+			<p>
+				<div class="input-group">
+					<span class="input-group-addon">Verify your password:</span>
+					<input type="password" class="form-control" placeholder="Password" ng-model="user.passwordverify" ng-enter="resetPassword()">
+				</div>
+			</p>
+
+			<button type="button" class="btn btn-primary" ng-click="resetPassword()">Set Your Password</button>
+		</span>
+
+		<span ng-switch-when="passwordresetcomplete">
+			<span ng-hide="localchange">
+				<div class="page-header">
+					<h1>Congratulations!</h1>
+				</div>
+
+				<p>
+					You've completed setting your password, you can now <a href="/#/login">log in</a>. 
+				</p>
+			</span>
+			<span ng-show="localchange">
+				<div class="page-header">
+					<h1>Sweet, you've changed your password.</h1>
+				</div>
+				<p>
+					You've completed re-setting your password, you can now <a href="/">go back to what you were doing</a>. 
+				</p>
+			</span>
+		</span>
+
+		<span ng-switch-when="forgot">
+			<div class="page-header">
+				<h1>Forgot your password?</h1>
+			</div>
+
+			<p>
+				Enter your email address, and we'll send you instructions on how to reset your password.
+			</p>
+
+			<div ng-show="user.error_email" class="alert alert-warning" role="alert">
+				<strong>Required</strong> Sorry, we don't see an email address there, please enter one.
+			</div>
+
+			<div ng-show="user.error_emailunknown" class="alert alert-warning" role="alert">
+				<strong>Sorry</strong> We can't find that email address on our system, try again.
+			</div>
+
+			<p>
+				<div class="input-group">
+					<span class="input-group-addon">Email address:</span>
+					<input type="text" class="form-control" placeholder="Enter your email address" ng-model="user.email" ng-enter="forgotPassword()">
+				</div>
+			</p>
+
+			<button type="button" class="btn btn-primary" ng-click="forgotPassword()">Continue</button>
+		</span>
+
+
+	</div>
+</div>
+
+<div class="layoutSpacer"></div>

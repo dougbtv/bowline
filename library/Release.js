@@ -1,75 +1,121 @@
-module.exports = function(mongoose) {
+module.exports = function(bowline,opts,log,mongoose) {
 
-	// We instantiate builders for each specification.
 	var moment = require('moment');
-	var Builder = require("./Builder.js"); 
-	//	var builder = new Builder(opts,irc);
+	var async = require('async');
+	
+	// A child object is the build log.
+	var BuildLog = require('./BuildLog.js');
+	var buildlog = new BuildLog(mongoose,log);
 
+	var validator = {
+		slug: '^[\\w\S]+$',
+		method: '^(http|hook|manual)$',
+		hook_secret: '^[\\w\\-]+$',
+		docker_tag: '^[a-zA-Z0-9\:\\/\-_.]+$',
+		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
+		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
+		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
+	};
 
 	// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
-		active: Boolean,		// Is this currently active?
-		method: String,			// Update method -- For now, just "http", other methods, later.
-
-		slug: String,			// An index/slug to refer to.
-
-		host: String,			// [http] What's the host to look at with http method?
-		url_path: String,		// [http] What's the path from there?
+		// -------------- Over arching.
+		owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 				// Who owns this?
+		active: Boolean,											  				// Is this currently active?
+		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
+		docker_tag: {type: String, required: true, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
+		dockerfile: String,
 		
-		check_minutes: [Number], // At which minutes on the clock do we check?
+		// -------------- Colaborators
+		collaborators: [
+			{ type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+		],
 
-		git_repo: String,		// What's the git repo?
-		git_path: String,		// This is the path to the dockerfile in the git repo
-		branch_name: String,	// What's the NEW branch name you'd like?
-		branch_master: String,	// What's your master branch name?
+		private: Boolean,
+
+		// --------------- Storage options
+		store_dockerhub: Boolean,
+		store_local: Boolean,
+
+		// --------------- Update methods.
+		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
 		
-		docker_tag: String,		// What's the name of the docker image tag?
+			// --------------- Method: http
+			host: {type: String, match: new RegExp(validator.host) },				// [http] What's the host to look at with http method?
+			url_path: String,														// [http] What's the path from there?
+			check_minutes: [Number], 												// At which minutes on the clock do we check?
+
+			// --------------- Method: git hook.
+			hook_secret: {type: String, unique: true, match: new RegExp(validator.hook_secret) },	// A secret to be passed in git hook.
+
+
+		// ----------- Git variables.
+		git_method: String,																	// What git method do we use? (pure git or github)
+		git_enabled: Boolean,																// Do we upate the git repo?
+		git_repo: { type: String, required: true, match: new RegExp(validator.git_repo) },	// What's the git repo?
+		git_path: { type: String, required: true, match: new RegExp(validator.git_path) },	// This is the path to the dockerfile in the git repo
+		branch_name: { type: String, required: true },										// What's the NEW branch name you'd like?
+		branch_master: { type: String, required: true },										// What's your master branch name?
+
+		// github specific variables
+		github_oauth: String,
+
+		// temporal properties
+		last_build: Date,
+		last_commit: String,
+
+		// ------------ Job properties.
+		job: {						// Here's our associate job.
+			exists: Boolean,		// Is there a job at all?
+			active: Boolean,		// Is the job checking for updates?
+			last_check: Date,		// When did it last check?
+			error: String,			// Is there an error?
+			in_progress: Boolean, 	// Is a build in progress?
+		},
 
 	}, { collection: 'releases' });
 
 	// We want virtuals when we export to json.
-	// releaseSchema.set('toObject', { virtuals: true });
-
-	// An array of available hours for comparison.
-	/* 
-
-	  releaseSchema.virtual('hoursarray')
+	releaseSchema.set('toObject', { virtuals: true });
+	
+	releaseSchema.virtual('dockerfile_array')
 		.get(function () {
-			var hoursarray = [];
-			for (var i = this.playstart; i <= this.playend; i++) {
-				hoursarray.push(i);
+			if (this.dockerfile) {
+				var dfa = this.dockerfile.split("\n");
+				if (dfa[dfa.length-1] == "") {
+					dfa.pop();
+				}
+				return dfa;
+			} else {
+				return [];
 			}
-			return hoursarray;
+			
 		});
-
-	*/
 
 	// Compile it to a model.
 	var Release = mongoose.model('Release', releaseSchema);
 	
-	// The method is enumerated, so we'll enforce that.
-	Release.schema.path('method').validate(function (value) {
+	// git method is also enum.
+	Release.schema.path('git_method').validate(function (value) {
 	  
 	  if (value === '' || typeof value === 'undefined') {
 	  	return true;
 	  }
 
-	  // It's only http right now... Later... We'll have other methods like: github PR's and stuff like that.
-	  return /http|http|http/.test(value);
+	  return /github|git/.test(value);
 
 	}, 'Invalid release method');
 
-	// Check out the docker path for validation
-	Release.schema.path('docker_tag').validate(function (value) {
-
-		var re = new RegExp("[a-zA-Z0-9\:\\/\-_.]");
-		return re.test(value);
-
-	}, 'Docker tag must match [a-zA-Z0-9:/-_.]');
+	
 
 	// the check minutes must be a list, and all values must be between 0 and 59.
 	Release.schema.path('check_minutes').validate(function (value) {
+
+		// This only applies for http method.
+		if (this.method != 'http') {
+			return true;
+		}
 
 		if (value.length) {
 			for (var i = 0; i < value.length; i++) {
@@ -87,11 +133,208 @@ module.exports = function(mongoose) {
 			return false;			
 		}
 
-		// It's only http right now... Later... We'll have other methods like: github PR's and stuff like that.
-		return /http|http|http/.test(value);
-
 	}, 'check_minutes must have at least one value, and all values must be between 0 and 59');
 
+	this.updateReleaseProperties = function(source,dest,callback) {
+
+		dest.slug = source.slug;
+		dest.method = source.method;
+		dest.docker_tag = source.docker_tag;
+		dest.host = source.host;
+		dest.url_path = source.url_path;
+
+		dest.hook_secret = source.hook_secret;
+		dest.git_enabled = source.git_enabled;
+		dest.git_method = source.git_method;
+		dest.git_repo = source.git_repo;
+		dest.git_path = source.git_path;
+		dest.branch_name = source.branch_name;
+		dest.branch_master = source.branch_master;
+
+		// Iteratively add collabs.
+		dest.collaborators = [];
+		if (source.collaborators) {
+			if (source.collaborators.length) {
+				for (var i = 0; i < source.collaborators.length; i++) {
+					dest.collaborators.push(
+						mongoose.Types.ObjectId(source.collaborators[i]._id)
+					);
+				}
+			}
+		}
+
+		dest.store_dockerhub = source.store_dockerhub;
+		dest.store_local = source.store_local;
+
+		if (source.method == 'http') {
+
+			dest.check_minutes = source.check_minutes;
+			
+		}
+
+		dest.save(function(err){
+			callback(err);
+		});
+
+	}
+
+	this.findByHookSecret = function(hook_secret,callback) {
+
+		var searchpack = {hook_secret: hook_secret};
+		// console.log("!trace findByHookSecret searchpack: ",searchpack);
+
+		this.getReleases(searchpack,function(rels){
+
+			if (rels) {
+				callback(null,rels[0]);
+			} else {
+				log.it("hook_secret_notfound",{hook_secret: hook_secret});
+				callback("hook_secret_notfound");
+			}
+			
+		});
+
+	}
+
+	this.addRelease = function(inrelease,userid,callback) {
+
+		// console.log("!trace addRelease: userid: %s | inrelease",userid,inrelease);
+
+		var release = new Release;
+		release.owner = mongoose.Types.ObjectId(userid);
+		release.active = true;
+
+		this.updateReleaseProperties(inrelease,release,function(err){
+
+			if (err) {
+				log.error("add_release",{err: err});
+			}
+
+			callback(err,release._id);
+
+		});
+
+	};
+
+	this.editRelease = function(inrelease,callback) {
+
+		// alright, we should find this release, then we'll edit it.
+		Release.findOne({
+			_id: inrelease._id
+		},function(err,release){
+			if (!err) {
+				
+				this.updateReleaseProperties(inrelease,release,function(err){
+
+					callback(err,inrelease._id);
+
+				});
+
+			} else {
+				callback("Mongo error, couldn't get editRelease: " + err);
+			}
+		}.bind(this));
+
+	};
+
+	this.deleteRelease = function(releaseid,callback) {
+
+		Release.find({ _id: releaseid })
+			.remove()
+			.exec(function(err){
+				if (err) {
+					log.error("delete_release",{err: err});
+				}
+				callback(err);
+			});
+
+	}
+
+	this.updateDockerfile = function(releaseid,dockerfile,callback) {
+
+		Release.update(
+			{ _id: releaseid },
+			{ dockerfile: dockerfile },
+			function(err){
+
+				if (err) {
+					log.error("mongo_update_dockerfile",err);
+				}
+
+				callback(err);
+
+			});
+
+	}
+
+	this.addBuild = function(releaseid,commit,start,end,log,success,callback) {
+
+		buildlog.addBuildLog(releaseid,commit,start,end,log,success,function(err){
+			callback(err);
+		});
+
+	}
+
+	this.getLogs = function(releaseid,startpos,endpos,callback) {
+
+		buildlog.getLogs(releaseid,startpos,endpos,function(err,logs){
+			callback(err,logs);
+		});
+
+	}
+
+	this.getLogText = function(releaseid,logid,callback) {
+
+		buildlog.getLogText(releaseid,logid,function(err,logtext){
+			callback(err,logtext);
+		});
+
+	}
+
+	this.isOwner = function(userid,releaseid,callback) {
+		Release.findOne({
+			$or: [{owner: userid},{collaborators: userid}],
+			_id: releaseid
+		},function(err,rel){
+			if (!err) {
+
+
+				if (rel) {
+					callback(null,true);
+				} else {
+					callback(null,false);
+				}
+
+			} else {
+				callback("Mongo error, couldn't check isOwner: " + err);
+			}
+		});
+	}
+
+	this.updateLastBuildStamp = function(releaseid,commit,callback) {
+
+		if (typeof callback == 'undefined') {
+			callback = function(){};
+		}
+
+		Release.findOne({ _id: releaseid},function(err,rel){
+
+			if (!err && rel) {
+
+ 				rel.last_build = new Date();
+ 				rel.last_commit = commit;
+ 				rel.save(function(err){
+ 					callback(err);
+ 				});
+
+			} else {
+				log.error("release_update_lastbuildstamp",{note: "wasn't found", err: err});
+				callback("release wasn't foudn for last buildstamp");
+			}
+
+		});
+
+	}
 
 	this.getActive = function(callback) {
 
@@ -107,6 +350,131 @@ module.exports = function(mongoose) {
 			}
 
 		});
+
+	}
+
+	// TODO: This doesn't account for privacy (as with a lot)
+	this.getReleaseList = function(userid,search,callback) {
+
+		var andarray = [];
+
+		// Get for a specific user or collaborator if userid is defined.
+		if (userid) {
+			andarray.push({ $or: [{owner: userid},{collaborators: userid}] });
+		}
+
+		// We'll also search by a regex if search is defined.
+		if (search) {
+			var sregex = new RegExp(search,"ig");
+			andarray.push({ $or: [
+				{ slug: sregex },
+				{ docker_tag: sregex }
+			]});
+		}
+
+		var searchpack = {};
+
+		if (userid || search) {
+			searchpack = { $and: andarray };
+		}
+
+		// console.log("!trace getReleaseList input: ",userid,search);
+		// console.log("!trace getReleaseList searchpack: %j",searchpack);
+
+		this.getReleases(searchpack,function(results){
+			callback(results);
+		});
+
+	}
+
+	this.getReleases = function(filter,callback) {
+
+		if (!filter) {
+			filter = {};
+		}
+
+		// console.log("!trace filter : ",filter);
+
+		// TODO: This will be filtered in the future.
+		Release.find(filter)
+			.populate('collaborators','_id username profile.gravatar_hash')
+			.populate('owner','_id username profile.gravatar_hash')
+			.sort({last_build: -1})
+			.sort({docker_tag: 1})
+			.exec(function(err,rels){
+		
+				if (!err) {
+
+					async.map(rels, function(item,callback){
+
+						bowline.manager.jobProperties(item.slug,function(err,props){
+							item.job = props;
+							// console.log("!trace jobProperties full: ",item);
+							//!bang
+							callback(err,item.toObject({ virtuals: true }));
+						});
+
+					}, function(err, results){
+					    // results is now an array of stats for each file
+					    // console.log("!trace GET VIRTUAL POP: ",results);
+					    callback(results);
+
+					});
+
+
+				} else {
+					callback("Mongo error, couldn't getReleases: " + err);
+				}
+
+			});
+
+	}
+
+	this.exists = function(username,namespace,callback) {
+
+		// Ok, string together the username and namespace
+		var docker_tag = username + "/" + namespace;
+
+		// console.log("!trace search? ",{ docker_tag: docker_tag });
+
+		// Hrmmm, more than one can exist.
+		// But, that's OK, it's just gotta be registered at least once.
+		Release.findOne({ docker_tag: docker_tag },function(err,release){
+
+			if (!err && release) {
+				callback(release._id);
+			} else {
+
+				if (err) {
+					log.err("release_exists_mongo",err);
+				}
+				callback(false);
+
+			}
+
+		});
+
+	}
+
+	this.getSlug = function(releaseid,callback) {
+
+		Release.findOne({_id: releaseid},function(err,rel){
+			if (!err) {
+				if (rel) {
+					callback(null,rel.slug);
+				} else {
+					callback("Release, couldn't getSlug for id: " + releaseid);	
+				}
+			} else {
+				callback("Mongo error, couldn't getSlug: " + err);	
+			}
+		});
+
+	}
+
+	this.getValidator = function(callback) {
+
+		callback(validator);
 
 	}
 

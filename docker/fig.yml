@@ -1,0 +1,15 @@
+# NOTICE : This is unfinished.
+# this doesn't quite play with my mindset so well... so, just a sketch to begin with.
+# docker run -p 80:80 --link regserver:regserver -i -t dougbtv/bowline-nginx
+
+nginx:
+  build: nginx/.
+  image: dougbtv/bowline-nginx
+  ports:
+   - "80:80"
+  links:
+   - regserver
+regserver:
+  image: registry
+  ports:
+   - "5000:5000"
