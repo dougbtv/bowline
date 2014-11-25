@@ -110,7 +110,7 @@ module.exports = function(bowline, log, opts, mongoose) {
 								/// this.send = function(subject,body,to,from) {
 								mail.send(subject,body,user.email);
 
-								callback(false);
+								callback(false,{ resetkey: user.resetkey, email: user.email });
 								
 							} else {
 

@@ -744,13 +744,18 @@ module.exports = function(bowline, opts, log) {
 		bowline.user.registerUser(
 			input.user.email.trim(),
 			input.user.username.trim(),
-			function(err){
+			function(err,resetdata){
 
 			var sendjson = {};
 
 			// Ship an error if we have one.
 			if (err) {
 				sendjson = {error: err};				
+			}
+
+			if (resetdata) {
+				sendjson.resetkey = resetdata.resetkey;
+				sendjson.email = resetdata.email;
 			}
 
 			res.contentType = 'json';

@@ -354,7 +354,8 @@ module.exports = function (grunt) {
           ENV: {
             name: 'development',
             githook_url: 'http://localhost:8000/api/gitHookUpdate/',
-            api_url: 'http://localhost:8000'
+            api_url: 'http://localhost:8000',
+            email_verify: false
           }
         }
       },
@@ -367,7 +368,8 @@ module.exports = function (grunt) {
           ENV: {
             name: 'production',
             githook_url: 'https://bowline.io/api/gitHookUpdate/',
-            api_url: ''
+            api_url: '',
+            email_verify: false
           }
         }
       }
