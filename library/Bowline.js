@@ -17,6 +17,8 @@ module.exports = function(opts,log,mongoose) {
 	var Images = require('./Images.js');
 	this.images = new Images(this,opts,log,mongoose);
 
+	var DockerHub = require('./DockerHub.js');
+	this.dockerhub = new DockerHub(this,opts,log,mongoose);
 
 	// We include the builder for imports (specifically the manager users this)
 	this.Builder = require("./Builder.js");
