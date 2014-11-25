@@ -69,6 +69,8 @@ bowlineApp.controller('bowlineMainController',
 	['$scope', '$location', '$http', '$cookies', '$route', '$interval','loginModule', 'ENV', 
 	function($scope, $location, $http, $cookies, $route, $interval, login, ENV) {
 
+		$scope.ENV = ENV;
+
 		$scope.loggedin = login.status;
 
 		$scope.$on("loginStatus",function(event,status){
