@@ -20,11 +20,12 @@ bowlineApp.controller('docsController', ['$scope', '$location', '$http', 'loginM
 	});
 
 	var markdown = {
-		"readme": 'README.md',
 		"started": 'docs/GettingStarted.md',
+		"runninglocal": 'docs/RunningLocally.md',
+		"usinghooks": 'docs/UsingGitHooks.md',
 	};
 
-	$scope.mode = "readme";
+	$scope.mode = "started";
 
 	$scope.clickDocs = function(mode) {
 

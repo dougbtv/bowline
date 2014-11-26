@@ -1,12 +1,31 @@
-## Running bowline.io locally
+# Running bowline.io locally
 
-### SSL
+## Basic Setup
 
-#### Option A: Get a legit Cert
+This setup assumes CentOS, but, basically if you change the package manager commands, the rest will apply to you (assuming Linux)
+
+Firstly, get docker and git installed.
+
+    yum install -y docker git
+
+Let's clone Bowline, and move to our Docker directory.
+
+    git clone https://github.com/dougbtv/bowline.git
+    cd bowline/docker/utils/
+
+Now we can build the containers we're going to need.
+
+    
+
+    
+
+## SSL
+
+### Option A: Get a legit Cert
 
 In production, you'll want a legitimate SSL certificate. However, this isn't always an option locally, and running `docker pull/push/login` with a repository with creds -- you *need* to use legit SSL. So use a legit cert.
 
-#### Option B: You need to test in development
+### Option B: You need to test in development
 
 The biggest pain with staging a test of the docker registry locally is the TLS & CA infrastructure. If you need another reference, I'll point you to [this github issue](https://github.com/docker/docker-registry/issues/541), which I found critical.
 
