@@ -21,4 +21,4 @@ WORKDIR /
 
 # ENV DOCKER_HOST tcp://dind:4444
 
-ENTRYPOINT [forever -e /var/log/bowline.log -o /var/log/bowline.log /bowline/bowline.js ]
+ENTRYPOINT forever -e /var/log/bowline.log -o /var/log/bowline.log /bowline/bowline.js
