@@ -16,7 +16,7 @@ docker rm $(docker ps -a -q) || true
 
 echo "Starting registry server..."
 # docker run -p 5000:5000 --name regserver -d -t registry
-docker run -d -v $REGISTRY_DIR:/registry -e SETTINGS_FLAVOR=local -e STORAGE_PATH=/registry -e SEARCH_BACKEND=sqlalchemy -p 5000:5000  --name regserver registry:latest
+docker run -d -e GUNICORN_OPTS=[--preload] -v $REGISTRY_DIR:/registry -e SETTINGS_FLAVOR=local -e STORAGE_PATH=/registry -e SEARCH_BACKEND=sqlalchemy -p 5000:5000  --name regserver registry:latest
 
 echo "Starting mongodb..."
 docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db --name mongodb dockerfile/mongodb
