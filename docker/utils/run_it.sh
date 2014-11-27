@@ -21,5 +21,9 @@ docker run -d -v $REGISTRY_DIR:/registry -e SETTINGS_FLAVOR=local -e STORAGE_PAT
 echo "Starting mongodb..."
 docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db --name mongodb dockerfile/mongodb
 
+echo "Starting bowline..."
+docker run -p 8000:8000 --link dind:dind --name bowline -i -t dougbtv/bowline
+
 echo "Starting nginx..."
-docker run -p 80:80 -p 443:443 --link regserver:regserver -i -t dougbtv/bowline-nginx
+docker run -p 80:80 -p 443:443 --link regserver:regserver --name -i -t dougbtv/bowline-nginx
+

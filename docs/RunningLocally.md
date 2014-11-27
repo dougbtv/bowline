@@ -1,10 +1,12 @@
-# Running bowline.io locally
+# Running Bowline.io locally
 
 ## Basic Setup
 
+You can run Bowline with Docker. It's all bootstrapped for you, just install the dependencies and run the provided script.
+
 This setup assumes CentOS, but, basically if you change the package manager commands, the rest will apply to you (assuming Linux)
 
-Firstly, get docker and git installed.
+We really only require two things, docker and git. Install them with your favorite package manager:
 
     yum install -y docker git
 
@@ -13,11 +15,23 @@ Let's clone Bowline, and move to our Docker directory.
     git clone https://github.com/dougbtv/bowline.git
     cd bowline/docker/utils/
 
-Now we can build the containers we're going to need.
+Now we can build the containers we're going to need. You'll need to run this with a user who has privileges to build Docker images & run Docker containers. *Word to the wise*: This script will stop other running docker containers.
 
+    ./build_it.sh
     
 
-    
+
+## Understanding the setup.
+
+You're building 4 docker containers, and running them:
+
+* Bowline's backend
+* A [MongoDB instance](https://registry.hub.docker.com/u/dockerfile/mongodb/) to store Bowline's data.
+* A [Docker registry](https://registry.hub.docker.com/_/registry/)
+* A Docker instance ([running in... Docker](https://github.com/jpetazzo/dind))
+* An nginx server to proxy requests between the Bowline API & the registry
+
+If you want to do a "docker"
 
 ## SSL
 

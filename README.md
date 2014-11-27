@@ -1,23 +1,30 @@
-![Bowline logo](http://i.imgur.com/nZkCkrv.png)
+![Bowline logo](http://i.imgur.com/pHdhLik.png)
 
 --
 
 ## It ties your Docker images to a build process... with a bowline.
 
-Bowline is a system that's designed to build Docker images for you, from a Dockerfile automatically, as a service. It watches for changes to "something" (a file over HTTP, or a merged pull request {and more}) and then kicks off a build process for you, and pushes the image to Dockerhub.
+Bowline provides a number of ways to stream-line the continuous builds of your Docker images, through a web interface.
 
-It's goal is to:
+* Automates building via push or polling HTTP (say, with a Git hook)
+* Logs the results of each `docker build`
+* Alerts you of your Dockerfile build status (e.g. if a build fails)
+* Provides an authenticated Docker registry, that works with with the Docker CLI (e.g. `docker login`)
+* Provides a front-end to that registry showing you how each build is tagged.
 
-1. Watch for an update
-2. Update a Github repository holding your Dockerfile (and make a pull request)
-3. Kick off a build of your `Dockerfile`
-4. Push the built image to Dockerhub.
-5. Alert you that it's ready
-6. Log it's results of the build.
+And yes, you can run it locally -- it all runs in Docker, [check out the guide for running it locally](https://github.com/dougbtv/bowline/blob/master/docs/RunningLocally.md).
 
-## Bowline is still a preview
+...Or you can run it in the cloud on [Bowline.io](https://bowline.io/)
 
-There isn't an official release yet, I'm just getting the ideas down (after I built a simple original version that just did a one-off automatic build cycle for docker images)
+You just provide each build you want to run with a link to a Dockerfile in a Github project, give your build a nickname, and watch it build remotely -- including a real-time view of the `docker build` progress.
+
+It's very compatible with Github, and you can also update your images on Dockerhub with it.
+
+You can also interact with it programatically through a REST API, too.
+
+## Bowline is way beta right now
+
+We'd encourage you to check it out, and see if it provides a useful way to host a private local Docker registry and build server. Or, if the product in the cloud helps you out at all. It's free to use in the cloud, but, all images are currently public on bowline.io.
 
 ## Inspiration
 
