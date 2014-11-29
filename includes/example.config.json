@@ -14,6 +14,7 @@
 	"docker_user": "REPLACE_THIS_USER",
 	"docker_email": "REPLACE_d00d@d00d.com",
 	"docker_password": "REPLACE_THIS_PASSWORD",
+	"disable_docker_hub": true,
 	"git_setemail": "auto@builder.com",
 	"git_setname": "Your loyal autobuilder",
 	"authdisabled": false,

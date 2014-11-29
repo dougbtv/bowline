@@ -7,7 +7,6 @@ module.exports = function() {
 	// These are required values? for now.
 	var required = [
 		"gituser",
-		"gitrepo",
 		"gitpassword",
 		"docker_user",
 		"docker_email",
@@ -93,34 +92,6 @@ module.exports = function() {
 			.option('irc_channel', {
 				// default: "##asterisk-autobuilder",
 				help: 'The bots chanel on IRC'
-			})
-			.option('irc_nick', {
-				// default: "ast-autobuild",
-				help: 'The bots nick on IRC'
-			})
-			.option('irc_realname', {
-				// default: "asterisk-autobuilder",
-				help: 'The bots "real name" on IRC'
-			})
-			.option('irc_server', {
-				// default: "chat.freenode.net",
-				help: 'The IRC network to connect to'
-			})
-			.option('irc_authuser', {
-				// default: "protocoldoug",
-				help: 'The IRC network to connect to'
-			})
-			.option('irc_authhost', {
-				// default: "unaffiliated/protocoldoug",
-				help: 'The IRC network to connect to'
-			})
-			.option('irc_debug', {
-				flag: true,
-				help: 'Show IRC debug output'
-			})
-			.option('irc_disabled', {
-				flag: true,
-				help: 'Do not connect to IRC'
 			})
 			.option('git_setemail', {
 				// default: "auto@builder.com",

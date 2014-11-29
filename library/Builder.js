@@ -566,7 +566,7 @@ module.exports = function(bowline,opts,log) {
 			}.bind(this),
 
 			docker_push_dockerhub: function(callback) {
-				if (this.release.store_dockerhub) {
+				if (this.release.store_dockerhub && !opts.disable_docker_hub) {
 
 					log.it("push_dockerhub",{releaseid: this.release._id, tag: this.tag});
 							
@@ -635,7 +635,7 @@ module.exports = function(bowline,opts,log) {
 					}.bind(this));
 					
 				} else {
-					// this.logit("NOTICE: No docker push (by options)");
+					// this.logit("NOTICE: No dockerhub push (by options)");
 					callback(null);
 				}
 			}.bind(this),
