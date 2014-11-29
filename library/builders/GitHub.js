@@ -179,7 +179,7 @@ module.exports = function(inrelease,bowline,opts,log) {
 	this.branchCommitPushPR = function(buildstamp,callback) {
 
 		// Only do this if the release is "git enabled" (TODO: That's a misnomer.)
-		if (!this.release.git_enabled) {
+		if (!this.release.git_enabled || opts.disable_github) {
 			callback(null);
 		} else {
 

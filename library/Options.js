@@ -6,7 +6,6 @@ module.exports = function() {
 
 	// These are required values? for now.
 	var required = [
-		"gitpassword",
 		"docker_user",
 		"docker_email",
 		"docker_password",

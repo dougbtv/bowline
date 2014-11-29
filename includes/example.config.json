@@ -7,6 +7,7 @@
     "SERVER_PORT": 8000,
 	"gituser": "REPLACE_THIS_USER",
 	"gitpassword": "REPLACE_THIS_PASSWORD",
+	"disable_github": true,
 	"docker_localuser": "bowlineadmin",
 	"docker_localpassword": "bowline",
 	"docker_localhost": "dockertest.com",

@@ -54,18 +54,22 @@ module.exports = function(opts,log,mongoose) {
 	// ...because builders spawn up like crazaaay.
 	// so we'll keep this around.
 
-	var GitHubApi = require("github");
-	this.github = new GitHubApi({
-		// required
-		version: "3.0.0",
-	});
+	if (!opts.disable_github) {
 
-	// OAuth2 Key/Secret
-	this.github.authenticate({
-		type: "basic",
-		username: opts.gituser,
-		password: opts.gitpassword
-	});
+		var GitHubApi = require("github");
+		this.github = new GitHubApi({
+			// required
+			version: "3.0.0",
+		});
+
+		// OAuth2 Key/Secret
+		this.github.authenticate({
+			type: "basic",
+			username: opts.gituser,
+			password: opts.gitpassword
+		});
+
+	}
 
 
 	// We instantiate builders for each specification.
