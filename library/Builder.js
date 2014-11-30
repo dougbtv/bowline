@@ -498,7 +498,7 @@ module.exports = function(bowline,opts,log) {
 
 					log.it("push_bowline",{releaseid: this.release._id, tag: this.tag});
 					
-					var localtag = opts.docker_localhost + '/' + this.release.docker_tag;
+					var localtag = opts.docker_registryurl + '/' + this.release.docker_tag;
 					var specifictag = null;
 
 					// Are we going to specifically tag this?
