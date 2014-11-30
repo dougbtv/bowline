@@ -21,10 +21,24 @@ docker run -d -e GUNICORN_OPTS=[--preload] -v $REGISTRY_DIR:/registry -e SETTING
 echo "Starting mongodb..."
 docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db --name mongodb dockerfile/mongodb
 
+echo "Starting nginx ambassador..."
+HOST_IP_ADDRESS=$(ifconfig | grep -a2 docker0 | grep -P "inet[^6]" | awk '{print $2}')
+docker run -d --name nginx-amb --expose 443 -e NGINX_PORT_443_TCP=tcp://$HOST_IP_ADDRESS:443 svendowideit/ambassador
+
 echo "Starting bowline..."
-docker run -p 8000:8000 -v /var/run/docker.sock:/var/run/docker.sock -v /bowline/ --name bowline -d -t dougbtv/bowline
-# --link dind:dind 
+docker run \
+    -p 8000:8000 \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /bowline/ \
+    --link mongodb:mongodb \
+    --link nginx-amb:dockertest.com \
+    --name bowline -d -t dougbtv/bowline
 
 echo "Starting nginx..."
-docker run -p 80:80 -p 443:443 --volumes-from bowline --link regserver:regserver -d -t dougbtv/bowline-nginx
+docker run \
+    -p 80:80 -p 443:443 \
+    --volumes-from bowline \
+    --link bowline:bowline \
+    --link regserver:regserver \
+    -d -t dougbtv/bowline-nginx
 

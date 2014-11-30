@@ -1,4 +1,6 @@
 secure_run.sh
 docker_run.sh
 includes/config.json
+includes/testprivate.config.json
 docker/mongodb/exampledata
+docker/bowline/config.json
