@@ -39,10 +39,10 @@ If you run a `docker ps` it should now look approximately like:
 
 You're building a couple docker containers, pulling another three, and running them. They are:
 
-* Bowline's backend
+* Bowline's backend (a REST-ish API created with Node.js)
 * A [MongoDB instance](https://registry.hub.docker.com/u/dockerfile/mongodb/) to store Bowline's data.
 * A [Docker registry](https://registry.hub.docker.com/_/registry/)
-* An nginx server to proxy requests between the Bowline API & the registry
+* An nginx server to proxy requests between the Bowline API & the registry, and serve the front-end
 * An ambassador for nginx, as the Bowline & Nginx containers need both to know about one another.
   * Necessary for later scaling to multiple servers.
   * What's an ambassador, you ask?
