@@ -12,7 +12,7 @@ Bowline provides a number of ways to stream-line the continuous builds of your D
 * Provides an authenticated Docker registry, that works with with the Docker CLI (e.g. `docker login`)
 * Provides a front-end to that registry showing you how each build is tagged.
 
-And yes, you can run it locally -- it all runs in Docker, [check out the guide for running it locally](https://github.com/dougbtv/bowline/blob/master/docs/RunningLocally.md).
+And yes, you can run it locally -- it all runs in Docker, [check out the guide for running it locally](https://bowline.io/#/docs/runninglocal).
 
 ...Or you can run it in the cloud on [Bowline.io](https://bowline.io/)
 

@@ -42,13 +42,39 @@ You've got two options for automatic updates, with a Git Hook, or poll HTTP (or 
 
 #### Git Hooks
 
-For now, I'll refer you to the `Using Git Hooks` part of the manual. (It's on the top tab if you're on Bowline.io)
+For now, I'll refer you to the [Using Git Hooks](http://bowline.io/#/docs/usinghooks) part of the manual, which goes further in-depth.
 
 #### Polling HTTP
 
 If you're looking at someone else's package, and they deliver it over HTTP -- this might be the option for you. In fact, the original author was inspired to build this when he wanted to track tarballs for building Asterisk. So, we'll use Asterisk as the example.
 
-*TODO: More to come here*
+The most important thing is that the item you're looking at via HTTP has a `Last-Modified` header. A typical Apache setup for serving files will provide this for you.
+
+Let's say we're looking at a tarball for Asterisk 13, which is @ `http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz`
+
+In the *Update Method* of your Bowline knot properties, change the *Update Method* drop-down to "Poll HTTP"
+
+Using this URL, we'll break it into two parts and enter in:
+
+* *HTTP Host*: downloads.asterisk.org
+* *HTTP Path*: /pub/telephony/asterisk/asterisk-13-current.tar.gz
+
+You'll also want to set which minutes of the hour you'd like to check for updates. If you add `15` & `45` in the "Check @ Minutes" Bowline will poll for changes at quarter past the hour, and 45 minutes past the hour each hour. You can check as frequently as every minute, or as little as once per hour.
+
+##### Looking at the `last-modified` header
+
+You can check out the headers on a file using curl like so:
+
+    [user@host ~]$ curl --head http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz
+    HTTP/1.1 200 OK
+    Date: Mon, 01 Dec 2014 16:28:14 GMT
+    Server: Apache/2.2.22 (Ubuntu)
+    Last-Modified: Thu, 20 Nov 2014 20:55:57 GMT
+    ETag: "260a38-1e5b88c-508508e10a5b8"
+    Accept-Ranges: bytes
+    Content-Length: 31832204
+    Content-Type: application/x-gzip
+
 
 ### Customizing your Dockerfile for Bowline.
 

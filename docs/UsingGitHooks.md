@@ -18,7 +18,7 @@ If you need more information about how to configure which events you'd like it t
 
 ### Using plain-ole git
 
-All you'll need to do is add a git hook at the appropriate time. May we
+All you'll need to do is add a git hook at the appropriate time.
 
 First, collect your Git Hook URL & secret by visiting your knot's properties, and copying the URL which looks approximately like:
 
