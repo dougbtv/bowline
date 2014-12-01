@@ -6,7 +6,7 @@
 
 Bowline provides a number of ways to stream-line the continuous builds of your Docker images, through a web interface.
 
-* Automates building via push or polling HTTP (say, with a Git hook)
+* Automates building via push (say, with a Git hook) or polling HTTP 
 * Logs the results of each `docker build`
 * Alerts you of your Dockerfile build status (e.g. if a build fails)
 * Provides an authenticated Docker registry, that works with with the Docker CLI (e.g. `docker login`)
