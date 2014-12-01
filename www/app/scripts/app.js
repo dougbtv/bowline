@@ -35,6 +35,10 @@ var bowlineApp = angular
 			templateUrl: 'views/docs.html',
 			controller: 'docsController'
 		})
+		.when('/docs/:specificdoc', {
+			templateUrl: 'views/docs.html',
+			controller: 'docsController'
+		})
 		.when('/knots', {
 			templateUrl: 'views/knots.html',
 			controller: 'knotsController'
