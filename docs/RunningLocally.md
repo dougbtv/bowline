@@ -34,6 +34,11 @@ If you run a `docker ps` it should now look approximately like:
     ae35ea4437e8        dockerfile/mongodb:latest        "mongod"               A minute ago   Up         28017/tcp, 0.0.0.0:27017->27017/tcp        mongodb             
     235d17f30e11        registry:latest                  "docker-registry"      A minute ago   Up         0.0.0.0:5000->5000/tcp                     regserver           
 
+Add `dockertest.com` to your hosts file:
+
+    echo "127.0.0.1 dockertest.com" >> /etc/hosts
+
+And point a browser @ dockertest.com -- or do a `docker login https://dockertest.com`
 
 ## Understanding the setup.
 
@@ -51,6 +56,18 @@ You're building a couple docker containers, pulling another three, and running t
     * [Here's the container we run](https://registry.hub.docker.com/u/svendowideit/ambassador/)
 
 The setup uses the hosts Docker daemon to do the building of the images. You could consider running [Docker-in-Docker](https://github.com/jpetazzo/dind), however, our experience has been that it isn't 100% rock solid.
+
+This setup creates two directories in `/tmp/` for storing the registry, and the mongod. We recommend you change these variables in `run_it.sh`, which are at the top of the file to point to directories that are you know, more permanent. (And maybe even backed up!) 
+
+## Customizing your Setup
+
+Likely, now that you've got it running -- it's semi incomplete, because you need to add your credentials. Especially, a github account to use the Github API inside Bowline. You can customize these by editing `/includes/examples.config.json`
+
+If you're using the `build_it.sh` script as described earlier, you can just edit `/includes/examples.config.json` with the Github username and password of your choice, then run `build_it.sh` and `run_it.sh` again, and it will use the new configuration.
+
+### Customizing the passwords
+
+TODO. For now, login as user 'bowlineadmin' with password 'bowline' and then just change your password with the web front-end.
 
 ## SSL
 

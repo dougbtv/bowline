@@ -16,7 +16,7 @@ bowlineApp.controller('docsController', ['$scope', '$location', '$http', 'loginM
   	var REPO = 'dougbtv/bowline';
 
 	Flatdoc.run({
-		fetcher: Flatdoc.github(REPO, 'README.md')
+		fetcher: Flatdoc.github(REPO, 'docs/GettingStarted.md')
 	});
 
 	var markdown = {
