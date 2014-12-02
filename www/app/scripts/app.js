@@ -35,6 +35,10 @@ var bowlineApp = angular
 			templateUrl: 'views/docs.html',
 			controller: 'docsController'
 		})
+		.when('/docs/:specificdoc', {
+			templateUrl: 'views/docs.html',
+			controller: 'docsController'
+		})
 		.when('/knots', {
 			templateUrl: 'views/knots.html',
 			controller: 'knotsController'
@@ -68,6 +72,8 @@ var bowlineApp = angular
 bowlineApp.controller('bowlineMainController', 
 	['$scope', '$location', '$http', '$cookies', '$route', '$interval','loginModule', 'ENV', 
 	function($scope, $location, $http, $cookies, $route, $interval, login, ENV) {
+
+		$scope.ENV = ENV;
 
 		$scope.loggedin = login.status;
 

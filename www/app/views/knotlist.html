@@ -19,7 +19,7 @@
 
 		<thead>
 			<tr>
-				<th>Docker Tag</th>
+				<th>Docker Name</th>
 				<th ng-hide="username">Owner</th>
 				<th>Last Build</th>
 				<th class="text-center">Get Details</th>
@@ -33,7 +33,7 @@
 				<td>{{rel.docker_tag}}</td>
 				<td ng-hide="username">
 					<a ng-href="#/profile/{{rel.owner.username}}" class="nolinelink">
-						<img class="image-responsive" ng-src="http://www.gravatar.com/avatar/{{rel.owner.profile.gravatar_hash}}?s=20&d=retro"/>
+						<img class="image-responsive" ng-src="https://secure.gravatar.com/avatar/{{rel.owner.profile.gravatar_hash}}?s=20&d=retro"/>
 						{{rel.owner.username}}
 					</a>
 				</td>

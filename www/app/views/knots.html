@@ -167,12 +167,12 @@
 										</tr>
 
 										<tr>
-											<td class="vert-align">Docker tag</td>
+											<td class="vert-align">Docker namespace</td>
 											<td class="vert-align text-center">
 												<validator variable="single.docker_tag" regex="validator.docker_tag" required='true' message="'Letters, numbers, underscore, colon, slash allowed (also at least four letter before first slash)'">
 											</td>
 											<td class="vert-align text-center col-sm-6">
-												<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/tag">
+												<input ng-model="single.docker_tag" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/project">
 											</td>
 										</tr>
 									</tbody>

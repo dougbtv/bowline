@@ -435,6 +435,15 @@ module.exports = function(bowline,opts,log) {
 			}.bind(this),
 			*/
 
+			// Assure a dockerhub login.
+			dockerhub_login: function(callback) {
+
+				bowline.dockerhub.login(function(err){
+					callback(err);
+				});
+
+			}.bind(this),
+
 			docker_build: function(callback) {
 				
 				// When did we start?
@@ -489,7 +498,7 @@ module.exports = function(bowline,opts,log) {
 
 					log.it("push_bowline",{releaseid: this.release._id, tag: this.tag});
 					
-					var localtag = opts.docker_localhost + '/' + this.release.docker_tag;
+					var localtag = opts.docker_registryurl + '/' + this.release.docker_tag;
 					var specifictag = null;
 
 					// Are we going to specifically tag this?
@@ -557,18 +566,34 @@ module.exports = function(bowline,opts,log) {
 			}.bind(this),
 
 			docker_push_dockerhub: function(callback) {
-				if (this.release.store_dockerhub) {
+				if (this.release.store_dockerhub && !opts.disable_docker_hub) {
 
 					log.it("push_dockerhub",{releaseid: this.release._id, tag: this.tag});
 							
 					var specifictag = null;
 
+					// We need to add a proper namespace for our dockerhub user.
+					// So let's change the namespace.
+					var dockerhub_name = opts.docker_user + "/" + this.release.docker_tag.replace("/","_");
+
 					// Are we going to specifically tag this?
 					if (this.tag) {
-						specifictag = this.release.docker_tag + ":" + this.tag;
+						specifictag = dockerhub_name + ":" + this.tag;
 					}
 
 					async.series({
+
+						namespace_tag: function(callback){
+
+							if (specifictag) {
+								execlog('docker tag ' + this.release.docker_tag + ' ' + dockerhub_name,function(err,stdout,stderr){
+									callback(err,{stdout: stdout, stderr: stderr});
+								}.bind(this));
+							} else {
+								callback(null);
+							}
+
+						}.bind(this),
 
 						specific_tag: function(callback){
 
@@ -584,7 +609,7 @@ module.exports = function(bowline,opts,log) {
 
 						push_master: function(callback){
 
-							execlog('docker push ' + this.release.docker_tag + ':latest',function(err,stdout,stderr){
+							execlog('docker push ' + dockerhub_name + ':latest',function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							});
 
@@ -610,13 +635,13 @@ module.exports = function(bowline,opts,log) {
 					}.bind(this));
 					
 				} else {
-					// this.logit("NOTICE: No docker push (by options)");
+					// this.logit("NOTICE: No dockerhub push (by options)");
 					callback(null);
 				}
 			}.bind(this),
 
 			docker_show_images: function(callback) {
-				execlog('docker images | grep "' + this.release.docker_tag + '"',function(err,stdout,stderr){
+				execlog('docker images | grep "' + this.release.docker_tag.replace("/",".") + '"',function(err,stdout,stderr){
 					callback(err,{stdout: stdout, stderr: stderr});
 				});
 			}.bind(this),

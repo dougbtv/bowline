@@ -10,30 +10,28 @@
  * Controller of the bowlineApp
  */
 
-bowlineApp.controller('docsController', ['$scope', '$location', '$http', 'loginModule', 'ENV', function($scope,$location,$http,login,ENV) {
+bowlineApp.controller('docsController', ['$scope', '$location', '$http', '$routeParams', 'loginModule', 'ENV', function($scope,$location,$http,$routeParams,login,ENV) {
 
 
-  	var REPO = 'dougbtv/bowline';
-
-	Flatdoc.run({
-		fetcher: Flatdoc.github(REPO, 'README.md')
-	});
-
+	var REPO = 'dougbtv/bowline';
+	$scope.mode = "started";
 	var markdown = {
-		"readme": 'README.md',
 		"started": 'docs/GettingStarted.md',
+		"runninglocal": 'docs/RunningLocally.md',
+		"usinghooks": 'docs/UsingGitHooks.md',
 	};
 
-	$scope.mode = "readme";
+	if ($routeParams.specificdoc) {
+		$scope.mode = $routeParams.specificdoc;
+	}
 
+	Flatdoc.run({
+		fetcher: Flatdoc.github(REPO, markdown[$scope.mode])
+	});
+
+	// This just sets the location, and we let that do the magic, since it will re-instantiate this mother.
 	$scope.clickDocs = function(mode) {
-
-		$scope.mode = mode;
-
-		Flatdoc.run({
-			fetcher: Flatdoc.github(REPO, markdown[mode])
-		});
-
+		$location.path("/docs/" + mode);
 	};
 
 	$scope.docsTab = function(mode) {

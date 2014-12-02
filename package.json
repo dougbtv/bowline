@@ -1,11 +1,11 @@
 {
-  "name": "bowline",
+  "name": "bowline-io",
   "preferGlobal": true,
-  "version": "0.0.1",
+  "version": "0.4.2",
   "author": "Doug Smith <info@laboratoryb.org>",
-  "description": "Automatically builds projects into docker containers, and pushes it to dockerhub",
+  "description": "Ties together docker images with a registry and build process",
   "scripts": {
-    "start": "node ./bowline.js"
+    "start": "node bowline.js"
   },
   "main": "./bowline.js",
   "repository": {
@@ -14,7 +14,7 @@
   },
   "keywords": [
     "docker",
-    "asterisk",
+    "registry",
     "automation"
   ],
   "dependencies": {

@@ -20,7 +20,6 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 	if (typeof loc.resetpass != 'undefined') {
 		// Ok, we're in a password reset mode.
 		$scope.registration_phase = "resetpass";
-
 	}
 
 	$scope.localchange = false;
@@ -158,7 +157,7 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 		$scope.user.error_email = false;
 		$scope.user.error_username = false;
 
-		console.log("submitregistration -- user: %j",$scope.user);
+		// console.log("submitregistration -- user: %j",$scope.user);
 
 		// Assume no error.
 		var is_error = false;
@@ -187,9 +186,19 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 
 					if (typeof data.error === 'undefined') {
 
-						// That looks like a success.
-						$scope.registration_phase = "complete";
+						if (ENV.verify_email) {
+							// That looks like a success.
+							$scope.registration_phase = "complete";	
+						} else {
+							// We're not verifying their email.
+							// So, we can just zip right ahead.
+							$location.path('/register')
+								.search('resetpass',data.resetkey)
+								.search('email',data.email);
+							// Ok, we can just set the
+						}
 
+						
 						// Scroll to the top.
 						$("body,html").animate({scrollTop: 0}, "slow");
 
@@ -201,7 +210,7 @@ bowlineApp.controller('registerController', ['$scope', '$location', '$http', '$t
 
 					}
 
-					console.log("!trace test data from api: ",data);
+					// console.log("!trace test data from api: ",data);
 
 				}.bind(this)).error(function(data){
 
