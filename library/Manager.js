@@ -122,7 +122,7 @@ module.exports = function(bowline,opts,log) {
 				this.jobExists(findslug,function(exists){
 					if (!exists) {
 						// Great, let's create this job.
-						bowline.release.getReleases({_id: releaseid},function(rels){
+						bowline.release.getReleases(true,{_id: releaseid},function(rels){
 
 							jobs[findslug] = new Builder(bowline,opts,log);
 							jobs[findslug].start(rels[0],function(){

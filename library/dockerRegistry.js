@@ -146,7 +146,7 @@ module.exports = function(bowline, opts, log) {
 	this.getTags = function(releaseid,callback) {
 
 		// First things first, we need the release docker tag.
-		bowline.release.getReleases({ _id: releaseid },function(rels){
+		bowline.release.getReleases(false,{ _id: releaseid },function(rels){
 
 			if (rels) {
 				var docker_tag = rels[0].docker_tag;

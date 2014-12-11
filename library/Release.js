@@ -191,7 +191,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		var searchpack = {hook_secret: hook_secret};
 		// console.log("!trace findByHookSecret searchpack: ",searchpack);
 
-		this.getReleases(searchpack,function(rels){
+		this.getReleases(true,searchpack,function(rels){
 
 			if (rels) {
 				callback(null,rels[0]);

@@ -4,7 +4,7 @@ module.exports = function(bowline,opts,log) {
 
 	this.buildBegins = function(releaseid,callback) {
 
-		bowline.release.getReleases({ _id: releaseid },function(rels){
+		bowline.release.getReleases(true,{ _id: releaseid },function(rels){
 
 			var rel = rels[0];
 
@@ -32,7 +32,7 @@ module.exports = function(bowline,opts,log) {
 
 	this.buildComplete = function(releaseid,success,callback) {
 
-		bowline.release.getReleases({ _id: releaseid },function(rels){
+		bowline.release.getReleases(true,{ _id: releaseid },function(rels){
 
 			var rel = rels[0];
 
