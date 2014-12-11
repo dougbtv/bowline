@@ -11,7 +11,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		slug: '^[\\w\S]+$',
 		method: '^(http|hook|manual)$',
 		hook_secret: '^[\\w\\-]+$',
-		docker_tag: '^[a-zA-Z0-9\:\\/\-_.]+$',
+		docker_tag: '^[a-zA-Z0-9\:\\/\\-_.]+$',
 		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
