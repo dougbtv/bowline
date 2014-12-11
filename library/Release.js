@@ -93,6 +93,14 @@ module.exports = function(bowline,opts,log,mongoose) {
 			
 		});
 
+	releaseSchema.options.toObject.transform = function (doc, ret, options) {
+		if (options.hide) {
+			options.hide.split(' ').forEach(function (prop) {
+				delete ret[prop];
+			});
+		}
+	};
+
 	// Compile it to a model.
 	var Release = mongoose.model('Release', releaseSchema);
 	
@@ -381,13 +389,13 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// console.log("!trace getReleaseList input: ",userid,search);
 		// console.log("!trace getReleaseList searchpack: %j",searchpack);
 
-		this.getReleases(searchpack,function(results){
+		this.getReleases(false,searchpack,function(results){
 			callback(results);
 		});
 
 	}
 
-	this.getReleases = function(filter,callback) {
+	this.getReleases = function(isowner,filter,callback) {
 
 		if (!filter) {
 			filter = {};
@@ -411,7 +419,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 							item.job = props;
 							// console.log("!trace jobProperties full: ",item);
 							//!bang
-							callback(err,item.toObject({ virtuals: true }));
+							var hiding = 'hook_secret';
+							if (isowner) {
+								hiding = '';
+							}
+							callback(err,item.toObject({ hide: hiding, transform: true, virtuals: true }));
 						});
 
 					}, function(err, results){

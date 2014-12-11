@@ -581,11 +581,32 @@ module.exports = function(bowline, opts, log) {
 
 		var input = req.params;
 
-		bowline.release.getReleases({_id: input.id},function(rels){
-			// console.log("!trace rels from single release",rels);
-			res.contentType = 'json';
-			res.send(rels[0]);
-		});
+		if (input.session) {
+			
+			bowline.user.validateSession(input.session,function(validpack){
+
+				bowline.release.isOwner(validpack.fulluser._id,input.id,function(err,owner){
+
+					bowline.release.getReleases(owner,{_id: input.id},function(rels){
+						// console.log("!trace rels from single release",rels);
+						res.contentType = 'json';
+						res.send(rels[0]);
+					});
+
+				});
+
+			});
+
+		} else {
+
+			bowline.release.getReleases(false,{_id: input.id},function(rels){
+				// console.log("!trace rels from single release",rels);
+				res.contentType = 'json';
+				res.send(rels[0]);
+			});
+			
+		}
+
 
 	}
 
