@@ -574,7 +574,8 @@ module.exports = function(bowline,opts,log) {
 
 					// We need to add a proper namespace for our dockerhub user.
 					// So let's change the namespace.
-					var dockerhub_name = opts.docker_user + "/" + this.release.docker_tag.replace("/","_");
+					var target_nickname = this.release.docker_tag.split("/");
+					var dockerhub_name = opts.docker_user + "/" + target_nickname[1];
 
 					// Are we going to specifically tag this?
 					if (this.tag) {

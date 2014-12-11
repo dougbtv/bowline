@@ -11,7 +11,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		slug: '^[\\w\S]+$',
 		method: '^(http|hook|manual)$',
 		hook_secret: '^[\\w\\-]+$',
-		docker_tag: '^[a-zA-Z0-9\:\\/\-_.]+$',
+		docker_tag: '^[a-zA-Z0-9\:\\/\\-_.]+$',
 		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
@@ -92,6 +92,14 @@ module.exports = function(bowline,opts,log,mongoose) {
 			}
 			
 		});
+
+	releaseSchema.options.toObject.transform = function (doc, ret, options) {
+		if (options.hide) {
+			options.hide.split(' ').forEach(function (prop) {
+				delete ret[prop];
+			});
+		}
+	};
 
 	// Compile it to a model.
 	var Release = mongoose.model('Release', releaseSchema);
@@ -381,13 +389,13 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// console.log("!trace getReleaseList input: ",userid,search);
 		// console.log("!trace getReleaseList searchpack: %j",searchpack);
 
-		this.getReleases(searchpack,function(results){
+		this.getReleases(false,searchpack,function(results){
 			callback(results);
 		});
 
 	}
 
-	this.getReleases = function(filter,callback) {
+	this.getReleases = function(isowner,filter,callback) {
 
 		if (!filter) {
 			filter = {};
@@ -411,7 +419,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 							item.job = props;
 							// console.log("!trace jobProperties full: ",item);
 							//!bang
-							callback(err,item.toObject({ virtuals: true }));
+							var hiding = 'hook_secret';
+							if (isowner) {
+								hiding = '';
+							}
+							callback(err,item.toObject({ hide: hiding, transform: true, virtuals: true }));
 						});
 
 					}, function(err, results){

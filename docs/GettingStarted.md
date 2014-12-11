@@ -30,6 +30,7 @@ Let's set up a "Hello, World!" Bowline knot. We'll use a handy [example from bow
     * Add the absolute path to the Dockerfile from the clone's root.
     * Include the filename `Dockerfile` in the path.
     * In this example we use: `/helloworld/Dockerfile`
+      * If your Dockerfile is in the root directory, use `/Dockerfile`
 * Choose Save.
 
 Alright, now you've got a knot setup that you can choose to manually update by visiting the status for that knot, and chooseing "Begin manual update".
