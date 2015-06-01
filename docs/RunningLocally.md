@@ -31,7 +31,7 @@ If you run a `docker ps` it should now look approximately like:
     62d6a179e9a4        dougbtv/bowline-nginx:latest     "nginx -g 'daemon of   A minute ago   Up         0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   determined_turing   
     ace84aa405f7        dougbtv/bowline:latest           "/bin/sh -c 'forever   A minute ago   Up         0.0.0.0:8000->8000/tcp                     bowline             
     1fb1bea5f4d3        svendowideit/ambassador:latest   "\"/bin/sh -c 'env |   A minute ago   Up         443/tcp                                    nginx-amb           
-    ae35ea4437e8        lbrary/mongo:latest        "mongod"               A minute ago   Up         28017/tcp, 0.0.0.0:27017->27017/tcp        mongodb             
+    ae35ea4437e8        library/mongo:latest        "mongod"               A minute ago   Up         28017/tcp, 0.0.0.0:27017->27017/tcp        mongodb             
     235d17f30e11        registry:latest                  "docker-registry"      A minute ago   Up         0.0.0.0:5000->5000/tcp                     regserver           
 
 Add `dockertest.com` to your hosts file:
@@ -45,7 +45,7 @@ And point a browser @ dockertest.com -- or do a `docker login https://dockertest
 You're building a couple docker containers, pulling another three, and running them. They are:
 
 * Bowline's backend (a REST-ish API created with Node.js)
-* A [MongoDB instance](https://registry.hub.docker.com/u/lbrary/mongo/) to store Bowline's data.
+* A [MongoDB instance](https://registry.hub.docker.com/u/library/mongo/) to store Bowline's data.
 * A [Docker registry](https://registry.hub.docker.com/_/registry/)
 * An nginx server to proxy requests between the Bowline API & the registry, and serve the front-end
 * An ambassador for nginx, as the Bowline & Nginx containers need both to know about one another.
