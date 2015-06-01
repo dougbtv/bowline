@@ -19,7 +19,7 @@ echo "Starting registry server..."
 docker run -d -e GUNICORN_OPTS=[--preload] -v $REGISTRY_DIR:/registry -e SETTINGS_FLAVOR=local -e STORAGE_PATH=/registry -e SEARCH_BACKEND=sqlalchemy -p 5000:5000  --name regserver registry:latest
 
 echo "Starting mongodb..."
-docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db --name mongodb dockerfile/mongodb
+docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db --name mongodb library/mongo
 
 echo "Starting nginx ambassador..."
 HOST_IP_ADDRESS=$(ifconfig | grep -a2 docker0 | grep -P "inet[^6]" | awk '{print $2}')
