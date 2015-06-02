@@ -27,7 +27,7 @@ docker rm $(docker ps -a -q)
 echo "Running mongo for preload..."
 rm -Rf $MONGO_DIR
 mkdir $MONGO_DIR
-docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db --name temp_mongo library/mongo
+docker run -d --privileged -v $MONGO_DIR:/data/db --name temp_mongo library/mongo
 
 CMD_RELEASE_IMPORT=""
 CMD_USER_IMPORT=""
