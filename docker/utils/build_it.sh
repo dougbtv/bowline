@@ -33,8 +33,8 @@ CMD_RELEASE_IMPORT=""
 CMD_USER_IMPORT=""
 
 echo "Starting mongo client"
-docker run -it --rm --link temp_mongo:mongodb -v $EXAMPLE_DATA:/exampledata/ library/mongo \
-    bash -c 'mongoimport --host mongodb --db bowline --collection releases --file /exampledata/json/releases.json; mongoimport --host mongodb --db bowline --collection users --file /exampledata/json/users.json'
+docker run -it --rm --link temp_mongo:mongo -v $EXAMPLE_DATA:/exampledata/ library/mongo \
+    bash -c 'mongoimport --host mongo --db bowline --collection releases --file /exampledata/json/releases.json; mongoimport --host mongo --db bowline --collection users --file /exampledata/json/users.json'
 
 echo "Cleaning up all containers...."
 docker kill $(docker ps -a -q) || true
