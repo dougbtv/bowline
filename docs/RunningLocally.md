@@ -45,7 +45,7 @@ And point a browser @ dockertest.com -- or do a `docker login https://dockertest
 You're building a couple docker containers, pulling another three, and running them. They are:
 
 * Bowline's backend (a REST-ish API created with Node.js)
-* A [MongoDB instance](https://registry.hub.docker.com/u/library/mongo/) to store Bowline's data.
+* A [MongoDB instance](https://registry.hub.docker.com/_/mongo/) to store Bowline's data.
 * A [Docker registry](https://registry.hub.docker.com/_/registry/)
 * An nginx server to proxy requests between the Bowline API & the registry, and serve the front-end
 * An ambassador for nginx, as the Bowline & Nginx containers need both to know about one another.
