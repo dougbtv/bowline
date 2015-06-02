@@ -6,5 +6,5 @@ RUN mkdir /etc/nginx/ssl/
 COPY cert/nginx.crt /etc/nginx/ssl/nginx.crt
 COPY cert/nginx.key /etc/nginx/ssl/nginx.key
 RUN rm /etc/nginx/conf.d/default.conf
-RUN rm /etc/nginx/conf.d/example_ssl.conf
+# RUN rm /etc/nginx/conf.d/example_ssl.conf
 COPY nginx.conf /etc/nginx/nginx.conf
