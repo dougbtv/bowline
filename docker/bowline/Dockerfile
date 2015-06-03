@@ -12,7 +12,7 @@ RUN npm install -g forever
 
 RUN yum install -y make
 
-ENV version_increment 0x0000b00fd33d4
+ENV version_increment 0x0000b00fd33d6
 RUN git clone https://github.com/dougbtv/bowline.git
 
 # We need make for gyp rebuilds of cpp
@@ -21,7 +21,7 @@ RUN npm install
 RUN git checkout develop
 WORKDIR /
 
-ADD config.json /bowline/includes/config.json
+ADD example.config.json /bowline/includes/config.json
 
 # ENV DOCKER_HOST tcp://dind:4444
 
