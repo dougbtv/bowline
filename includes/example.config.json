@@ -1,6 +1,6 @@
 {
 	"CONFIG_NAME": "example",
-    "MONGO_CONNECT_STRING": "mongo://mongo/bowline",
+    "MONGO_CONNECT_STRING": "mongodb://mongo/bowline",
     "MONGO_OPTIONS": {},
     "MONGOOSE_DEBUG": false,
     "EMAIL_ENABLED": false,
