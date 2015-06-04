@@ -13,7 +13,7 @@ RUN npm install -g forever
 RUN yum install -y make
 
 ENV version_increment 0x0000b00fd33d6
-RUN git clone https://github.com/dougbtv/bowline.git
+RUN git clone https://github.com/mut3/bowline.git
 
 # We need make for gyp rebuilds of cpp
 WORKDIR /bowline
