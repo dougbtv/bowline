@@ -2,6 +2,14 @@
 MONGO_DIR=/tmp/mongodata
 REGISTRY_DIR=/tmp/registry
 
+MOUNT_BOWLINEDIR="-v /bowline/"
+
+if [ "$1" = "dev" ]; then
+  BASEDIR=$(dirname $(dirname $(pwd)))
+  echo "Loading up $BASEDIR into bowline"
+  MOUNT_BOWLINEDIR="-v $BASEDIR:/bowline/"
+fi
+
 echo "Removing ALL containers..."
 docker kill $(docker ps -a -q) || true
 docker rm $(docker ps -a -q) || true
@@ -29,7 +37,7 @@ echo "Starting bowline..."
 docker run \
     -p 8000:8000 \
     -v /var/run/docker.sock:/var/run/docker.sock:rw \
-    -v /bowline/ \
+    $MOUNT_BOWLINEDIR \
     --link mongo:mongo \
     --link nginx-amb:dockertest.com \
     --name bowline -d -t dougbtv/bowline
@@ -42,3 +50,7 @@ docker run \
     --link regserver:regserver \
     -d -t dougbtv/bowline-nginx
 
+if [ "$1" = "dev" ]; then
+  echo "Tailing bowline logs..."
+  docker logs -f bowline
+fi

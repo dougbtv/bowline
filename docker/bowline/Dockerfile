@@ -25,4 +25,4 @@ ADD example.config.json /bowline/includes/config.json
 
 # ENV DOCKER_HOST tcp://dind:4444
 
-ENTRYPOINT forever -e /var/log/bowline.log -o /var/log/bowline.log /bowline/bowline.js
+ENTRYPOINT forever -w --watchDirectory /bowline/library/ -e /var/log/bowline.log -o /var/log/bowline.log /bowline/bowline.js
