@@ -5,6 +5,7 @@
     "MONGOOSE_DEBUG": false,
     "EMAIL_ENABLED": false,
     "SERVER_PORT": 8000,
+    "bowline_domain": "dockertest.com",
 	"gituser": "REPLACE_THIS_USER",
 	"gitpassword": "REPLACE_THIS_PASSWORD",
 	"disable_github": true,

@@ -78,6 +78,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	// We want virtuals when we export to json.
 	releaseSchema.set('toObject', { virtuals: true });
+
+	releaseSchema.virtual('git_hookurl')
+		.get(function () {
+			return "http://" + opts.bowline_domain + "/api/gitHookUpdate/" + this.hook_secret;
+		});
 	
 	releaseSchema.virtual('dockerfile_array')
 		.get(function () {
