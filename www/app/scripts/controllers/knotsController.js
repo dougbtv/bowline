@@ -315,15 +315,26 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					} */
 					break;
 				case "readme":
-					$timeout(function(){
-						var path_readme = $scope.single.git_path.replace(/Dockerfile/,'README.md');
-						Flatdoc.run({
-							fetcher: Flatdoc.github($scope.single.git_repo, path_readme),
-						});
-					},300);
+
+					switch ($scope.single.git_method) {
+						case "github": 
+							$timeout(function(){
+								var path_readme = $scope.single.git_path.replace(/Dockerfile/,'README.md');
+								Flatdoc.run({
+									fetcher: Flatdoc.github($scope.single.git_repo, path_readme),
+								});
+							},300);
+							break;
+							
+						default:
+							console.log("!TODO: This just isn't support yet, bummer.");
+					}
 					
 					break;
+
 				default:
+					// nothing yet...
+					break;
 			}
 
 		};
@@ -398,10 +409,11 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					// Ok, let's compile a github URL.
 					// var url_github = 'https://github.com/' + release.git_repo + '/tree/' + release.branch_master + path_readme;
 
+					/*
 					Flatdoc.run({
 						fetcher: Flatdoc.github(single.git_repo, path_readme),
 					});
-
+					*/
 
 					// selects are a bummer, let's take the enumerated type of method and make it a reference to method.
 					for (var i = 0; i < $scope.methods.length; i++) {
