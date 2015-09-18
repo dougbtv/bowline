@@ -289,7 +289,7 @@
 										<tr ng-show="selected_gitmethod.value == 'git'">
 											<td class="vert-align">Git URL</td>
 											<td class="vert-align text-center">
-												<validator variable="single.git_url" regex="validator.git_url" required='true' message="'Github Name/Repo format'">
+												<validator variable="single.git_url" regex="validator.git_url" required='true' message="'Valid URL please'">
 											</td>
 											<td>
 												<input ng-model="single.git_url" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="https://user:pass@git.repo/url">

@@ -13,7 +13,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		hook_secret: '^[\\w\\-]+$',
 		docker_tag: '^[a-zA-Z0-9\:\\/\\-_.]+$',
 		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
-		git_url: '^.+$',
+		git_url: '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$',
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
 	};
@@ -56,7 +56,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		git_enabled: Boolean,																// Do we upate the git repo?
 		git_repo: { type: String, required: false, match: new RegExp(validator.git_repo) },	// What's the git repo?
 		git_path: { type: String, required: true, match: new RegExp(validator.git_path) },	// This is the path to the dockerfile in the git repo
-		git_url: String,
+		git_url: { type: String, required: false, match: new RegExp(validator.git_url) },
 		branch_name: { type: String, required: true },										// What's the NEW branch name you'd like?
 		branch_master: { type: String, required: true },										// What's your master branch name?
 
