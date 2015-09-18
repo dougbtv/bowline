@@ -276,13 +276,23 @@
 											</td>
 										</tr>
 
-										<tr>
+										<tr ng-show="selected_gitmethod.value == 'github'">
 											<td class="vert-align">Github Repo</td>
 											<td class="vert-align text-center">
 												<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
 											</td>
 											<td>
 												<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+											</td>
+										</tr>
+
+										<tr ng-show="selected_gitmethod.value == 'git'">
+											<td class="vert-align">Git URL</td>
+											<td class="vert-align text-center">
+												<validator variable="single.git_url" regex="validator.git_url" required='true' message="'Github Name/Repo format'">
+											</td>
+											<td>
+												<input ng-model="single.git_url" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="https://user:pass@git.repo/url">
 											</td>
 										</tr>
 
@@ -305,7 +315,7 @@
 											</td>
 										</tr>
 
-										<tr>
+										<tr ng-show="selected_gitmethod.value == 'github'">
 											<td class="vert-align">New Branch Name (prefix)</td>
 											<td class="vert-align text-center">
 												<validator variable="single.branch_name" required='true'>

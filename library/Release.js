@@ -13,6 +13,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		hook_secret: '^[\\w\\-]+$',
 		docker_tag: '^[a-zA-Z0-9\:\\/\\-_.]+$',
 		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
+		git_url: '^.+$',
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
 	};
@@ -53,8 +54,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// ----------- Git variables.
 		git_method: String,																	// What git method do we use? (pure git or github)
 		git_enabled: Boolean,																// Do we upate the git repo?
-		git_repo: { type: String, required: true, match: new RegExp(validator.git_repo) },	// What's the git repo?
+		git_repo: { type: String, required: false, match: new RegExp(validator.git_repo) },	// What's the git repo?
 		git_path: { type: String, required: true, match: new RegExp(validator.git_path) },	// This is the path to the dockerfile in the git repo
+		git_url: String,
 		branch_name: { type: String, required: true },										// What's the NEW branch name you'd like?
 		branch_master: { type: String, required: true },										// What's your master branch name?
 
@@ -160,6 +162,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.git_enabled = source.git_enabled;
 		dest.git_method = source.git_method;
 		dest.git_repo = source.git_repo;
+		dest.git_url = source.git_url;
 		dest.git_path = source.git_path;
 		dest.branch_name = source.branch_name;
 		dest.branch_master = source.branch_master;
