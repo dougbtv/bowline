@@ -13,15 +13,29 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 	var exec = require('child_process').exec;
 
 	this.clone = function(callback) {
-		callback("nopez... clone isn't build yet.");
+		
+		gitcommon.clone(this.release,this.release.git_url,function(err,commitish){
+			if (err) {
+				log.warn("vanilla_git_clone","err with that: " + err);
+				callback(err);
+			} else {
+				this.commit = commitish;
+				callback(err,commitish);
+			}
+		}.bind(this));
 	}
 
 	this.verify = function(callback) {
-		callback("sorry, no, verify for vanilla is not built yet");
+		// Let's just see if we can clone...
+		this.clone(function(err){
+			callback(err);
+		});
+
 	}
 
 	this.success = function(callback) {
-		callback("Bummer ehn... not built yet");
+		log.it("vanilla_git_success","durrrr I am always success! like my brother, though.");
+		// callback("Bummer ehn... not built yet");
 	}
 
 	this.branchCommitPushPR = function(buildstamp,callback) {

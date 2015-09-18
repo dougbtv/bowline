@@ -43,7 +43,7 @@ module.exports = function(bowline,opts,log) {
 				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
 				exec(cmd_gitclone,function(err,stdout,stderr){
 					if (err) {
-						log.warn("gitcommon_clone_fail",{release: release});
+						log.warn("gitcommon_clone_fail",{release: release, stdout: stdout, stderr: stderr});
 						callback("gitcommon clone failed");
 					} else {
 						callback(err,stdout);	
