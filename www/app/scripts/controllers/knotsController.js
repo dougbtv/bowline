@@ -84,7 +84,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.logs_pageend = 10;
 			$scope.logs_pageincrement = 10;
 			$scope.logs_found_all = false;
-		}
+		};
 
 		$scope.logSetDefaults();
 

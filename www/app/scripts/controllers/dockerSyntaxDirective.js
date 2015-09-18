@@ -62,14 +62,14 @@ bowlineApp.directive('dockersyntax', function(){
 						if (dockerline.indexOf(dockercmds[i]) > -1) {
 							// ok it matches that command,
 							// we need to put that part
-							var eachtext = dockerline.replace(new RegExp(dockercmds[i], 'g'),'');
+							var dockerline_eachtext = dockerline.replace(new RegExp(dockercmds[i], 'g'),'');
 							collection.push({ text: dockercmds[i], style: "coded-highlight"});
-							collection.push({ text: eachtext, style: "coded"});
+							collection.push({ text: dockerline_eachtext, style: "coded"});
 						}
 					}
 
 					if (dockerline.indexOf('AUTOBUILD_UNIXTIME') > -1) {
-						var useline = dockerline
+						var useline = dockerline;
 						if (collection.length > 0) {
 							var end = collection.pop();
 							useline = end.text;
