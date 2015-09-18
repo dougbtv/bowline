@@ -1,4 +1,4 @@
-module.exports = function(inrelease,bowline,opts,log) {
+module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 
 	// an instance of the applicable release.
 	this.release = inrelease;
@@ -8,9 +8,6 @@ module.exports = function(inrelease,bowline,opts,log) {
 
 	// What's the HEAD commit-ish?
 	this.commit = '';
-
-	// -- constants
-	var DEPTH = 1; 		// how deep?
 
 	// -- our deps.
 	var moment = require('moment');
@@ -25,74 +22,19 @@ module.exports = function(inrelease,bowline,opts,log) {
 
 	this.clone = function(callback) {
 
-		async.series({
-
-			// Remove the tempdir if necessary
-			rmdir: function(callback){
-				exec("rm -Rf " + this.release.clone_path,function(err){
-					callback(err);
-				});
-			}.bind(this),
-
-			// Set your git config user items.
-			
-   			// TODO: This is wonked out. I'm not sure what to do with it, yet.
-   			/*
-			git_set_email: function(callback){
-				exec('git config --global user.email "' + opts.git_setemail + '"', function(err,stdout){
-					// console.log("!trace branch stdout: ",stdout);
-					callback(err,stdout);
-				});
-			},
-
-			git_set_email: function(callback){
-				exec('git config --global user.name "' + opts.git_setname + '"', function(err,stdout){
-					// console.log("!trace branch stdout: ",stdout);
-					callback(err,stdout);
-				});
-			},
-			*/
-
-			// Clone with git.
-			clone: function(callback){
-				// this.logit("Beginning git clone.");`
-				var cmd_gitclone = 'git clone --depth ' + DEPTH + ' https://' + opts.gituser + ':' + opts.gitpassword + '@github.com/' + this.release.git_repo + ".git " + this.release.clone_path;
-				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
-				exec(cmd_gitclone,function(err,stdout,stderr){
-					if (err) {
-						log.warn("github_clone_fail",{release: this.release});
-						callback("GitHub clone failed");
-					} else {
-						callback(err,stdout);	
-					}
-				});
-			}.bind(this),
-
-			get_headcommit: function(callback){
-				// this.logit("Beginning git clone.");`
-				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
-				exec('git rev-parse HEAD',
-					{cwd: this.release.clone_path},
-					function(err,stdout,stderr){
-						if (err) {
-							log.warn("github_get_headcommit_failed",{release: this.release});
-							callback("GitHub get head commit failed");
-						} else {
-							this.commit = stdout.trim();
-							callback(err,this.commit);
-						}
-					}.bind(this));
-			}.bind(this),
-
-		},function(err,results){
-
+		var giturl = 'https://' + opts.gituser + ':' + opts.gitpassword + '@github.com/' + this.release.git_repo + ".git ";
+		
+		gitcommon.clone(this.release,giturl,function(err,commitish){
 			if (err) {
-				log.error("github_clone",err);
+				log.warn("error_github_clone","In GitHub, error with GitCommon clone: " + err);
+				callback(err);
+			} else {
+				this.commit = commitish;
+				callback(err,commitish);
 			}
-
-			callback(err);
-
 		}.bind(this));
+
+		
 		
 	}
 
@@ -170,6 +112,8 @@ module.exports = function(inrelease,bowline,opts,log) {
 			if (err) {
 				log.warn("github_verify_fail",{releaseid: this.release._id, err: err, series_results: results});
 			}
+
+			// log.it("verify_worked","good it looks like it works");
 
 			callback(err);
 

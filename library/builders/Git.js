@@ -1,4 +1,4 @@
-module.exports = function(inrelease,bowline,opts,log) {
+module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 
 	// an instance of the applicable release.
 	this.release = inrelease;

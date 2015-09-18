@@ -1,6 +1,8 @@
 module.exports = function(bowline,opts,log) {
 
 	// Our children.
+	var GitCommon = require('./builders/GitCommon.js');
+	var gitcommon = new GitCommon(bowline,opts,log);
 	var GitHub = require('./builders/GitHub.js');
 	var Git = require('./builders/Git.js');
 
@@ -64,12 +66,12 @@ module.exports = function(bowline,opts,log) {
 		switch (this.release.git_method) {
 			// use github.
 			case "github":
-				this.git = new GitHub(this.release,bowline,opts,log);
+				this.git = new GitHub(this.release,gitcommon,bowline,opts,log);
 				break;
 
 			// use a standard git repo.
 			case "git":
-				this.git = new Git(this.release,bowline,opts,log);
+				this.git = new Git(this.release,gitcommon,bowline,opts,log);
 				break;
 
 			// Hrmm, that's an error.
