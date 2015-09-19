@@ -243,9 +243,38 @@ module.exports = function(bowline,opts,log) {
 					fs.readFile(path_dockerfile, 'utf8', function (err, dockerfile_contents) {
 						if (!err) {
 
-							bowline.release.updateDockerfile(this.release._id,dockerfile_contents,function(err){
-								callback(err);
+							// Let's parse the FROM out of the dockerfile
+							// !bang
+							var dockerfile_from = false;
+
+							dockerfile_contents.split("\n").forEach(function(line){
+
+								// make sure you trim that up...
+								line = line.trim();
+
+								// omit comments....
+								if (!line.match(/^\s*#.+$/)) {
+
+									// And we'll operate on only the first line.
+									if (line.match(/FROM/i)) {
+										if (!dockerfile_from) {
+											// Parse out the field it's from
+											dockerfile_from = line.replace(/^\s*FROM\s+([\S]+).*$/,"$1");
+											// log.it("check_from",dockerfile_from);
+										}
+									}
+								}
+
 							}.bind(this));
+
+							if (dockerfile_from) {
+								bowline.release.updateDockerfile(this.release._id,dockerfile_contents,dockerfile_from,function(err){
+									callback(err);
+								}.bind(this));
+
+							} else {
+
+							}
 
 						} else {
 							callback("Damn, couldn't read the dockerfile when looking for environment variable.");
@@ -721,7 +750,6 @@ module.exports = function(bowline,opts,log) {
 		var path_dockerfile = this.release.clone_path + relative_gitpath;
 
 
-		// !bang
 		fs.readFile(path_dockerfile, 'utf8', function (err, filecontents) {
 
 			// console.log("!trace a: ",path_dockerfile);

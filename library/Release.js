@@ -26,7 +26,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 		active: Boolean,											  				// Is this currently active?
 		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
 		docker_tag: {type: String, required: true, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
-		dockerfile: String,
+		dockerfile: String,															// Yep that's the dockerfile
+		from: String, 																// The dockerfile FROM base image
 		
 		// -------------- Colaborators
 		collaborators: [
@@ -266,11 +267,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
-	this.updateDockerfile = function(releaseid,dockerfile,callback) {
+	this.updateDockerfile = function(releaseid,dockerfile,from,callback) {
 
 		Release.update(
 			{ _id: releaseid },
-			{ dockerfile: dockerfile },
+			{ dockerfile: dockerfile, from: from  },
 			function(err){
 
 				if (err) {
