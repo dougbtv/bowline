@@ -221,6 +221,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$location.search('mine',null);
 		};
 
+		$scope.selectFamily = function() {
+			$scope.mode = 'family';
+		};
+
 		$scope.selectLog = function(logid) {
 
 			$scope.mode = 'logdetail';
