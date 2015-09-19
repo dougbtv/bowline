@@ -195,6 +195,94 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
+	this.getFamily = function(id,callback) {
+		// Alright, we're going to create a little family tree here.
+		// We'll look for:
+		// The parent. (there's only ever one, and it's optional)
+		// The children. (there could be none, one or many)
+		// The siblings,. (there could be none, one or many)
+		// !bang
+
+		var family = {
+			parent: false,
+			children: [],
+			siblings: [],
+		};
+
+		// Pull up the release in question.
+		Release.findOne({ _id: id },function(err,release){
+
+			// Make sure it's legit.
+			if (!err && release) {
+				
+				async.series({
+
+					// Get the parent
+					get_parent: function(callback){
+						
+						Release.findOne({ docker_tag: release.from }, 'docker_tag last_build _id',function(err,parent){
+							if (err) {
+								console.log("getfamily_parent",err);
+							}
+							family.parent = parent;
+							callback(err);
+						});
+
+					}.bind(this),
+
+					// Get the children
+					get_children: function(callback){
+						
+						Release.find({ from: release.docker_tag }, 'docker_tag last_build _id',function(err,children){
+							if (err) {
+								console.log("getfamily_children",err);
+							}
+							family.children = children;
+							callback(err);
+						});
+
+					}.bind(this),
+
+					// Get the siblings
+					get_siblings: function(callback){
+						
+						Release.find({ from: release.from }, 'docker_tag last_build _id',function(err,siblings){
+							if (err) {
+								console.log("getfamily_siblings",err);
+							}
+							family.siblings = siblings;
+							callback(err);
+						});
+
+					}.bind(this),
+					
+
+				},function(err){
+
+					if (err) {
+						log.error("release_getFamily",err);
+					}
+
+					callback(err,family);
+
+				}.bind(this));
+
+			} else {
+
+				if (err) {
+					log.err("release_getFamily_existance_check",err);
+				}
+
+				callback("Sorry, no release exited.");
+
+			}
+
+		});
+
+		
+
+	}
+
 	this.findByHookSecret = function(hook_secret,callback) {
 
 		var searchpack = {hook_secret: hook_secret};
@@ -427,7 +515,6 @@ module.exports = function(bowline,opts,log,mongoose) {
 						bowline.manager.jobProperties(item.slug,function(err,props){
 							item.job = props;
 							// console.log("!trace jobProperties full: ",item);
-							//!bang
 							var hiding = 'hook_secret';
 							if (isowner) {
 								hiding = '';

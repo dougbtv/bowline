@@ -223,6 +223,11 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.selectFamily = function() {
 			$scope.mode = 'family';
+			console.log("!trace start get family");
+			release.getFamily($scope.single._id,function(err,family){
+				console.log("!trace end get family");
+				$scope.family = family;
+			});
 		};
 
 		$scope.selectLog = function(logid) {
@@ -310,6 +315,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.mode = mode;
 
 			switch (mode) {
+				case "family":
+					$scope.selectFamily();
+					break;
 				case "tags":
 					$scope.getTags();
 					break;

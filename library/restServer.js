@@ -115,6 +115,10 @@ module.exports = function(bowline, opts, log) {
 		server.post('/api/getLogs', this.getLogs);
 		server.head('/api/getLogs', this.getLogs);
 
+		server.get('/api/getFamily', this.getFamily);
+		server.post('/api/getFamily', this.getFamily);
+		server.head('/api/getFamily', this.getFamily);
+
 		server.get('/api/getTags', this.getTags);
 		server.post('/api/getTags', this.getTags);
 		server.head('/api/getTags', this.getTags);
@@ -492,6 +496,16 @@ module.exports = function(bowline, opts, log) {
 
 	}.bind(this);
 
+	this.getFamily = function(req, res, next) {
+
+		var input = req.params;
+
+		bowline.release.getFamily(input.id,function(err,family){
+			res.contentType = 'json';
+			res.send(family);
+		});
+
+	}.bind(this);
 
 	this.getLogs = function(req, res, next) {
 
