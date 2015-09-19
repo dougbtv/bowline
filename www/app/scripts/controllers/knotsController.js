@@ -327,7 +327,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 							break;
 							
 						default:
-							console.log("!TODO: This just isn't support yet, bummer.");
+							console.log("!TODO: Build readme support for vanilla git");
 					}
 					
 					break;
