@@ -462,86 +462,84 @@
 
 			<span ng-switch-when="family">
 
-				<h3>Parent</h3>
-				<table ng-show="family.parent.docker_tag" class="table table-striped">
-
-					<thead>
-						<tr>
-							<th>Image</th>
-							<th>Last Build @</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						<tr >
-							<td>
-								<a ng-href="/#/knots?details={{ family.parent._id }}">{{ family.parent.docker_tag }}</a>
-							</td>
-							<td>
-								<span ng-show="family.parent.last_build">{{ formatLogDate(family.parent.last_build) }}</span>
-								<span ng-hide="family.parent.last_build"><i>(never built)</i></span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
-				<div ng-hide="family.parent.docker_tag" class="alert alert-info" role="alert">
-					No parent for this knot.
+				<div ng-hide="family.parent.docker_tag || family.children.length || family.siblings.length" class="alert alert-info" role="alert">
+					<strong>No relationships</strong> If you specify <i>{{ single.docker_tag }}</i> (the image name for this knot) as a FROM image in another Dockerfile and add it as a knot, you'll create a child which can automatically be updated when this image is. Or vise-versa, you can create a parent for this knot by creating it FROM another knot's image name.
 				</div>
 
-				<h3>Children</h3>
-				<table ng-show="family.children.length" class="table table-striped">
+				<span ng-show="family.parent.docker_tag">
+					<h3>Parent</h3>
+					<table class="table table-striped">
 
-					<thead>
-						<tr>
-							<th>Image</th>
-							<th>Last Build @</th>
-						</tr>
-					</thead>
+						<thead>
+							<tr>
+								<th>Image</th>
+								<th>Last Build @</th>
+							</tr>
+						</thead>
 
-					<tbody>
-						<tr ng-repeat="child in family.children">
-							<td>
-								<a ng-href="/#/knots?details={{ child._id }}">{{ child.docker_tag }}</a>
-							</td>
-							<td>
-								<span ng-show="child.last_build">{{ formatLogDate(child.last_build) }}</span>
-								<span ng-hide="child.last_build"><i>(never built)</i></span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+						<tbody>
+							<tr >
+								<td>
+									<a ng-href="/#/knots?details={{ family.parent._id }}">{{ family.parent.docker_tag }}</a>
+								</td>
+								<td>
+									<span ng-show="family.parent.last_build">{{ formatLogDate(family.parent.last_build) }}</span>
+									<span ng-hide="family.parent.last_build"><i>(never built)</i></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</span>
 
-				<div ng-hide="family.children.length" class="alert alert-info" role="alert">
-					No children for this knot.
-				</div>
+				<span ng-show="family.children.length">
+					<h3>Children</h3>
+					<table class="table table-striped">
 
-				<h3>Siblings</h3>
-				<table ng-show="family.siblings.length" class="table table-striped">
+						<thead>
+							<tr>
+								<th>Image</th>
+								<th>Last Build @</th>
+							</tr>
+						</thead>
 
-					<thead>
-						<tr>
-							<th>Image</th>
-							<th>Last Build @</th>
-						</tr>
-					</thead>
+						<tbody>
+							<tr ng-repeat="child in family.children">
+								<td>
+									<a ng-href="/#/knots?details={{ child._id }}">{{ child.docker_tag }}</a>
+								</td>
+								<td>
+									<span ng-show="child.last_build">{{ formatLogDate(child.last_build) }}</span>
+									<span ng-hide="child.last_build"><i>(never built)</i></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</span>
 
-					<tbody>
-						<tr ng-repeat="sibling in family.siblings">
-							<td>
-								<a ng-href="/#/knots?details={{ sibling._id }}">{{ sibling.docker_tag }}</a>
-							</td>
-							<td>
-								<span ng-show="sibling.last_build">{{ formatLogDate(sibling.last_build) }}</span>
-								<span ng-hide="sibling.last_build"><i>(never built)</i></span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<span ng-show="family.siblings.length">
+					<h3>Siblings</h3>
+					<table class="table table-striped">
 
-				<div ng-hide="family.siblings.length" class="alert alert-info" role="alert">
-					No siblings for this knot.
-				</div>
+						<thead>
+							<tr>
+								<th>Image</th>
+								<th>Last Build @</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr ng-repeat="sibling in family.siblings">
+								<td>
+									<a ng-href="/#/knots?details={{ sibling._id }}">{{ sibling.docker_tag }}</a>
+								</td>
+								<td>
+									<span ng-show="sibling.last_build">{{ formatLogDate(sibling.last_build) }}</span>
+									<span ng-hide="sibling.last_build"><i>(never built)</i></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</span>
 
 			</span>
 

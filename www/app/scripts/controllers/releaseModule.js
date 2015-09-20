@@ -203,7 +203,7 @@ function releaseModule($rootScope,$http,$timeout,login,ENV) {
 					err = data.error;
 				}
 
-				console.log("!trace getFamily data",data);
+				// console.log("!trace getFamily data",data);
 				callback(err,data);
 
 			}.bind(this)).error(function(data){
