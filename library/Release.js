@@ -40,6 +40,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 		store_dockerhub: Boolean,
 		store_local: Boolean,
 
+		// --------------- Family options
+		upstream_update: Boolean,													// Update this release when base image has been updated
+
 		// --------------- Update methods.
 		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
 		
@@ -158,6 +161,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.docker_tag = source.docker_tag;
 		dest.host = source.host;
 		dest.url_path = source.url_path;
+		dest.upstream_update = source.upstream_update;
 
 		dest.hook_secret = source.hook_secret;
 		dest.git_enabled = source.git_enabled;
