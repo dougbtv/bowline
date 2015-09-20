@@ -246,7 +246,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 					// Get the siblings
 					get_siblings: function(callback){
 						
-						Release.find({ from: release.from }, 'docker_tag last_build _id',function(err,siblings){
+						Release.find({ from: release.from, docker_tag: { $ne: release.docker_tag } }, 'docker_tag last_build _id',function(err,siblings){
 							if (err) {
 								console.log("getfamily_siblings",err);
 							}

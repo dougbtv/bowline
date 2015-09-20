@@ -223,9 +223,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 
 		$scope.selectFamily = function() {
 			$scope.mode = 'family';
-			console.log("!trace start get family");
 			release.getFamily($scope.single._id,function(err,family){
-				console.log("!trace end get family");
 				$scope.family = family;
 			});
 		};
