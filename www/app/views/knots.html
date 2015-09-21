@@ -336,9 +336,9 @@
 											</td>
 										</tr>
 										<tr>
-											<td class="vert-align">Master Branch</td>
+											<td class="vert-align">Track Branch</td>
 											<td class="vert-align text-center">
-												<validator variable="single.branch_master" required='true' >
+												<validator variable="single.branch_master" regex="validator.branch_master" message="'Please just use alphanumeric and - dot and slash'" required='true' >
 											</td>
 											<td>
 												<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
