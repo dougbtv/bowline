@@ -403,7 +403,7 @@ module.exports = function(bowline,opts,log) {
 						} else {
 							log.err("builder_getchildren",{msg: "Couldn't get children in builder", err: err});
 						}
-					});
+					}.bind(this));
 
 
 				} else {

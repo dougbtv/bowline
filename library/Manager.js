@@ -260,7 +260,7 @@ module.exports = function(bowline,opts,log) {
 	this.updateChildren = function(parentslug,slugs) {
 
 		if (slugs.length) {
-			async.each(slugs, function(findslug){
+			async.each(slugs, function(findslug,callback){
 				// iterate with each slug...
 				this.jobExists(findslug,function(exists){
 					if (exists) {
@@ -269,7 +269,7 @@ module.exports = function(bowline,opts,log) {
 					}
 					callback(null);
 				});
-			},function(err){
+			}.bind(this),function(err){
 				// when it's all done....
 				log.it("manager_updatechildren","Update children is complete, for parent: " + parentslug);
 			});
