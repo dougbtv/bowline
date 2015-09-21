@@ -244,7 +244,6 @@ module.exports = function(bowline,opts,log) {
 						if (!err) {
 
 							// Let's parse the FROM out of the dockerfile
-							// !bang
 							var dockerfile_from = false;
 
 							dockerfile_contents.split("\n").forEach(function(line){
@@ -384,16 +383,38 @@ module.exports = function(bowline,opts,log) {
 			},function(err,result){
 				// We're done with this running job.
 				this.in_progress = false;
+
 				if (!err) {
+					
 					log.it("builder_success",{releaseid: this.release._id, note: "Looking good -- appears we have a successful build!"});
+					
+					// But what about it's family?
+					// Does it have children and do they need to be kicked off?
+					// Let's answer that now.
+					bowline.release.getChildrenToUpdate(this.release._id,function(err,update_slugs){
+						if (!err) {
+
+							if (update_slugs.length) {
+								// Ok, we have some child slugs to update.
+								// We can send these to the manager and let 'er rip.
+								bowline.manager.updateChildren(this.release.slug,update_slugs);
+							}
+
+						} else {
+							log.err("builder_getchildren",{msg: "Couldn't get children in builder", err: err});
+						}
+					});
+
+
 				} else {
 					log.error("builder_error",{releaseid: this.release._id, err: err});
 				}
+
 			}.bind(this));
 
 		} else {
 			// There's nothing to do, usually.
-
+			log.warn("builder_locked","Tried to perform an update, but, builder was already locked as in progress");
 		}
 
 	}

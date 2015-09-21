@@ -6,6 +6,9 @@ module.exports = function(bowline,opts,log) {
 	// Initialize our jobs hash
 	var jobs = {};
 
+	// Other modules we use...
+	var async = require('async');
+
 	// We'll log into our local registry server
 	// note: we are the local registry server, this is... kinda meta.
 	// let's take a little delay because of that.
@@ -250,6 +253,27 @@ module.exports = function(bowline,opts,log) {
 		});
 
 		callback(found);
+
+	}
+
+	// !bang
+	this.updateChildren = function(parentslug,slugs) {
+
+		if (slugs.length) {
+			async.each(slugs, function(findslug){
+				// iterate with each slug...
+				this.jobExists(findslug,function(exists){
+					if (exists) {
+						// Great, let's start that update.
+						jobs[findslug].performUpdate();
+					}
+					callback(null);
+				});
+			},function(err){
+				// when it's all done....
+				log.it("manager_updatechildren","Update children is complete, for parent: " + parentslug);
+			});
+		}
 
 	}
 

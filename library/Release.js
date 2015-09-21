@@ -205,13 +205,14 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// The parent. (there's only ever one, and it's optional)
 		// The children. (there could be none, one or many)
 		// The siblings,. (there could be none, one or many)
-		// !bang
 
 		var family = {
 			parent: false,
 			children: [],
 			siblings: [],
 		};
+
+		var selected_fields = 'docker_tag slug last_build _id upstream_update';
 
 		// Pull up the release in question.
 		Release.findOne({ _id: id },function(err,release){
@@ -224,7 +225,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 					// Get the parent
 					get_parent: function(callback){
 						
-						Release.findOne({ docker_tag: release.from }, 'docker_tag last_build _id',function(err,parent){
+						Release.findOne({ docker_tag: release.from }, selected_fields,function(err,parent){
 							if (err) {
 								console.log("getfamily_parent",err);
 							}
@@ -237,7 +238,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 					// Get the children
 					get_children: function(callback){
 						
-						Release.find({ from: release.docker_tag }, 'docker_tag last_build _id',function(err,children){
+						Release.find({ from: release.docker_tag }, selected_fields,function(err,children){
 							if (err) {
 								console.log("getfamily_children",err);
 							}
@@ -250,7 +251,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 					// Get the siblings
 					get_siblings: function(callback){
 						
-						Release.find({ from: release.from, docker_tag: { $ne: release.docker_tag } }, 'docker_tag last_build _id',function(err,siblings){
+						Release.find({ from: release.from, docker_tag: { $ne: release.docker_tag } }, selected_fields,function(err,siblings){
 							if (err) {
 								console.log("getfamily_siblings",err);
 							}
@@ -284,6 +285,39 @@ module.exports = function(bowline,opts,log,mongoose) {
 		});
 
 		
+
+	}
+
+	// !bang
+	this.getChildrenToUpdate = function(id,callback) {
+
+		// Let's make a list of slugs.
+		var slugs = [];
+
+		// Pull up the whole family.
+		this.getFamily(id,function(err,family){
+			if (!err) {
+
+				// Operate when there are children.
+				if (family.children.length) {
+
+					// Push members that are flagged for upstream update
+					family.children.forEach(function(fmember){
+						if (fmember.upstream_update) {
+							slugs.push(fmember.slug);
+						}
+					});
+
+				}
+
+			} else {
+				log.err("release_getchildrentoupdate",err);
+			}
+
+			callback(err,slugs);
+			
+		});
+
 
 	}
 
