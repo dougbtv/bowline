@@ -39,7 +39,10 @@ module.exports = function(bowline,opts,log) {
 			// Clone with git.
 			clone: function(callback){
 				
-				var cmd_gitclone = 'git clone --depth ' + DEPTH + ' ' + giturl + ' ' + release.clone_path;
+				// what about tracking a branch?
+				// git clone --depth 1 --branch develop git@github.com:dougbtv/bowline.git
+
+				var cmd_gitclone = 'git clone --depth ' + DEPTH + ' --branch ' + release.branch_master + ' ' + giturl + ' ' + release.clone_path;
 				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
 				exec(cmd_gitclone,function(err,stdout,stderr){
 					if (err) {
