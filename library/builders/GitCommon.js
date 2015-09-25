@@ -76,7 +76,8 @@ module.exports = function(bowline,opts,log) {
 				log.error("gitcommon_clone",err);
 			}
 
-			callback(err);
+			// Ship back the head commit.
+			callback(err,results.get_headcommit);
 
 		}.bind(this));
 
