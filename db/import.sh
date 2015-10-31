@@ -2,10 +2,11 @@
 echo "Clearing all collections..."
 function clearCollection {
     mongo <<EOF
-    use bowline
-    db.releases.remove({})
-    db.users.remove({})
+    use bowline;
+    db.releases.remove({});
+    db.users.remove({});
 EOF
+echo "Cleared it all"
 }
 clearCollection
 
