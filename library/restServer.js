@@ -68,124 +68,47 @@ module.exports = function(bowline, opts, log) {
 
 		server.use(restify.authorizationParser());
 
-	    // Docker registry proxy methods
-		server.get('/auth/', this.dockerAuthProxy);
-		server.post('/auth/', this.dockerAuthProxy);
-		server.head('/auth/', this.dockerAuthProxy);
+		var endpoints = [
+			{ route: '/auth/', 							method: this.dockerAuthProxy },
+			// ------------------ Release methods
+			{ route: '/api/getReleases', 				method: this.getReleases },
+			{ route: '/api/getSingleRelease', 			method: this.getSingleRelease },
+			{ route: '/api/getReleaseValidator', 		method: this.getReleaseValidator },
+			{ route: '/api/editRelease', 				method: this.editRelease },
+			{ route: '/api/addRelease', 				method: this.addRelease },
+			{ route: '/api/deleteRelease', 				method: this.deleteRelease },
+			{ route: '/api/searchCollaborators', 		method: this.searchCollaborators },
+			{ route: '/api/forceUpdate', 				method: this.forceUpdate },
+			{ route: '/api/gitHookUpdate/:hook_secret', method: this.gitHookUpdate },
+			{ route: '/api/getLogs', 					method: this.getLogs },
+			{ route: '/api/getFamily', 					method: this.getFamily },
+			{ route: '/api/getTags', 					method: this.getTags },
+			{ route: '/api/getLogText', 				method: this.getLogText },
+			{ route: '/api/stopJob', 					method: this.stopJob },
+			{ route: '/api/startJob', 					method: this.startJob },
+			{ route: '/api/validateJob', 				method: this.validateJob },
+			{ route: '/api/foo', 						method: this.testFunction },
+			// ----------------- Social calls.
+			{ route: '/api/getPublicProfile', 			method: this.getPublicProfile },
+			{ route: '/api/getProfile', 				method: this.getProfile },
+			{ route: '/api/setProfile', 				method: this.setProfile },
+			// ----------------- Registration calls.
+			{ route: '/api/register', 					method: this.register },
+			{ route: '/api/setpassword', 				method: this.setpassword },
+			{ route: '/api/forgotpassword', 			method: this.forgotpassword },
+			{ route: '/api/resetPasswordParameters', 	method: this.resetPasswordParameters },
+			// ----------------- Login & Session calls.
+			{ route: '/api/login', 						method: this.userLogin },
+			{ route: '/api/validateSession', 			method: this.validateSession },
+		];
 
-		// Release methods
-		
-		server.get('/api/getReleases', this.getReleases);
-		server.post('/api/getReleases', this.getReleases);
-		server.head('/api/getReleases', this.getReleases);
+		endpoints.forEach(function(point){
 
-		server.get('/api/getSingleRelease', this.getSingleRelease);
-		server.post('/api/getSingleRelease', this.getSingleRelease);
-		server.head('/api/getSingleRelease', this.getSingleRelease);
+			server.get(point.route, point.method);
+			server.post(point.route, point.method);
+			server.head(point.route, point.method);
 
-		server.get('/api/getReleaseValidator', this.getReleaseValidator);
-		server.post('/api/getReleaseValidator', this.getReleaseValidator);
-		server.head('/api/getReleaseValidator', this.getReleaseValidator);
-
-		server.get('/api/editRelease', this.editRelease);
-		server.post('/api/editRelease', this.editRelease);
-		server.head('/api/editRelease', this.editRelease);
-
-		server.get('/api/addRelease', this.addRelease);
-		server.post('/api/addRelease', this.addRelease);
-		server.head('/api/addRelease', this.addRelease);
-
-		server.get('/api/deleteRelease', this.deleteRelease);
-		server.post('/api/deleteRelease', this.deleteRelease);
-		server.head('/api/deleteRelease', this.deleteRelease);
-
-		server.get('/api/searchCollaborators', this.searchCollaborators);
-		server.post('/api/searchCollaborators', this.searchCollaborators);
-		server.head('/api/searchCollaborators', this.searchCollaborators);
-
-		server.get('/api/forceUpdate', this.forceUpdate);
-		server.post('/api/forceUpdate', this.forceUpdate);
-		server.head('/api/forceUpdate', this.forceUpdate);
-
-		server.get('/api/gitHookUpdate/:hook_secret', this.gitHookUpdate);
-		server.post('/api/gitHookUpdate/:hook_secret', this.gitHookUpdate);
-		server.head('/api/gitHookUpdate/:hook_secret', this.gitHookUpdate);
-
-		server.get('/api/getLogs', this.getLogs);
-		server.post('/api/getLogs', this.getLogs);
-		server.head('/api/getLogs', this.getLogs);
-
-		server.get('/api/getFamily', this.getFamily);
-		server.post('/api/getFamily', this.getFamily);
-		server.head('/api/getFamily', this.getFamily);
-
-		server.get('/api/getTags', this.getTags);
-		server.post('/api/getTags', this.getTags);
-		server.head('/api/getTags', this.getTags);
-
-		server.get('/api/getLogText', this.getLogText);
-		server.post('/api/getLogText', this.getLogText);
-		server.head('/api/getLogText', this.getLogText);
-
-		server.get('/api/stopJob', this.stopJob);
-		server.post('/api/stopJob', this.stopJob);
-		server.head('/api/stopJob', this.stopJob);
-
-		server.get('/api/startJob', this.startJob);
-		server.post('/api/startJob', this.startJob);
-		server.head('/api/startJob', this.startJob);
-
-		server.get('/api/validateJob', this.validateJob);
-		server.post('/api/validateJob', this.validateJob);
-		server.head('/api/validateJob', this.validateJob);
-
-		// infamous test method.
-
-		server.get('/api/foo', this.testFunction);
-		server.post('/api/foo', this.testFunction);
-		server.head('/api/foo', this.testFunction);
-
-		// ----------------- Social calls.
-		
-		server.get('/api/getPublicProfile', this.getPublicProfile);
-		server.post('/api/getPublicProfile', this.getPublicProfile);
-		server.head('/api/getPublicProfile', this.getPublicProfile);
-
-		server.get('/api/getProfile', this.getProfile);
-		server.post('/api/getProfile', this.getProfile);
-		server.head('/api/getProfile', this.getProfile);
-
-		server.get('/api/setProfile', this.setProfile);
-		server.post('/api/setProfile', this.setProfile);
-		server.head('/api/setProfile', this.setProfile);
-
-		// ----------------- Registration calls.
-
-		server.get('/api/register', this.register);
-		server.post('/api/register', this.register);
-		server.head('/api/register', this.register);
-
-		server.get('/api/setpassword', this.setpassword);
-		server.post('/api/setpassword', this.setpassword);
-		server.head('/api/setpassword', this.setpassword);
-
-		server.get('/api/forgotpassword', this.forgotpassword);
-		server.post('/api/forgotpassword', this.forgotpassword);
-		server.head('/api/forgotpassword', this.forgotpassword);
-
-		server.get('/api/resetPasswordParameters', this.resetPasswordParameters);
-		server.post('/api/resetPasswordParameters', this.resetPasswordParameters);
-		server.head('/api/resetPasswordParameters', this.resetPasswordParameters);
-
-		// -------------------- Login & Session calls.
-
-		server.get('/api/login', this.userLogin);
-		server.post('/api/login', this.userLogin);
-		server.head('/api/login', this.userLogin);
-
-		server.get('/api/validateSession', this.validateSession);
-		server.post('/api/validateSession', this.validateSession);
-		server.head('/api/validateSession', this.validateSession);
+		}.bind(this));
 		
 	};
 
