@@ -6,7 +6,13 @@ module.exports = function(bowline,opts,log) {
 	// -- constants
 	var DEPTH = 15; 		// how deep?
 
+	// A reference to the release object.
+	this.release;
+
 	this.clone = function(release,giturl,callback) {
+
+		// Let's save that release.
+		this.release = release;
 
 		async.series({
 
@@ -57,7 +63,8 @@ module.exports = function(bowline,opts,log) {
 						log.warn("gitcommon_clone_fail",{release: release, stdout: stdout, stderr: stderr});
 						callback("gitcommon clone failed");
 					} else {
-						callback(err,stdout);	
+						log.it("gitcommon_clone_location",{clone_path: release.clone_path});
+						callback(err,stdout);
 					}
 				});
 			}.bind(this),
@@ -120,6 +127,38 @@ module.exports = function(bowline,opts,log) {
 
 		}.bind(this));
 
+	}
+
+	// Ok, let's switch the checkout...
+	this.checkout = function(branch,callback) {
+		var release = this.release;
+
+		// sanitize branch...
+		if (branch.match(/^[\w\d\-\.\/]+$/)) {
+			
+			var cmd = 'cd ' + release.clone_path + ' && git checkout ' + branch;
+			exec(cmd,
+			// cwd: release.clone_path
+			{},
+			function(err,stdout,stderr){
+				if (!err) {
+
+					// Alright, we've switched 'er
+					callback(false);
+
+
+				} else {
+					log.error("gitcommon_checkout_failed",{release: release, err: err, stdout: stdout, stderr: stderr, cmd: cmd});
+					callback("gitcommon_checkout_failed");
+				}
+			}.bind(this));
+
+		} else {
+			log.warn("gitcommon_checkout_invalid_branchname",{msg: 'plumb dont match our regex', branch: branch});
+			callback("gitcommon_checkout_invalid_branchname");
+		}
+
+		
 	}
 
 	this.parseBranches = function(raw_gitbranch_output,callback) {

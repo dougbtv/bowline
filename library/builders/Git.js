@@ -27,6 +27,12 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 		}.bind(this));
 	}
 
+	this.checkout = function(branch,callback) {
+		gitcommon.checkout(branch,function(err){
+			callback(err);
+		});
+	}
+
 	this.verify = function(callback) {
 		// Let's just see if we can clone...
 		this.clone(function(err){

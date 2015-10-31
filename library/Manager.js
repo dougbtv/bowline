@@ -3,6 +3,9 @@ module.exports = function(bowline,opts,log) {
 	// import our builder object.
 	var Builder = bowline.Builder; 
 
+	var ParserDockerfile = require('./ParserDockerfile.js');
+	var parserdockerfile = new ParserDockerfile(bowline,opts,log);
+
 	// Initialize our jobs hash
 	var jobs = {};
 
@@ -46,7 +49,7 @@ module.exports = function(bowline,opts,log) {
 						// console.log("!trace each rel: ",rel);
 
 						// We need a slug for this job.
-						jobs[rel.slug] = new Builder(bowline,opts,log);
+						jobs[rel.slug] = new Builder(bowline,opts,log,parserdockerfile);
 						jobs[rel.slug].start(rel,function(){
 							
 						});
@@ -127,7 +130,7 @@ module.exports = function(bowline,opts,log) {
 						// Great, let's create this job.
 						bowline.release.getReleases(true,{_id: releaseid},function(rels){
 
-							jobs[findslug] = new Builder(bowline,opts,log);
+							jobs[findslug] = new Builder(bowline,opts,log,parserdockerfile);
 							jobs[findslug].start(rels[0],function(){
 								callback(null);
 							});

@@ -1,4 +1,6 @@
-module.exports = function(bowline,opts,log) {
+module.exports = function(bowline,opts,log,parser) {
+
+	// parser = parserdockerfile instance.
 
 	// Our children.
 	var GitCommon = require('./builders/GitCommon.js');
@@ -240,57 +242,37 @@ module.exports = function(bowline,opts,log) {
 				update_branches: function(callback) {
 
 					log.it("update_branches",{branches: this.git.branches});
-					callback(false);
 
-				}.bind(this),
+					async.eachSeries(this.git.branches,function(branch,callback){
 
-				// Update the dockerfile for this release.
-				update_dockerfile: function(callback) {
+						this.git.checkout(branch,function(err){
 
-					fs.readFile(path_dockerfile, 'utf8', function (err, dockerfile_contents) {
-						if (!err) {
+							if (!err) {
 
-							// Let's parse the FROM out of the dockerfile
-							var dockerfile_from = false;
+								log.it("checked_out_branch",{branch: branch});
 
-							dockerfile_contents.split("\n").forEach(function(line){
-
-								// make sure you trim that up...
-								line = line.trim();
-
-								// omit comments....
-								if (!line.match(/^\s*#.+$/)) {
-
-									// And we'll operate on only the first line.
-									if (line.match(/FROM/i)) {
-										if (!dockerfile_from) {
-											// Parse out the field it's from
-											dockerfile_from = line.replace(/^\s*FROM\s+([\S]+).*$/,"$1");
-											// log.it("check_from",dockerfile_from);
-										}
+								parser.readDockerfile(path_dockerfile,function(err,dockerfile){
+									if (!err) {
+										
+										bowline.release.updateDockerfile(this.release._id,dockerfile.contents,dockerfile.from,function(err){
+											callback(err);
+										}.bind(this));
+									
+									} else {
+										callback(err);
 									}
-								}
-
-							}.bind(this));
-
-							if (dockerfile_from) {
-								bowline.release.updateDockerfile(this.release._id,dockerfile_contents,dockerfile_from,function(err){
-									callback(err);
 								}.bind(this));
-
+								// Now, we should be able to update the dockerfile for each branch.
+								// ...we also need to find the headcommit.
+								
 							} else {
-
-								log.warn("builder_dockerfile_nofrom",{dockerfile_contents: dockerfile_contents});
-								callback("Darn, there was no FROM line in the dockerfile");
-
+								callback(err);
 							}
+						}.bind(this));
 
-						} else {
-							callback("Damn, couldn't read the dockerfile when looking for environment variable.");
-						}
-						
-
-					}.bind(this));
+					}.bind(this),function(err,result){
+						callback(false);
+					});
 
 				}.bind(this),
 
@@ -317,6 +299,7 @@ module.exports = function(bowline,opts,log) {
 		}
 
 	}.bind(this);
+
 
 	this.performUpdate = function() {
 
@@ -361,7 +344,7 @@ module.exports = function(bowline,opts,log) {
 
 				get_dockerfile_tag: function(callback) {
 
-					this.getDockerfileTag(function(err){
+					this.parseDockerfileForTagging(function(err){
 						callback(err);
 					});
 
@@ -775,7 +758,7 @@ module.exports = function(bowline,opts,log) {
 		
 	}
 
-	this.getDockerfileTag = function(callback) {
+	this.parseDockerfileForTagging = function(callback) {
 
 		var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
 		var path_dockerfile = this.release.clone_path + relative_gitpath;

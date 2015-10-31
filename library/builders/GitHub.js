@@ -38,6 +38,12 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 		
 	}
 
+	this.checkout = function(branch,callback) {
+		gitcommon.checkout(branch,function(err){
+			callback(err);
+		});
+	}
+
 	this.success = function(callback) {
 
 		// last_pullrequest
