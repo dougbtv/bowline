@@ -4,7 +4,7 @@ module.exports = function(bowline,opts,log) {
 	var exec = require('child_process').exec;
 
 	// -- constants
-	var DEPTH = 1; 		// how deep?
+	var DEPTH = 15; 		// how deep?
 
 	this.clone = function(release,giturl,callback) {
 
@@ -42,7 +42,8 @@ module.exports = function(bowline,opts,log) {
 				// what about tracking a branch?
 				// git clone --depth 1 --branch develop git@github.com:dougbtv/bowline.git
 
-				var cmd_gitclone = 'git clone --depth ' + DEPTH + ' --branch ' + release.branch_master + ' ' + giturl + ' ' + release.clone_path;
+				// ' --branch ' + release.branch_master + 
+				var cmd_gitclone = 'git clone --depth ' + DEPTH + ' ' + giturl + ' ' + release.clone_path;
 				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
 				exec(cmd_gitclone,function(err,stdout,stderr){
 					if (err) {
@@ -52,6 +53,29 @@ module.exports = function(bowline,opts,log) {
 						callback(err,stdout);	
 					}
 				});
+			}.bind(this),
+
+			show_branches: function(callback) {
+
+				exec('git branch',
+					{cwd: release.clone_path},
+					function(err,stdout,stderr){
+						if (err) {
+							log.warn("gitcommon_show_branches_failed",{release: release});
+							callback("gitcommon show branches failed");
+						} else {
+							var commit = stdout.trim();
+							callback(err,commit);
+						}
+					}.bind(this));
+
+			},
+
+			checkout: function(callback) {
+
+				var cmd_checkout = 'git checkout ';
+				callback(false);
+
 			}.bind(this),
 
 			get_headcommit: function(callback){
