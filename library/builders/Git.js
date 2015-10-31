@@ -5,6 +5,7 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 
 	// our working head commit
 	this.commit = '';
+	this.branches = {};
 
 
 	// our deps.
@@ -14,13 +15,14 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 
 	this.clone = function(callback) {
 		
-		gitcommon.clone(this.release,this.release.git_url,function(err,commitish){
-			if (err) {
+		gitcommon.clone(this.release,this.release.git_url,function(err,clone){
+			if (!err) {
+				this.commit = clone.commit;
+				this.branches = clone.branches;
+				callback(err,clone);
+			} else {
 				log.warn("vanilla_git_clone","err with that: " + err);
 				callback(err);
-			} else {
-				this.commit = commitish;
-				callback(err,commitish);
 			}
 		}.bind(this));
 	}
@@ -30,7 +32,6 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 		this.clone(function(err){
 			callback(err);
 		});
-
 	}
 
 	this.success = function(callback) {

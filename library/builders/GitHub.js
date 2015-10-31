@@ -8,6 +8,7 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 
 	// What's the HEAD commit-ish?
 	this.commit = '';
+	this.branches = {};
 
 	// -- our deps.
 	var moment = require('moment');
@@ -24,17 +25,16 @@ module.exports = function(inrelease,gitcommon,bowline,opts,log) {
 
 		var giturl = 'https://' + opts.gituser + ':' + opts.gitpassword + '@github.com/' + this.release.git_repo + ".git ";
 		
-		gitcommon.clone(this.release,giturl,function(err,commitish){
-			if (err) {
+		gitcommon.clone(this.release,giturl,function(err,clone){
+			if (!err) {
+				this.commit = clone.commit;
+				this.branches = clone.branches;
+				callback(err,clone);
+			} else {
 				log.warn("error_github_clone","In GitHub, error with GitCommon clone: " + err);
 				callback(err);
-			} else {
-				this.commit = commitish;
-				callback(err,commitish);
 			}
 		}.bind(this));
-
-		
 		
 	}
 

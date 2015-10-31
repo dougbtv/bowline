@@ -237,6 +237,13 @@ module.exports = function(bowline,opts,log) {
 				}.bind(this),
 				*/
 
+				update_branches: function(callback) {
+
+					log.it("update_branches",{branches: this.git.branches});
+					callback(false);
+
+				}.bind(this),
+
 				// Update the dockerfile for this release.
 				update_dockerfile: function(callback) {
 

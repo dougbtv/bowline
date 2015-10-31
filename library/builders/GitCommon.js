@@ -40,10 +40,17 @@ module.exports = function(bowline,opts,log) {
 			clone: function(callback){
 				
 				// what about tracking a branch?
+
+				// I'm not so hot on getting one anymore...
 				// git clone --depth 1 --branch develop git@github.com:dougbtv/bowline.git
 
+				// And maybe not tracking a branch exactly....
 				// ' --branch ' + release.branch_master + 
-				var cmd_gitclone = 'git clone --depth ' + DEPTH + ' ' + giturl + ' ' + release.clone_path;
+
+				// TODO: We need some depth control. But to get all the active branches... full clone is nice for right now.
+				// --depth ' + DEPTH + '
+				
+				var cmd_gitclone = 'git clone ' + giturl + ' ' + release.clone_path;
 				// console.log("!trace cmd_gitclone: ",cmd_gitclone);
 				exec(cmd_gitclone,function(err,stdout,stderr){
 					if (err) {
@@ -57,15 +64,20 @@ module.exports = function(bowline,opts,log) {
 
 			show_branches: function(callback) {
 
-				exec('git branch',
+				exec('git branch -a',
 					{cwd: release.clone_path},
 					function(err,stdout,stderr){
-						if (err) {
+						if (!err) {
+							
+							// log.it("gitcommon_showbranches",{stdout: stdout});
+							
+							parseBranches(stdout,function(branches){
+								callback(err,branches);
+							});
+
+						} else {
 							log.warn("gitcommon_show_branches_failed",{release: release});
 							callback("gitcommon show branches failed");
-						} else {
-							var commit = stdout.trim();
-							callback(err,commit);
 						}
 					}.bind(this));
 
@@ -101,10 +113,68 @@ module.exports = function(bowline,opts,log) {
 			}
 
 			// Ship back the head commit.
-			callback(err,results.get_headcommit);
+			callback(err,{
+				commit: results.get_headcommit,
+				branches: results.show_branches,
+			});
 
 		}.bind(this));
 
 	}
+
+	this.parseBranches = function(raw_gitbranch_output,callback) {
+
+		// We'll collect the branches
+		var branches = [];
+		
+		// And we'll need to parse those branches...
+		var lines = raw_gitbranch_output.split(/\n/);
+		// with each line...
+		lines.forEach(function(line){
+			line = line.trim();
+
+			// for lines that have content...
+			if (line.length) {
+
+				var branch_name;
+
+				// pick up the remote names, plus master.
+				var clean = line.replace(/^[\*\s]*(\S+).*$/gim,'$1');
+				if (line.match(/\//)) {
+					// split on the slashes, and grab the lash piece
+					var slashes = clean.split(/\//);
+					branch_name = slashes[(slashes.length -1)];
+				} else {
+					// that's master.
+					branch_name = clean;
+				}
+
+				switch(branch_name) {
+					// Omit these branches...
+					case 'HEAD': 
+						break;
+					// Warn when empty...
+					case '':
+						log.warn("gitcommon_branchname_empty",{msg: 'Did not quite match our branch name expectations', original: line});
+						break;
+					default:
+						// We'll collect these.
+						if (branches.indexOf(branch_name) == -1) {
+							branches.push(branch_name);
+						}
+						break;	
+				}
+
+				// log.it("branches_parse",{clean: clean, original: line});
+			
+			}
+		});
+		
+		// log.it("gitcommon_branches_found",{branches: branches});
+		callback(branches);
+
+	}
+
+	var parseBranches = this.parseBranches;
 
 }
