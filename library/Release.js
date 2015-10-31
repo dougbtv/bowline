@@ -396,6 +396,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	this.updateDockerfile = function(releaseid,dockerfile,from,callback) {
 
+		log.it("release_updatedockerfile",{releaseid: releaseid, dockerfile: dockerfile, from: from});
+
 		Release.update(
 			{ _id: releaseid },
 			{ dockerfile: dockerfile, from: from  },

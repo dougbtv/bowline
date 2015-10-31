@@ -254,6 +254,8 @@ module.exports = function(bowline,opts,log,parser) {
 								parser.readDockerfile(path_dockerfile,function(err,dockerfile){
 									if (!err) {
 										
+										// log.it("check_read_dockerfile",{dockerfile: dockerfile});
+
 										bowline.release.updateDockerfile(this.release._id,dockerfile.contents,dockerfile.from,function(err){
 											callback(err);
 										}.bind(this));
@@ -344,9 +346,13 @@ module.exports = function(bowline,opts,log,parser) {
 
 				get_dockerfile_tag: function(callback) {
 
-					this.parseDockerfileForTagging(function(err){
+					var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
+					var path_dockerfile = this.release.clone_path + relative_gitpath;
+
+					parser.readDockerfile(path_dockerfile,function(err,dockerfile){
+						this.tag = dockerfile.bowlinetag;
 						callback(err);
-					});
+					}.bind(this));
 
 				}.bind(this),
 
@@ -757,51 +763,6 @@ module.exports = function(bowline,opts,log,parser) {
 		}.bind(this));
 		
 	}
-
-	this.parseDockerfileForTagging = function(callback) {
-
-		var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
-		var path_dockerfile = this.release.clone_path + relative_gitpath;
-
-
-		fs.readFile(path_dockerfile, 'utf8', function (err, filecontents) {
-
-			// console.log("!trace a: ",path_dockerfile);
-			// console.log("!trace a: ",filecontents);
-
-			if (err) {
-				log.error("read_dockerfile_tag",{err: err});
-			}
-
-			// Set the release tag to null.
-			this.tag = null;
-			
-			// Split by new lines, and look for #bowline
-
-			filecontents.split("\n").forEach(function(line){
-
-				if (line.match(/\#bowline/)) {
-					// Ok, it's got bowline, let's break it up.
-					var pts = line.split(/\s+/);
-					if (pts[0] == "#bowline" && pts[1] == "tag") {
-						// Then use the third element.
-						var tag = pts[2];
-						if (tag.match(/^[\d\.\-]+$/)) {
-							// Ok, we can use that tag.
-							this.tag = tag;
-							// log.it("parsed_tag",{tag: this.tag});
-						}
-					}
-				}
-
-			}.bind(this));
-
-			callback(err);
-
-		}.bind(this));
-
-	}.bind(this);
-
 
 	this.updateBuildStamp = function(buildstamp,callback){
 

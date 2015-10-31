@@ -1,23 +1,41 @@
 module.exports = function(bowline,opts,log) {
 
 	var fs = require('fs');
+	var async = require('async');
 
 	this.readDockerfile = function(path_dockerfile,callback) {
 
 		fs.readFile(path_dockerfile, 'utf8', function (err, dockerfile_contents) {
 			if (!err) {
 
-				getFrom(dockerfile_contents,function(err,dockerfile_from){
+				async.series({
+					from: function(callback){
+						getFrom(dockerfile_contents,function(err,dockerfile_from){
+							if (!err) {
+								callback(false,dockerfile_from);
+							} else {
+								log.warn("parser_dockerfile_nofrom",{dockerfile_contents: dockerfile_contents});
+								callback("Darn, there was no FROM line in the dockerfile");						
+							}
+						});
+					},
+					bowlinetag: function(callback){
+						getBowlineTag(dockerfile_contents,function(err,bowlinetag){
+							callback(false,bowlinetag);
+						});
+					},
+				},function(err,results){
 					if (!err) {
 						callback(false,{
-							from: dockerfile_from,
-							contents: dockerfile_contents
+							from: results.from,
+							contents: dockerfile_contents,
+							bowlinetag: results.bowlinetag,
 						});
 					} else {
-						log.warn("parser_dockerfile_nofrom",{dockerfile_contents: dockerfile_contents});
-						callback("Darn, there was no FROM line in the dockerfile");						
+						callback(err);
 					}
 				});
+
 				
 			} else {
 				log.warn("parser_readfile_error",{err: err});
@@ -60,5 +78,37 @@ module.exports = function(bowline,opts,log) {
 	}
 
 	var getFrom = this.getFrom;
+
+	// formerly: parseDockerfileForTagging
+	this.getBowlineTag = function(filecontents,callback) {
+
+		// Set the release tag to null.
+		var tag_result = null;
+		
+		// Split by new lines, and look for #bowline
+
+		filecontents.split("\n").forEach(function(line){
+
+			if (line.match(/\#bowline/)) {
+				// Ok, it's got bowline, let's break it up.
+				var pts = line.split(/\s+/);
+				if (pts[0] == "#bowline" && pts[1] == "tag") {
+					// Then use the third element.
+					var tag = pts[2];
+					if (tag.match(/^[\d\.\-]+$/)) {
+						// Ok, we can use that tag.
+						tag_result = tag;
+						// log.it("parsed_tag",{tag: tag_result});
+					}
+				}
+			}
+
+		}.bind(this));
+
+		callback(!tag_result,tag_result);
+
+	}
+
+	var getBowlineTag = this.getBowlineTag;
 
 }
