@@ -273,6 +273,9 @@ module.exports = function(bowline,opts,log) {
 
 							} else {
 
+								log.warn("builder_dockerfile_nofrom",{dockerfile_contents: dockerfile_contents});
+								callback("Darn, there was no FROM line in the dockerfile");
+
 							}
 
 						} else {
