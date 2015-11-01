@@ -525,7 +525,7 @@ module.exports = function(bowline, opts, log) {
 				bowline.release.isOwner(validpack.fulluser._id,input.id,function(err,owner){
 
 					bowline.release.getReleases(owner,{_id: input.id},function(rels){
-						// console.log("!trace rels from single release",rels);
+						// log.it("restserver_debug_singlerelease",{release: rels[0]});
 						res.contentType = 'json';
 						res.send(rels[0]);
 					});

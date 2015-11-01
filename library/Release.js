@@ -19,6 +19,28 @@ module.exports = function(bowline,opts,log,mongoose) {
 		branch_master: '^[\\w\\d-\\.\\/]+$', // see: http://tinyurl.com/buk567q
 	};
 
+	var branchSchema = new mongoose.Schema({
+		name: String,
+		dockerfile: String,
+		from: String,
+		bowlinetag: String,
+		update_from: { type: Boolean, default: true},
+	});
+
+	branchSchema.virtual('dockerfile_array')
+		.get(function () {
+			if (this.dockerfile) {
+				var dfa = this.dockerfile.split("\n");
+				if (dfa[dfa.length-1] == "") {
+					dfa.pop();
+				}
+				return dfa;
+			} else {
+				return [];
+			}
+			
+		});
+
 	// Setup a schema.
 	var releaseSchema = mongoose.Schema({
 
@@ -45,15 +67,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 		upstream_update: Boolean,													// Update this release when base image has been updated
 
 		// --------------- Branch settings
-		branches: [
-			{
-				name: String,
-				dockerfile: String,
-				from: String,
-				bowlinetag: String,
-				update_from: { type: Boolean, default: true},
-			},
-		],
+		branches: [ branchSchema ],
 
 		// --------------- Update methods.
 		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
