@@ -488,9 +488,6 @@ module.exports = function(bowline,opts,log,mongoose) {
 			}
 
 		});
-		// Alright... 
-		callback(false);
-
 
 	}
 
