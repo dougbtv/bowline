@@ -63,7 +63,7 @@ module.exports = function(bowline,opts,log) {
 						log.warn("gitcommon_clone_fail",{release: release, stdout: stdout, stderr: stderr});
 						callback("gitcommon clone failed");
 					} else {
-						log.it("gitcommon_clone_location",{clone_path: release.clone_path});
+						// log.it("gitcommon_clone_location",{clone_path: release.clone_path});
 						callback(err,stdout);
 					}
 				});

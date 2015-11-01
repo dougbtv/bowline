@@ -409,11 +409,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 		// log.it("release_getbranchidx",{searching_for: find_branch_name, release_branches: release_branches});
 
-		log.it("!trace C >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",{find_branch_name: find_branch_name,release_branches: release_branches});
 		var exists = -1;
 		if (release_branches.length) {
 			release_branches.forEach(function(branch,idx){
-				log.it("!trace d: >>>>>>>>>>>>>>>>>>>>>>>> release_getbranch_which",{branch: branch});
 				if (branch.name == find_branch_name) {
 					exists = idx;
 				}
@@ -427,8 +425,6 @@ module.exports = function(bowline,opts,log,mongoose) {
 	// given what's available in git.
 	// so this is called when we clone -- basically.
 	this.setupBranches = function(releaseid,branch_packs,callback) {
-
-		log.it("!trace A >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
 		// !bang
 		// Alright, so let's pull up this guy...
@@ -454,13 +450,13 @@ module.exports = function(bowline,opts,log,mongoose) {
 						if (branchidx < 0) {
 
 							// Here's where we do the setup... for a brand new branch.
-							log.it("release_setupbranches_new_branch",{pack: pack});
+							// log.it("release_setupbranches_new_branch",{pack: pack});
 							release_branches.push(updated_branch);
 
 						} else {
 
 							// It's already there, update it.
-							log.it("release_setupbranches_update_branch",{pack: pack});
+							// log.it("release_setupbranches_update_branch",{pack: pack});
 							release_branches[branchidx].dockerfile = pack.contents;
 							release_branches[branchidx].from = pack.from;
 							release_branches[branchidx].bowlinetag = pack.bowlinetag;
@@ -473,7 +469,6 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 				},function(err){
 					// We'll just save every time, not super efficient, but, oh well.
-					log.it("!trace B >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
 					release.branches = release_branches;
 

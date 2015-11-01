@@ -243,7 +243,7 @@ module.exports = function(bowline,opts,log,parser) {
 
 				gather_branches: function(callback) {
 
-					log.it("gather_branches",{branches: this.git.branches});
+					// log.it("gather_branches",{branches: this.git.branches});
 
 					async.eachSeries(this.git.branches,function(branch,callback){
 
@@ -251,7 +251,7 @@ module.exports = function(bowline,opts,log,parser) {
 
 							if (!err) {
 
-								log.it("checked_out_branch",{branch: branch});
+								// log.it("checked_out_branch",{branch: branch});
 
 								parser.readDockerfile(path_dockerfile,function(err,dockerfile){
 									if (!err) {
