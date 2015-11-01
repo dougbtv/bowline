@@ -183,6 +183,8 @@ module.exports = function(bowline,opts,log,parser) {
 		var relative_gitpath = this.release.git_path.replace(/^\/(.+)$/,"$1");
 		var path_dockerfile = this.release.clone_path + relative_gitpath;
 
+		var branch_packs = [];
+
 		if (!this.in_progress) {
 
 			// Alright, so, let's check that this release is OK.
@@ -239,9 +241,9 @@ module.exports = function(bowline,opts,log,parser) {
 				}.bind(this),
 				*/
 
-				update_branches: function(callback) {
+				gather_branches: function(callback) {
 
-					log.it("update_branches",{branches: this.git.branches});
+					log.it("gather_branches",{branches: this.git.branches});
 
 					async.eachSeries(this.git.branches,function(branch,callback){
 
@@ -255,10 +257,9 @@ module.exports = function(bowline,opts,log,parser) {
 									if (!err) {
 										
 										// log.it("check_read_dockerfile",{dockerfile: dockerfile});
-
-										bowline.release.updateDockerfile(this.release._id,dockerfile.contents,dockerfile.from,function(err){
-											callback(err);
-										}.bind(this));
+										dockerfile.branch = branch;
+										branch_packs.push(dockerfile);
+										callback(false);
 									
 									} else {
 										callback(err);
@@ -275,6 +276,20 @@ module.exports = function(bowline,opts,log,parser) {
 					}.bind(this),function(err,result){
 						callback(false);
 					});
+
+				}.bind(this),
+
+				update_branches: function(callback) {
+
+					bowline.release.setupBranches(this.release._id,branch_packs,function(err){
+						callback(err);
+					});
+					
+					/*
+						bowline.release.updateDockerfile(this.release._id,dockerfile.contents,dockerfile.from,function(err){
+						}.bind(this));
+					*/
+
 
 				}.bind(this),
 

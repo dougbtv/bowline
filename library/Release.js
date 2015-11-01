@@ -44,6 +44,17 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// --------------- Family options
 		upstream_update: Boolean,													// Update this release when base image has been updated
 
+		// --------------- Branch settings
+		branches: [
+			{
+				name: String,
+				dockerfile: String,
+				from: String,
+				bowlinetag: String,
+				update_from: { type: Boolean, default: true},
+			},
+		],
+
 		// --------------- Update methods.
 		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
 		
@@ -394,6 +405,100 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
+	var getBranchIndex = function(release_branches,find_branch_name,callback) {
+
+		// log.it("release_getbranchidx",{searching_for: find_branch_name, release_branches: release_branches});
+
+		log.it("!trace C >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",{find_branch_name: find_branch_name,release_branches: release_branches});
+		var exists = -1;
+		if (release_branches.length) {
+			release_branches.forEach(function(branch,idx){
+				log.it("!trace d: >>>>>>>>>>>>>>>>>>>>>>>> release_getbranch_which",{branch: branch});
+				if (branch.name == find_branch_name) {
+					exists = idx;
+				}
+			});
+		}
+		callback(false,exists);
+
+	}
+
+	// The gist of this is to make sure the datastructure of branches exists
+	// given what's available in git.
+	// so this is called when we clone -- basically.
+	this.setupBranches = function(releaseid,branch_packs,callback) {
+
+		log.it("!trace A >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+		// !bang
+		// Alright, so let's pull up this guy...
+		Release.findOne({_id: releaseid},function(err,release){
+
+		if (!err && release) {
+	
+				var release_branches = release.branches;
+	
+				async.eachSeries(branch_packs,function(pack,callback){
+
+					getBranchIndex(release_branches,pack.branch,function(err,branchidx){
+
+						// log.it("release_setupbranch_branchidx",{branchidx: branchidx});
+						// Update or add?
+						var updated_branch = {
+							name: pack.branch,
+							dockerfile: pack.contents,
+							from: pack.from,
+							bowlinetag: pack.bowlinetag,
+						};
+
+						if (branchidx < 0) {
+
+							// Here's where we do the setup... for a brand new branch.
+							log.it("release_setupbranches_new_branch",{pack: pack});
+							release_branches.push(updated_branch);
+
+						} else {
+
+							// It's already there, update it.
+							log.it("release_setupbranches_update_branch",{pack: pack});
+							release_branches[branchidx].dockerfile = pack.contents;
+							release_branches[branchidx].from = pack.from;
+							release_branches[branchidx].bowlinetag = pack.bowlinetag;
+						
+						}
+
+						callback(false);
+
+					});
+
+				},function(err){
+					// We'll just save every time, not super efficient, but, oh well.
+					log.it("!trace B >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+					release.branches = release_branches;
+
+					release.save(function(err){
+						if (!err) {
+							callback(false);
+						} else {
+							log.it("release_setupbranches_save_err",{err: err});
+							callback(err);
+						}
+					});
+				});
+
+			} else {
+				log.error("release_setupbranches_notfound",{err: err, releaseid: releaseid});
+				callback("release_setupbranches_notfound");
+			}
+
+		});
+		// Alright... 
+		callback(false);
+
+
+	}
+
 	this.updateDockerfile = function(releaseid,dockerfile,from,callback) {
 
 		log.it("release_updatedockerfile",{releaseid: releaseid, dockerfile: dockerfile, from: from});
@@ -564,8 +669,7 @@ module.exports = function(bowline,opts,log,mongoose) {
 						});
 
 					}, function(err, results){
-					    // results is now an array of stats for each file
-					    // console.log("!trace GET VIRTUAL POP: ",results);
+					    
 					    callback(results);
 
 					});
@@ -578,6 +682,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 			});
 
 	}
+
+	var getReleases = this.getReleases;
 
 	this.exists = function(username,namespace,callback) {
 
