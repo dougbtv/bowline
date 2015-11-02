@@ -210,6 +210,10 @@ body {
   color: whitesmoke !important;
 }
 
+.knotheader-table {
+  border: none !important;
+}
+
 /* ---------------------------- end validator */
 
   /*
