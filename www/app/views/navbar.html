@@ -15,7 +15,7 @@
                   <!-- old? -->
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li ng-class="navClass('home')"><a ng-href="#">Home</a></li>
+                    <li ng-class="navClass('home')"><a ng-href="#/">Home</a></li>
                     <li ng-class="navClass('knots')"><a ng-href="#/knots">Knots</a></li>
                     <li ng-class="navClass('docs')"><a ng-href="#/docs">Docs</a></li>
 
@@ -23,9 +23,9 @@
                     <li ng-class="navClass('register')" ng-hide="loggedin"><a ng-href="#/register">Register</a></li>
 
                     <li class="dropdown dropdown-toggle" ng-class="navClass('console')" ng-show="loggedin">
-                        <a href class="dropdown dropdown-toggle" >
-                          My Account
-                        </a>
+                        <a href class="dropdown dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                          Dropdown <span class="caret">
+                        </span></a>
                         <ul class="dropdown-menu">
                           <li><a href ng-click="myKnots()"><span class="dropiconspacer text-center"><i class="dropdownicon fa fa-book"></span></i>My knots</a></li>
                           <li><a href ng-click="addKnot()"><span class="dropiconspacer text-center"><i class="dropdownicon fa fa-plus"></span></i>Add a knot</a></li>
@@ -34,11 +34,11 @@
                           <li class="divider"></li>
                           <li><a href ng-click="logOut()"><span class="dropiconspacer text-center"><i class="dropdownicon fa fa-sign-out"></span></i>Log Out</a></li>
                         </ul>
-                    </li>                    
-
+                    </li>
+                    
                     <li class="dropdown dropdown-toggle" on-toggle="toggledAlerts(open)" ng-show="loggedin">
                       
-                        <a href class="dropdown dropdown-toggle" >
+                        <a href class="dropdown dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                           <i class="fa fa-comment-o" style="font-size: 16px;"></i> <span ng-show="numberUnread()" class="badge">{{numberUnread()}}</span>
                         </a>
                         <ul class="dropdown-menu">
