@@ -357,6 +357,28 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			}
 		};
 
+		// ---------------------------- branch dropdown
+		$scope.items = [
+			'The first choice!',
+			'And another choice for you.',
+			'but wait! A third!'
+		];
+
+		$scope.status = {
+			isopen: false
+		};
+
+		$scope.toggled = function(open) {
+			console.log('Dropdown is now: ', open);
+		};
+
+		$scope.toggleDropdown = function($event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.status.isopen = !$scope.status.isopen;
+		};
+		// --------------------------------------------
+
 		$scope.getSingleRelease = function(callback) {
 
 			$scope.is_owner = false;
@@ -364,7 +386,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			release.getSingleRelease($scope.params.details,function(err,single){
 
 				// Which which are required.
-				// console.log("!trace GET SINGLE: ",single);
+				console.log("!trace GET SINGLE: ",single);
 
 				if (!err) {
 

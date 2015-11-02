@@ -1,7 +1,6 @@
 <div class="container">
 
 <span ng-show="params.details || params.add">
-	<h3 ng-hide="params.add">{{single.docker_tag}}</h3>
 	<h2 ng-show="params.add">Adding Knot<span ng-show="single.docker_tag">: {{single.docker_tag}}</span></h2>
 
 	<div class="col-sm-9">
@@ -256,7 +255,7 @@
 										<input type="text" 
 											ng-model="selectedcollab.collaborator"
 											placeholder="Search by username or email" 
-											typeahead="user.username for user in collaborators" 
+											uibTypeaheadParser="user.username for user in collaborators" 
 											ng-change="searchCollaborators(selectedcollab.collaborator)" 
 											typeahead-loading="loadingLocations" 
 											class="form-control" 
@@ -408,7 +407,7 @@
 										<!-- - - - - - - - - - - - http -->
 
 										<tr ng-show="selected_method.value == 'http'">
-											<td ><span tooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
+											<td ><span uibTooltip="Enter each minute of the clock when this job should be checked for an update, to check every half hour, enter '0' and '30'" tooltip-placement="bottom">Check @ Minutes</span> </td>
 											<td class="vert-align text-center">
 												&nbsp;
 											</td>
