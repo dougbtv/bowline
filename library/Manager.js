@@ -105,7 +105,6 @@ module.exports = function(bowline,opts,log) {
 					in_progress: eachjob.in_progress,
 				};
 
-				log.it("job props?",{props: props});
 				// See if it's been checked.
 				if (eachjob.last_check) {
 					props.last_check = eachjob.last_check.toDate();
