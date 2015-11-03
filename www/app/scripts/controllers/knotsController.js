@@ -361,7 +361,8 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		
 		$scope.on_branch = {
 			label: 'All branches',
-			idx: -1,
+			name: 'master',
+			idx: 0,
 		};
 
 		$scope.selectBranch = function(branchidx){
@@ -369,10 +370,12 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			switch (branchidx) {
 				case -1:
 					$scope.on_branch.label = "All branches"
+					$scope.on_branch.name = "master"
 					$scope.on_branch.idx = 0;
 					break;
 				default:
 					$scope.on_branch.label = $scope.single.branches[branchidx].name;
+					$scope.on_branch.name = $scope.single.branches[branchidx].name;
 					$scope.on_branch.idx = branchidx;
 					break;
 			}

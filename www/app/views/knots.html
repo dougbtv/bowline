@@ -666,10 +666,10 @@
 			<span ng-switch-when="dockerfile">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Dockerfile</h3>
+						<h3 class="panel-title">Dockerfile <span class="branchlabel">[branch: {{on_branch.name}}]</span></h3>
 					</div>
 					<div class="panel-body">
-						<dockersyntax dockerfile="single.dockerfile_array"></dockersyntax>
+						<dockersyntax dockerfile="single.branches[on_branch.idx].dockerfile_array"></dockersyntax>
 					</div>
 				</div>
 			</span>

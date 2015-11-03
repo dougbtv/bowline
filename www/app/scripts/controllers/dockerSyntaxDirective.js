@@ -4,7 +4,7 @@ bowlineApp.directive('dockersyntax', function(){
 	return {
 		restrict: 'E',
 		scope: {
-			dockerfile: '=dockerfile', // an array of lines of a dockerfile.
+			dockerfile: '=', // an array of lines of a dockerfile.
 		},
 		templateUrl: 'views/dockersyntax.html',
 		controller: ['$scope','$http','$attrs','$location','ENV', 'loginModule', function ($scope,$http,$attrs,$location,ENV,login) {
@@ -25,9 +25,14 @@ bowlineApp.directive('dockersyntax', function(){
 				'ONBUILD',
 			];
 
+			$scope.$watch('dockerfile', function(newValue, oldValue) {
+				// console.log("!trace dockerfile watch!",{oldValue: oldValue, newValue: newValue});
+				$scope.init();
+			}, true);
+
 			$scope.init = function() {
 
-				console.log("!trace dockersyntax.... init");
+				// console.log("!trace dockersyntax.... init");
 
 				$scope.syntax = [];
 
