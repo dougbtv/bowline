@@ -4,47 +4,56 @@
 
 	<div class="row">
 
-		<div class="col-sm-6">
-			<table class="table">
+		<div class="col-sm-5">
+			<table class="table" style="margin-bottom: 5px;">
 				<tbody>
 					<TR>
 						<TD class="knotheader-table">
-							<h3 ng-hide="params.add">{{single.docker_tag}} </h3>
+							<h3 style="margin-left: 10px;" ng-hide="params.add">{{single.docker_tag}} </h3>
 						</TD>
 						<TD class="knotheader-table">
 				
 							<!-- Single button using append-to-body -->
-								<!--
+
 							<div class="btn-group" style="margin-top: 15px;" uib-dropdown dropdown-append-to-body>
-								<button id="btn-append-to-body" type="button" class="btn btn-primary" uib-dropdown-toggle>
-								Select a branch... <span class="caret"></span>
+								<button id="btn-append-to-body" type="button" style="width: 155px; text-align: left;" class="btn btn-default" uib-dropdown-toggle>
+									<i class="fa fa-code-fork" style="padding-right: 7px;"></i>
+									{{on_branch.label}}
 								</button>
+
 								<ul class="uib-dropdown-menu" role="menu" aria-labelledby="btn-append-to-body">
-									<li role="menuitem"><a href="#">Action</a></li>
-									<li role="menuitem"><a href="#">Another action</a></li>
-									<li role="menuitem"><a href="#">Something else here</a></li>
+									<li role="menuitem"><a href ng-click="selectBranch(-1)">All Branches</a></li>
 									<li class="divider"></li>
-									<li role="menuitem"><a href="#">Separated link</a></li>
+									<!-- !bang -->
+									<li role="menuitem" ng-repeat="branch in single.branches">
+										<a href ng-click="selectBranch($index)">{{branch.name}}</a>
+									</li>
+									
 								</ul>
 							</div>
-							-->
+							<!-- ng-repeat="choice in items" -->
+<!-- ng-repeat="choice in items" -->
+<!-- ng-repeat="choice in items" -->
+							<!--
+
 							<span uib-dropdown on-toggle="toggled(open)">
 								<a href id="simple-dropdown" uib-dropdown-toggle>
 									Click me for a dropdown, yo!
 								</a>
 								<ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
-	      							<li ><!-- ng-repeat="choice in items" -->
+	      							<li >
 										<a href>foo</a>
 									</li>
-	      							<li ><!-- ng-repeat="choice in items" -->
+	      							<li >
 										<a href>boo</a>
 									</li>
-	      							<li ><!-- ng-repeat="choice in items" -->
+	      							<li >
 										<a href>qoo</a>
 									</li>
 								</ul>
 							</span>
-							
+							-->
+
 						</TD>
 					</TR>
 				</tbody>

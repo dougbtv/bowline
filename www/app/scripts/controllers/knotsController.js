@@ -358,11 +358,27 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 		};
 
 		// ---------------------------- branch dropdown
-		$scope.items = [
-			'The first choice!',
-			'And another choice for you.',
-			'but wait! A third!'
-		];
+		
+		$scope.on_branch = {
+			label: 'All branches',
+			idx: -1,
+		};
+
+		$scope.selectBranch = function(branchidx){
+
+			switch (branchidx) {
+				case -1:
+					$scope.on_branch.label = "All branches"
+					$scope.on_branch.idx = 0;
+					break;
+				default:
+					$scope.on_branch.label = $scope.single.branches[branchidx].name;
+					$scope.on_branch.idx = branchidx;
+					break;
+			}
+
+
+		}
 
 		$scope.status = {
 			isopen: false
