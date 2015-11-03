@@ -542,11 +542,11 @@
 
 			<span ng-switch-when="family">
 
-				<div ng-hide="family.parent.docker_tag || family.children.length || family.siblings.length" class="alert alert-info" role="alert">
+				<div ng-hide="family[on_branch.name].parent.docker_tag || family[on_branch.name].children.length || family[on_branch.name].siblings.length" class="alert alert-info" role="alert">
 					<strong>No relationships</strong> If you specify <i>{{ single.docker_tag }}</i> (the image name for this knot) as a FROM image in another Dockerfile and add it as a knot, you'll create a child which can automatically be updated when this image is. Or vise-versa, you can create a parent for this knot by creating it FROM another knot's image name.
 				</div>
 
-				<span ng-show="family.parent.docker_tag">
+				<span ng-show="family[on_branch.name].parent.docker_tag">
 					<h3>Parent</h3>
 					<table class="table table-striped">
 
@@ -560,18 +560,18 @@
 						<tbody>
 							<tr >
 								<td>
-									<a ng-href="/#/knots?details={{ family.parent._id }}">{{ family.parent.docker_tag }}</a>
+									<a ng-href="/#/knots?details={{ family[on_branch.name].parent._id }}">{{ family[on_branch.name].parent.docker_tag }}</a>
 								</td>
 								<td>
-									<span ng-show="family.parent.last_build">{{ formatLogDate(family.parent.last_build) }}</span>
-									<span ng-hide="family.parent.last_build"><i>(never built)</i></span>
+									<span ng-show="family[on_branch.name].parent.last_build">{{ formatLogDate(family[on_branch.name].parent.last_build) }}</span>
+									<span ng-hide="family[on_branch.name].parent.last_build"><i>(never built)</i></span>
 								</td>
 							</tr>
 						</tbody>
 					</table>
 				</span>
 
-				<span ng-show="family.children.length">
+				<span ng-show="family[on_branch.name].children.length">
 					<h3>Children</h3>
 					<table class="table table-striped">
 
@@ -583,7 +583,7 @@
 						</thead>
 
 						<tbody>
-							<tr ng-repeat="child in family.children">
+							<tr ng-repeat="child in family[on_branch.name].children">
 								<td>
 									<a ng-href="/#/knots?details={{ child._id }}">{{ child.docker_tag }}</a>
 								</td>
@@ -596,7 +596,7 @@
 					</table>
 				</span>
 
-				<span ng-show="family.siblings.length">
+				<span ng-show="family[on_branch.name].siblings.length">
 					<h3>Siblings</h3>
 					<table class="table table-striped">
 
@@ -608,7 +608,7 @@
 						</thead>
 
 						<tbody>
-							<tr ng-repeat="sibling in family.siblings">
+							<tr ng-repeat="sibling in family[on_branch.name].siblings">
 								<td>
 									<a ng-href="/#/knots?details={{ sibling._id }}">{{ sibling.docker_tag }}</a>
 								</td>

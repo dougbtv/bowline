@@ -232,71 +232,101 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// The children. (there could be none, one or many)
 		// The siblings,. (there could be none, one or many)
 
-		var family = {
-			parent: false,
-			children: [],
-			siblings: [],
-		};
-
 		var selected_fields = 'docker_tag slug last_build _id upstream_update';
+
+		var whole_family = {};
 
 		// Pull up the release in question.
 		Release.findOne({ _id: id },function(err,release){
 
+
 			// Make sure it's legit.
 			if (!err && release) {
-				
-				async.series({
+	
+				// Refactor time! 
+				// ...we now need to do this per branch, and...
+				// ...search on that branch.
 
-					// Get the parent
-					get_parent: function(callback){
-						
-						Release.findOne({ docker_tag: release.from }, selected_fields,function(err,parent){
-							if (err) {
-								console.log("getfamily_parent",err);
-							}
-							family.parent = parent;
-							callback(err);
-						});
-
-					}.bind(this),
-
-					// Get the children
-					get_children: function(callback){
-						
-						Release.find({ from: release.docker_tag }, selected_fields,function(err,children){
-							if (err) {
-								console.log("getfamily_children",err);
-							}
-							family.children = children;
-							callback(err);
-						});
-
-					}.bind(this),
-
-					// Get the siblings
-					get_siblings: function(callback){
-						
-						Release.find({ from: release.from, docker_tag: { $ne: release.docker_tag } }, selected_fields,function(err,siblings){
-							if (err) {
-								console.log("getfamily_siblings",err);
-							}
-							family.siblings = siblings;
-							callback(err);
-						});
-
-					}.bind(this),
+				async.eachSeries(release.branches,function(branch,callback){
 					
+					log.it("getfamily_each_branch",{branch: branch});
+					
+					var family = {
+						parent: false,
+						children: [],
+						siblings: [],
+					};
 
-				},function(err){
+					async.series({
 
-					if (err) {
-						log.error("release_getFamily",err);
-					}
+						// Get the parent
+						get_parent: function(callback){
+							
+							Release.findOne({ docker_tag: branch.from }, selected_fields,function(err,parent){
+								if (err) {
+									console.log("getfamily_parent",err);
+								}
+								family.parent = parent;
+								callback(err);
+							});
 
-					callback(err,family);
+						}.bind(this),
 
-				}.bind(this));
+						// Get the children
+						get_children: function(callback){
+							
+							Release.find({ 
+								branches: {$all: [
+									{ $elemMatch: { from: release.docker_tag } }
+								]}
+							}, selected_fields,function(err,children){
+								if (err) {
+									console.log("getfamily_children",err);
+								}
+								family.children = children;
+								callback(err);
+							});
+
+						}.bind(this),
+
+						// Get the siblings
+						get_siblings: function(callback){
+							
+							Release.find({
+								branches: {$all: [
+									{ $elemMatch: { from: branch.from } }
+								]},
+								docker_tag: { $ne: release.docker_tag } 
+							}, selected_fields,function(err,siblings){
+								if (err) {
+									console.log("getfamily_siblings",err);
+								}
+								family.siblings = siblings;
+								callback(err);
+							});
+
+						}.bind(this),
+						
+
+					},function(err){
+
+						if (err) {
+							log.error("release_getFamily",err);
+						}
+
+						// Ok, add that all to the family hash...
+						log.it("family_found",{branch: branch.name, family: family});
+						whole_family[branch.name] = family;
+						callback(err,family);
+
+					}.bind(this));
+				
+				},function(err,result){
+
+					log.it("getfamily_thewholefamdamily",{whole_family: whole_family});
+					callback(false,whole_family);
+
+				});
 
 			} else {
 
