@@ -331,6 +331,7 @@ module.exports = function(bowline,opts,log,parser) {
 			// pull the dockers
 			// build the docker image
 			// push the docker image
+			// ...but we're going to do it by branch.
 			log.it("build_begins",{releaseid: this.release._id, note: "We're starting to perform an update"});
 			bowline.messenger.buildBegins(this.release._id,function(){});
 
@@ -373,6 +374,7 @@ module.exports = function(bowline,opts,log,parser) {
 
 				update_clone: function(callback){
 					// Let's update our git repository.
+					// DS 11/15 -- I'm falling out of love with this.
 					this.git.branchCommitPushPR(buildstamp,function(err){
 						callback(err);
 					});
@@ -381,15 +383,30 @@ module.exports = function(bowline,opts,log,parser) {
 
 				do_docker_build: function(callback){
 
-					if (!opts.skipbuild) {
-						// Ok, now, we can perform the docker build.
-						this.dockerBuild(function(err){
-							callback(err);	
-						});
-					} else {
-						log.it("builder_note",{note: "We skipped the build, by a debug flag."});
-						callback(null);
-					}
+					// Alright, we are going to build by branch!
+					// for now we'll build all branches.
+
+					log.it("builder_performupdate_dobuild",{release: this.release});
+
+					async.eachSeries(this.release.branches,function(branch,callback){
+
+						// Ok, now we're doing a series of branches...
+						if (!opts.skipbuild) {
+							// Ok, now, we can perform the docker build.
+							this.dockerBuild(branch,function(err){
+								callback(err);	
+							});
+						} else {
+							log.it("builder_note",{note: "We skipped the build, by a debug flag."});
+							callback(null);
+						}
+
+					}.bind(this),function(err){
+
+						log.it("builder_SERIES_COMPLETE",{msg: "Series of builds is complete..."});
+						callback(err);
+
+					});
 					
 					
 				}.bind(this)
@@ -405,7 +422,11 @@ module.exports = function(bowline,opts,log,parser) {
 					// But what about it's family?
 					// Does it have children and do they need to be kicked off?
 					// Let's answer that now.
+					log.it("TODO_BIG_FAT_TODO_builder_update_children",{msg: "Yo! Commented out code here that's important, you won't update children without it."});
+					/*
 					bowline.release.getChildrenToUpdate(this.release._id,function(err,update_slugs){
+
+						log.it("!trace AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 						if (!err) {
 
 							if (update_slugs.length) {
@@ -418,6 +439,7 @@ module.exports = function(bowline,opts,log,parser) {
 							log.err("builder_getchildren",{msg: "Couldn't get children in builder", err: err});
 						}
 					}.bind(this));
+					*/
 
 
 				} else {
@@ -460,8 +482,9 @@ module.exports = function(bowline,opts,log,parser) {
 	var build_start;
 	var lastline = "__initialize_this";
 
-	this.dockerBuild = function(callback) {
+	this.dockerBuild = function(branch,callback) {
 
+		log.it("builder_dockerbuild_branch",{branch: branch});
 		var tail = null;
 
 		async.series({

@@ -234,6 +234,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 		var selected_fields = 'docker_tag slug last_build _id upstream_update';
 
+		log.it("!trace C >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
 		var whole_family = {};
 
 		// Pull up the release in question.
@@ -354,6 +356,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 		this.getFamily(id,function(err,family){
 			if (!err) {
 
+				log.it("!trace NEED REFACTOR, family has no length, needs by branch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",{family: family});
+				
 				// Operate when there are children.
 				if (family.children.length) {
 
