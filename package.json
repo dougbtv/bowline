@@ -18,12 +18,15 @@
     "automation"
   ],
   "dependencies": {
+    "always-tail": "~0.1.1",
     "async": "*",
     "bcrypt": "*",
     "bunyan": "*",
     "bunyan-prettystream": "*",
+    "figlet": "^1.1.1",
     "github": "*",
     "irc": "*",
+    "md5": "~1.0.0",
     "moment": "*",
     "mongoose": "*",
     "node-schedule": "*",
@@ -35,9 +38,7 @@
     "request": "*",
     "restify": "*",
     "socket.io": "^1.2.0",
-    "tail": "^0.4.0",
-    "always-tail": "~0.1.1",
-    "md5": "~1.0.0"
+    "tail": "^0.4.0"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

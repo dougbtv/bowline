@@ -11,6 +11,10 @@ module.exports = function(bowline,opts,log,parser) {
 	// We create a common interface for those two git methods.
 	this.git = null;
 
+	// And we have a common tail object.
+	var tail = null;
+
+
 	// Our requirements.
 	var fs = require('fs');
 	var http = require('http');
@@ -381,6 +385,12 @@ module.exports = function(bowline,opts,log,parser) {
 				
 				}.bind(this),
 
+				docker_init: function(callback) {
+					this.dockerBuildInitialization(function(err){
+						callback(err);
+					});
+				}.bind(this),
+
 				do_docker_build: function(callback){
 
 					// Alright, we are going to build by branch!
@@ -393,7 +403,7 @@ module.exports = function(bowline,opts,log,parser) {
 						// Ok, now we're doing a series of branches...
 						if (!opts.skipbuild) {
 							// Ok, now, we can perform the docker build.
-							this.dockerBuild(branch,function(err){
+							this.dockerBuildBranch(branch,function(err){
 								callback(err);	
 							});
 						} else {
@@ -482,10 +492,9 @@ module.exports = function(bowline,opts,log,parser) {
 	var build_start;
 	var lastline = "__initialize_this";
 
-	this.dockerBuild = function(branch,callback) {
-
-		log.it("builder_dockerbuild_branch",{branch: branch});
-		var tail = null;
+	// We'll initialize our build scoped to ALL BRANCHES
+	// Then we'll work out the 
+	this.dockerBuildInitialization = function(callback) {
 
 		async.series({
 			clear_log: function(callback) {
@@ -525,6 +534,7 @@ module.exports = function(bowline,opts,log,parser) {
 			*/
 
 			// Assure a dockerhub login.
+			// TODO: This should be lofted to the manager
 			dockerhub_login: function(callback) {
 
 				bowline.dockerhub.login(function(err){
@@ -533,6 +543,46 @@ module.exports = function(bowline,opts,log,parser) {
 
 			}.bind(this),
 
+		},function(err){
+
+			callback(err);
+
+		});
+
+	}
+
+	this.dockerBuildBranch = function(branch,callback) {
+
+		log.it("builder_dockerbuild_branch",{branch: branch});
+
+		var branchtag = this.release.docker_tag + ":" + branch.name;
+
+		async.series({
+
+			log_banner: function(callback) {
+				var figlet = require('figlet');
+
+
+				// figlet sample fonts: http://www.askapache.com/online-tools/figlet-ascii/
+				figlet(branchtag, { font: 'Chunky' }, function(err, banner) {
+					
+					if (err) {
+						log.it("builder_figlet_error",{err: err});
+					}
+
+					// replace the banner with comments
+					// and append it.
+					fs.appendFile(this.release.log_docker, banner.replace(/^/mg,"#    ") + "\n", function (err) {
+						if (err) {
+							log.warn("builder_echo_banner_err",{msg: 'probably never see this...',err: err});
+						}
+						callback(err);
+					}.bind(this));
+
+				}.bind(this));
+
+			}.bind(this),
+			
 			docker_build: function(callback) {
 				
 				// When did we start?
