@@ -304,7 +304,10 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 				line = line.replace(/\x1b\[\d+m/g, "", line);
 			}
 
-			return { line: line, colored: colored };
+			// and let's find out if it's a comment.
+			var comment = line.match(/^#/);
+
+			return { line: line, colored: colored, comment: comment };
 
 		};
 
