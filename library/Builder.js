@@ -671,7 +671,7 @@ module.exports = function(bowline,opts,log,parser) {
 
 						push_master: function(callback){
 
-							execlog('docker push ' + localtag + ':latest',function(err,stdout,stderr){
+							execlog('yes | docker push ' + localtag + ':latest',function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							}.bind(this));
 
@@ -681,7 +681,7 @@ module.exports = function(bowline,opts,log,parser) {
 
 							if (specifictag) {
 
-								execlog('docker push ' + specifictag,function(err,stdout,stderr){
+								execlog('yes | docker push ' + specifictag,function(err,stdout,stderr){
 									callback(err,{stdout: stdout, stderr: stderr});
 								}.bind(this));
 
@@ -749,7 +749,7 @@ module.exports = function(bowline,opts,log,parser) {
 
 						push_master: function(callback){
 
-							execlog('docker push ' + dockerhub_name + ':latest',function(err,stdout,stderr){
+							execlog('yes | docker push ' + dockerhub_name + ':latest',function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							});
 
@@ -758,7 +758,7 @@ module.exports = function(bowline,opts,log,parser) {
 						push_tag: function(callback){
 
 							if (specifictag) {
-								execlog('docker push ' + specifictag,function(err,stdout,stderr){
+								execlog('yes | docker push ' + specifictag,function(err,stdout,stderr){
 									callback(err,{stdout: stdout, stderr: stderr});
 								});
 							} else {
