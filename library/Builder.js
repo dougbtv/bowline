@@ -510,7 +510,7 @@ module.exports = function(bowline,opts,log) {
 
 						tag_bowline: function(callback){
 
-							execlog('docker tag ' + this.release.docker_tag + ' ' + localtag,function(err,stdout,stderr){
+							execlog('docker tag -f ' + this.release.docker_tag + ' ' + localtag,function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							}.bind(this));
 
@@ -520,7 +520,7 @@ module.exports = function(bowline,opts,log) {
 
 							if (specifictag) {
 
-								execlog('docker tag ' + this.release.docker_tag + ' ' + specifictag,function(err,stdout,stderr){
+								execlog('docker tag -f ' + this.release.docker_tag + ' ' + specifictag,function(err,stdout,stderr){
 									callback(err,{stdout: stdout, stderr: stderr});
 								}.bind(this));
 
@@ -587,7 +587,7 @@ module.exports = function(bowline,opts,log) {
 						namespace_tag: function(callback){
 
 							if (specifictag) {
-								execlog('docker tag ' + this.release.docker_tag + ' ' + dockerhub_name,function(err,stdout,stderr){
+								execlog('docker tag -f ' + this.release.docker_tag + ' ' + dockerhub_name,function(err,stdout,stderr){
 									callback(err,{stdout: stdout, stderr: stderr});
 								}.bind(this));
 							} else {
@@ -599,7 +599,7 @@ module.exports = function(bowline,opts,log) {
 						specific_tag: function(callback){
 
 							if (specifictag) {
-								execlog('docker tag ' + this.release.docker_tag + ' ' + specifictag,function(err,stdout,stderr){
+								execlog('docker tag -f ' + this.release.docker_tag + ' ' + specifictag,function(err,stdout,stderr){
 									callback(err,{stdout: stdout, stderr: stderr});
 								}.bind(this));
 							} else {
