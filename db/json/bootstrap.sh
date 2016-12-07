@@ -9,7 +9,7 @@ SEMAPHOR_FILE=/data/db/.bowline_bootstrapped
 
 # First thing's first... see if we've marked the semaphor that says everything's good to go
 # (e.g. that the data's already bootstrapped.)
-if [ -f $SEMAPHOR_FILE]; then
+if [ -f $SEMAPHOR_FILE ]; then
   echo "Semaphor found, data already bootstrapped"
   exit 0
 fi
