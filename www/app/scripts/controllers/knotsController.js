@@ -84,7 +84,7 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.logs_pageend = 10;
 			$scope.logs_pageincrement = 10;
 			$scope.logs_found_all = false;
-		}
+		};
 
 		$scope.logSetDefaults();
 
@@ -221,6 +221,13 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$location.search('mine',null);
 		};
 
+		$scope.selectFamily = function() {
+			$scope.mode = 'family';
+			release.getFamily($scope.single._id,function(err,family){
+				$scope.family = family;
+			});
+		};
+
 		$scope.selectLog = function(logid) {
 
 			$scope.mode = 'logdetail';
@@ -306,6 +313,9 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 			$scope.mode = mode;
 
 			switch (mode) {
+				case "family":
+					$scope.selectFamily();
+					break;
 				case "tags":
 					$scope.getTags();
 					break;
@@ -315,15 +325,26 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					} */
 					break;
 				case "readme":
-					$timeout(function(){
-						var path_readme = $scope.single.git_path.replace(/Dockerfile/,'README.md');
-						Flatdoc.run({
-							fetcher: Flatdoc.github($scope.single.git_repo, path_readme),
-						});
-					},300);
+
+					switch ($scope.single.git_method) {
+						case "github": 
+							$timeout(function(){
+								var path_readme = $scope.single.git_path.replace(/Dockerfile/,'README.md');
+								Flatdoc.run({
+									fetcher: Flatdoc.github($scope.single.git_repo, path_readme),
+								});
+							},300);
+							break;
+							
+						default:
+							console.log("!TODO: Build readme support for vanilla git");
+					}
 					
 					break;
+
 				default:
+					// nothing yet...
+					break;
 			}
 
 		};
@@ -398,10 +419,11 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 					// Ok, let's compile a github URL.
 					// var url_github = 'https://github.com/' + release.git_repo + '/tree/' + release.branch_master + path_readme;
 
+					/*
 					Flatdoc.run({
 						fetcher: Flatdoc.github(single.git_repo, path_readme),
 					});
-
+					*/
 
 					// selects are a bummer, let's take the enumerated type of method and make it a reference to method.
 					for (var i = 0; i < $scope.methods.length; i++) {

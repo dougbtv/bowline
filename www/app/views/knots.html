@@ -72,6 +72,15 @@
 									</td>
 								</tr>
 
+								<tr ng-hide="single.job.error">
+									<td>
+										<strong>From Base: </strong>
+									</td>
+									<td class="text-center">
+										<a href ng-click="selectFamily()" class="nolinelink">{{ single.from }}</a>
+									</td>
+								</tr>
+
 								<tr ng-show="single.git_method == 'github' && single">
 									<td>
 										<strong>Last Commit Built: </strong>
@@ -213,6 +222,27 @@
 
 						<div class="panel panel-info">
 							<div class="knotproperties-header panel-heading">
+								<h3 class="panel-title">Family Properties</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-striped">
+									<tbody>
+										<tr>
+											<td class="vert-align">Update when parents are updated</td>
+											<td class="vert-align text-center">
+												&nbsp;
+											</td>
+											<td>
+												<input type="checkbox" ng-model="single.upstream_update" ng-disabled="formEnabled()">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="panel panel-info">
+							<div class="knotproperties-header panel-heading">
 								<h3 class="panel-title">Collaborators</h3>
 							</div>
 							<div class="panel-body">
@@ -276,13 +306,23 @@
 											</td>
 										</tr>
 
-										<tr>
+										<tr ng-show="selected_gitmethod.value == 'github'">
 											<td class="vert-align">Github Repo</td>
 											<td class="vert-align text-center">
 												<validator variable="single.git_repo" regex="validator.git_repo" required='true' message="'Github Name/Repo format'">
 											</td>
 											<td>
 												<input ng-model="single.git_repo" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="username/repo">
+											</td>
+										</tr>
+
+										<tr ng-show="selected_gitmethod.value == 'git'">
+											<td class="vert-align">Git URL</td>
+											<td class="vert-align text-center">
+												<validator variable="single.git_url" regex="validator.git_url" required='true' message="'Valid URL please'">
+											</td>
+											<td>
+												<input ng-model="single.git_url" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="https://user:pass@git.repo/url">
 											</td>
 										</tr>
 
@@ -296,16 +336,16 @@
 											</td>
 										</tr>
 										<tr>
-											<td class="vert-align">Master Branch</td>
+											<td class="vert-align">Track Branch</td>
 											<td class="vert-align text-center">
-												<validator variable="single.branch_master" required='true' >
+												<validator variable="single.branch_master" regex="validator.branch_master" message="'Please just use alphanumeric and - dot and slash'" required='true' >
 											</td>
 											<td>
 												<input ng-model="single.branch_master" type="text" ng-disabled="formEnabled()" class="form-control" placeholder="master branch name">
 											</td>
 										</tr>
 
-										<tr>
+										<tr ng-show="selected_gitmethod.value == 'github'">
 											<td class="vert-align">New Branch Name (prefix)</td>
 											<td class="vert-align text-center">
 												<validator variable="single.branch_name" required='true'>
@@ -438,6 +478,89 @@
 					</div>
 				</div><!-- properties -->
 
+
+			</span>
+
+			<span ng-switch-when="family">
+
+				<div ng-hide="family.parent.docker_tag || family.children.length || family.siblings.length" class="alert alert-info" role="alert">
+					<strong>No relationships</strong> If you specify <i>{{ single.docker_tag }}</i> (the image name for this knot) as a FROM image in another Dockerfile and add it as a knot, you'll create a child which can automatically be updated when this image is. Or vise-versa, you can create a parent for this knot by creating it FROM another knot's image name.
+				</div>
+
+				<span ng-show="family.parent.docker_tag">
+					<h3>Parent</h3>
+					<table class="table table-striped">
+
+						<thead>
+							<tr>
+								<th>Image</th>
+								<th>Last Build @</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr >
+								<td>
+									<a ng-href="/#/knots?details={{ family.parent._id }}">{{ family.parent.docker_tag }}</a>
+								</td>
+								<td>
+									<span ng-show="family.parent.last_build">{{ formatLogDate(family.parent.last_build) }}</span>
+									<span ng-hide="family.parent.last_build"><i>(never built)</i></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</span>
+
+				<span ng-show="family.children.length">
+					<h3>Children</h3>
+					<table class="table table-striped">
+
+						<thead>
+							<tr>
+								<th>Image</th>
+								<th>Last Build @</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr ng-repeat="child in family.children">
+								<td>
+									<a ng-href="/#/knots?details={{ child._id }}">{{ child.docker_tag }}</a>
+								</td>
+								<td>
+									<span ng-show="child.last_build">{{ formatLogDate(child.last_build) }}</span>
+									<span ng-hide="child.last_build"><i>(never built)</i></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</span>
+
+				<span ng-show="family.siblings.length">
+					<h3>Siblings</h3>
+					<table class="table table-striped">
+
+						<thead>
+							<tr>
+								<th>Image</th>
+								<th>Last Build @</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr ng-repeat="sibling in family.siblings">
+								<td>
+									<a ng-href="/#/knots?details={{ sibling._id }}">{{ sibling.docker_tag }}</a>
+								</td>
+								<td>
+									<span ng-show="sibling.last_build">{{ formatLogDate(sibling.last_build) }}</span>
+									<span ng-hide="sibling.last_build"><i>(never built)</i></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</span>
 
 			</span>
 
@@ -654,6 +777,10 @@
 
 			<a ng-click="changeMode('properties')" ng-class="navHighlight('properties')" class="list-group-item ahover">
 				<i class="fa fa-wrench" style="padding-right: 12px;"></i>Properties
+			</a>
+
+			<a ng-click="changeMode('family')" ng-class="navHighlight('family')" class="list-group-item ahover">
+				<i class="fa fa-tree" style="padding-right: 12px;"></i>Family
 			</a>
 
 			<a ng-show="single.store_local" ng-click="changeMode('tags')" ng-class="navHighlight('tags')" class="list-group-item ahover">

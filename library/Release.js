@@ -13,8 +13,10 @@ module.exports = function(bowline,opts,log,mongoose) {
 		hook_secret: '^[\\w\\-]+$',
 		docker_tag: '^[a-zA-Z0-9\:\\/\\-_.]+$',
 		git_repo: '^[\\w\\-]+\\/[\\w\\-]+$',
+		git_url: '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$',
 		git_path: '^[\\w\\/\\.\\-\\@\\~]+$',
 		host: '^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\\.[a-zA-Z]{2,3})$',
+		branch_master: '^[\\w\\d-\\.\\/]+$', // see: http://tinyurl.com/buk567q
 	};
 
 	// Setup a schema.
@@ -25,7 +27,8 @@ module.exports = function(bowline,opts,log,mongoose) {
 		active: Boolean,											  				// Is this currently active?
 		slug: { type: String, unique: true, match: new RegExp(validator.slug) }, 	// An index/slug to refer to.
 		docker_tag: {type: String, required: true, match: new RegExp(validator.docker_tag) },		// What's the name of the docker image tag?
-		dockerfile: String,
+		dockerfile: String,															// Yep that's the dockerfile
+		from: String, 																// The dockerfile FROM base image
 		
 		// -------------- Colaborators
 		collaborators: [
@@ -37,6 +40,9 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// --------------- Storage options
 		store_dockerhub: Boolean,
 		store_local: Boolean,
+
+		// --------------- Family options
+		upstream_update: Boolean,													// Update this release when base image has been updated
 
 		// --------------- Update methods.
 		method: {type: String, match: new RegExp(validator.method) },  				// Update method -- For now, just "http", other methods, later.
@@ -53,10 +59,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 		// ----------- Git variables.
 		git_method: String,																	// What git method do we use? (pure git or github)
 		git_enabled: Boolean,																// Do we upate the git repo?
-		git_repo: { type: String, required: true, match: new RegExp(validator.git_repo) },	// What's the git repo?
+		git_repo: { type: String, required: false, match: new RegExp(validator.git_repo) },	// What's the git repo?
 		git_path: { type: String, required: true, match: new RegExp(validator.git_path) },	// This is the path to the dockerfile in the git repo
+		git_url: { type: String, required: false, match: new RegExp(validator.git_url) },
 		branch_name: { type: String, required: true },										// What's the NEW branch name you'd like?
-		branch_master: { type: String, required: true },										// What's your master branch name?
+		branch_master: { type: String, required: true, match: new RegExp(validator.branch_master) }, // What's your master branch name?
 
 		// github specific variables
 		github_oauth: String,
@@ -155,11 +162,13 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.docker_tag = source.docker_tag;
 		dest.host = source.host;
 		dest.url_path = source.url_path;
+		dest.upstream_update = source.upstream_update;
 
 		dest.hook_secret = source.hook_secret;
 		dest.git_enabled = source.git_enabled;
 		dest.git_method = source.git_method;
 		dest.git_repo = source.git_repo;
+		dest.git_url = source.git_url;
 		dest.git_path = source.git_path;
 		dest.branch_name = source.branch_name;
 		dest.branch_master = source.branch_master;
@@ -188,6 +197,128 @@ module.exports = function(bowline,opts,log,mongoose) {
 		dest.save(function(err){
 			callback(err);
 		});
+
+	}
+
+	this.getFamily = function(id,callback) {
+		// Alright, we're going to create a little family tree here.
+		// We'll look for:
+		// The parent. (there's only ever one, and it's optional)
+		// The children. (there could be none, one or many)
+		// The siblings,. (there could be none, one or many)
+
+		var family = {
+			parent: false,
+			children: [],
+			siblings: [],
+		};
+
+		var selected_fields = 'docker_tag slug last_build _id upstream_update';
+
+		// Pull up the release in question.
+		Release.findOne({ _id: id },function(err,release){
+
+			// Make sure it's legit.
+			if (!err && release) {
+				
+				async.series({
+
+					// Get the parent
+					get_parent: function(callback){
+						
+						Release.findOne({ docker_tag: release.from }, selected_fields,function(err,parent){
+							if (err) {
+								console.log("getfamily_parent",err);
+							}
+							family.parent = parent;
+							callback(err);
+						});
+
+					}.bind(this),
+
+					// Get the children
+					get_children: function(callback){
+						
+						Release.find({ from: release.docker_tag }, selected_fields,function(err,children){
+							if (err) {
+								console.log("getfamily_children",err);
+							}
+							family.children = children;
+							callback(err);
+						});
+
+					}.bind(this),
+
+					// Get the siblings
+					get_siblings: function(callback){
+						
+						Release.find({ from: release.from, docker_tag: { $ne: release.docker_tag } }, selected_fields,function(err,siblings){
+							if (err) {
+								console.log("getfamily_siblings",err);
+							}
+							family.siblings = siblings;
+							callback(err);
+						});
+
+					}.bind(this),
+					
+
+				},function(err){
+
+					if (err) {
+						log.error("release_getFamily",err);
+					}
+
+					callback(err,family);
+
+				}.bind(this));
+
+			} else {
+
+				if (err) {
+					log.err("release_getFamily_existance_check",err);
+				}
+
+				callback("Sorry, no release exited.");
+
+			}
+
+		});
+
+		
+
+	}
+
+	// !bang
+	this.getChildrenToUpdate = function(id,callback) {
+
+		// Let's make a list of slugs.
+		var slugs = [];
+
+		// Pull up the whole family.
+		this.getFamily(id,function(err,family){
+			if (!err) {
+
+				// Operate when there are children.
+				if (family.children.length) {
+
+					// Push members that are flagged for upstream update
+					family.children.forEach(function(fmember){
+						if (fmember.upstream_update) {
+							slugs.push(fmember.slug);
+						}
+					});
+
+				}
+
+			} else {
+				log.err("release_getchildrentoupdate",err);
+			}
+
+			callback(err,slugs);
+			
+		});
+
 
 	}
 
@@ -263,11 +394,11 @@ module.exports = function(bowline,opts,log,mongoose) {
 
 	}
 
-	this.updateDockerfile = function(releaseid,dockerfile,callback) {
+	this.updateDockerfile = function(releaseid,dockerfile,from,callback) {
 
 		Release.update(
 			{ _id: releaseid },
-			{ dockerfile: dockerfile },
+			{ dockerfile: dockerfile, from: from  },
 			function(err){
 
 				if (err) {
@@ -423,7 +554,6 @@ module.exports = function(bowline,opts,log,mongoose) {
 						bowline.manager.jobProperties(item.slug,function(err,props){
 							item.job = props;
 							// console.log("!trace jobProperties full: ",item);
-							//!bang
 							var hiding = 'hook_secret';
 							if (isowner) {
 								hiding = '';

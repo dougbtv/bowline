@@ -1,6 +1,8 @@
 module.exports = function(bowline,opts,log) {
 
 	// Our children.
+	var GitCommon = require('./builders/GitCommon.js');
+	var gitcommon = new GitCommon(bowline,opts,log);
 	var GitHub = require('./builders/GitHub.js');
 	var Git = require('./builders/Git.js');
 
@@ -64,12 +66,12 @@ module.exports = function(bowline,opts,log) {
 		switch (this.release.git_method) {
 			// use github.
 			case "github":
-				this.git = new GitHub(this.release,bowline,opts,log);
+				this.git = new GitHub(this.release,gitcommon,bowline,opts,log);
 				break;
 
 			// use a standard git repo.
 			case "git":
-				this.git = new Git(this.release,bowline,opts,log);
+				this.git = new Git(this.release,gitcommon,bowline,opts,log);
 				break;
 
 			// Hrmm, that's an error.
@@ -241,9 +243,37 @@ module.exports = function(bowline,opts,log) {
 					fs.readFile(path_dockerfile, 'utf8', function (err, dockerfile_contents) {
 						if (!err) {
 
-							bowline.release.updateDockerfile(this.release._id,dockerfile_contents,function(err){
-								callback(err);
+							// Let's parse the FROM out of the dockerfile
+							var dockerfile_from = false;
+
+							dockerfile_contents.split("\n").forEach(function(line){
+
+								// make sure you trim that up...
+								line = line.trim();
+
+								// omit comments....
+								if (!line.match(/^\s*#.+$/)) {
+
+									// And we'll operate on only the first line.
+									if (line.match(/FROM/i)) {
+										if (!dockerfile_from) {
+											// Parse out the field it's from
+											dockerfile_from = line.replace(/^\s*FROM\s+([\S]+).*$/,"$1");
+											// log.it("check_from",dockerfile_from);
+										}
+									}
+								}
+
 							}.bind(this));
+
+							if (dockerfile_from) {
+								bowline.release.updateDockerfile(this.release._id,dockerfile_contents,dockerfile_from,function(err){
+									callback(err);
+								}.bind(this));
+
+							} else {
+
+							}
 
 						} else {
 							callback("Damn, couldn't read the dockerfile when looking for environment variable.");
@@ -353,16 +383,38 @@ module.exports = function(bowline,opts,log) {
 			},function(err,result){
 				// We're done with this running job.
 				this.in_progress = false;
+
 				if (!err) {
+					
 					log.it("builder_success",{releaseid: this.release._id, note: "Looking good -- appears we have a successful build!"});
+					
+					// But what about it's family?
+					// Does it have children and do they need to be kicked off?
+					// Let's answer that now.
+					bowline.release.getChildrenToUpdate(this.release._id,function(err,update_slugs){
+						if (!err) {
+
+							if (update_slugs.length) {
+								// Ok, we have some child slugs to update.
+								// We can send these to the manager and let 'er rip.
+								bowline.manager.updateChildren(this.release.slug,update_slugs);
+							}
+
+						} else {
+							log.err("builder_getchildren",{msg: "Couldn't get children in builder", err: err});
+						}
+					}.bind(this));
+
+
 				} else {
 					log.error("builder_error",{releaseid: this.release._id, err: err});
 				}
+
 			}.bind(this));
 
 		} else {
 			// There's nothing to do, usually.
-
+			log.warn("builder_locked","Tried to perform an update, but, builder was already locked as in progress");
 		}
 
 	}
@@ -532,7 +584,7 @@ module.exports = function(bowline,opts,log) {
 
 						push_master: function(callback){
 
-							execlog('docker push ' + localtag + ':latest',function(err,stdout,stderr){
+							execlog('yes | docker push ' + localtag + ':latest',function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							}.bind(this));
 
@@ -542,7 +594,7 @@ module.exports = function(bowline,opts,log) {
 
 							if (specifictag) {
 
-								execlog('docker push ' + specifictag,function(err,stdout,stderr){
+								execlog('yes | docker push ' + specifictag,function(err,stdout,stderr){
 									callback(err,{stdout: stdout, stderr: stderr});
 								}.bind(this));
 
@@ -610,7 +662,7 @@ module.exports = function(bowline,opts,log) {
 
 						push_master: function(callback){
 
-							execlog('docker push ' + dockerhub_name + ':latest',function(err,stdout,stderr){
+							execlog('yes | docker push ' + dockerhub_name + ':latest',function(err,stdout,stderr){
 								callback(err,{stdout: stdout, stderr: stderr});
 							});
 
@@ -619,7 +671,7 @@ module.exports = function(bowline,opts,log) {
 						push_tag: function(callback){
 
 							if (specifictag) {
-								execlog('docker push ' + specifictag,function(err,stdout,stderr){
+								execlog('yes | docker push ' + specifictag,function(err,stdout,stderr){
 									callback(err,{stdout: stdout, stderr: stderr});
 								});
 							} else {
@@ -719,7 +771,6 @@ module.exports = function(bowline,opts,log) {
 		var path_dockerfile = this.release.clone_path + relative_gitpath;
 
 
-		// !bang
 		fs.readFile(path_dockerfile, 'utf8', function (err, filecontents) {
 
 			// console.log("!trace a: ",path_dockerfile);
