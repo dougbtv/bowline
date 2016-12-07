@@ -5,12 +5,12 @@
 # -------------------------------------------------
 
 # Overall descriptions
-SEMAPHOR_FILE=/data/db/.bowline_bootstrapped
+SEMAPHORE_FILE=/data/db/.bowline_bootstrapped
 
-# First thing's first... see if we've marked the semaphor that says everything's good to go
+# First thing's first... see if we've marked the semaphore that says everything's good to go
 # (e.g. that the data's already bootstrapped.)
-if [ -f $SEMAPHOR_FILE ]; then
-  echo "Semaphor found, data already bootstrapped"
+if [ -f $SEMAPHORE_FILE ]; then
+  echo "Semaphore found, data already bootstrapped"
   exit 0
 fi
 
@@ -43,7 +43,7 @@ done
 # See if it came up.
 if [ $mongo_up -eq 1 ]; then
   echo "Good mongo is up."
-  # Go ahead and bootstrap it with the data here, and mark if there's a semaphor
+  # Go ahead and bootstrap it with the data here, and mark if there's a semaphore
   mongoimport --host localhost --db bowline --collection releases --file /exampledata/releases.json
   import_release=$?
   mongoimport --host localhost --db bowline --collection users --file /exampledata/users.json
@@ -59,10 +59,10 @@ if [ $mongo_up -eq 1 ]; then
     sleep 3
 
     # Mark the semaphor
-    echo "Bowline bootstrapped" > $SEMAPHOR_FILE && date >> $SEMAPHOR_FILE
+    echo "Bowline bootstrapped" > $SEMAPHORE_FILE && date >> $SEMAPHORE_FILE
 
     # Say that we're done.
-    echo "Mongo data imported. Semaphor created."
+    echo "Mongo data imported. Semaphore created."
     exit 0
 
   else
