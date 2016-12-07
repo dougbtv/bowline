@@ -1,0 +1,124 @@
+version: '2'
+services:
+  # --------------------------------------------- Web app container
+#   echo "Starting registry server..."
+# # docker run -p 5000:5000 --name regserver -d -t registry
+# docker run -d -e GUNICORN_OPTS=[--preload] -v $REGISTRY_DIR:/registry:rw -e SETTINGS_FLAVOR=local -e STORAGE_PATH=/registry -e SEARCH_BACKEND=sqlalchemy -p 5000:5000  --name regserver registry:latest
+
+  regserver:
+    container_name: regserver
+    image: registry:latest
+    volumes:
+      - bowline-data-registry:/registry
+    ports:
+      - "5000:5000"
+    environment:
+      - "SETTINGS_FLAVOR=local"
+      - "STORAGE_PATH=/registry"
+      - "SEARCH_BACKEND=sqlalchemy"
+      - "GUNICORN_OPTS=[--preload]"
+
+  # we need to bootstrap.
+
+  # and we need a bootstrap semaphore
+  #   echo "Running mongo for preload..."
+  # rm -Rf $MONGO_DIR
+  # mkdir $MONGO_DIR
+  # docker run -d -v $MONGO_DIR:/data/db:rw --name temp_mongo library/mongo
+
+  # CMD_RELEASE_IMPORT=""
+  # CMD_USER_IMPORT=""
+
+  # echo "Starting mongo client"
+  # docker run -it --rm --link temp_mongo:mongo -v $EXAMPLE_DATA:/exampledata/:rw library/mongo \
+  #     bash -c 'mongoimport --host mongo --db bowline --collection releases --file /exampledata/json/releases.json; mongoimport --host mongo --db bowline --collection users --file /exampledata/json/users.json'
+
+  mongo-bootstrap-semaphore:
+    container_name: mongo-bootstrap-semaphore
+    image: library/mongo:latest
+    volumes:
+      - ./db/json/:/exampledata/
+      - bowline-data-mongo:/data/db
+    command: /exampledata/bootstrap.sh
+    
+  # docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db:rw --name mongo library/mongo
+  mongo:
+    container_name: mongo
+    image: library/mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - bowline-data-mongo:/data/db
+    entrypoint: |
+      /bin/bash -c '
+        MAX_TRIES=30;
+        tries=0;
+        while [ ! -f /data/db/.bowline_bootstrapped ]; do
+          let tries=tries+1;
+          echo "Waiting for bootstrap semaphore, attempt $$tries";
+          if [ $$tries -gt $$MAX_TRIES ]; then
+            echo "Never found bootstrap in $$MAX_TRIES";
+            exit 1;
+          fi
+          sleep 1;
+        done
+        ./entrypoint.sh mongod
+      '
+
+  # HOST_IP_ADDRESS=$(ifconfig | grep -a2 docker0 | grep -P "inet[^6]" | awk '{print $2}')
+  # docker run -d --name nginx-amb --expose 443 -e NGINX_PORT_443_TCP=tcp://$HOST_IP_ADDRESS:443 svendowideit/ambassador
+  nginx-amb:
+    container_name: nginx-amb
+    image: svendowideit/ambassador
+    expose:
+      - "443"
+    environment:
+      - "NGINX_PORT_443_TCP=tcp://localhost:443"
+
+  # echo "Starting bowline..."
+  # docker run \
+  #     -p 8000:8000 \
+  #     -v /var/run/docker.sock:/var/run/docker.sock:rw \
+  #     $MOUNT_BOWLINEDIR \
+  #     --link mongo:mongo \
+  #     --link nginx-amb:dockertest.com \
+  #     --name bowline -d -t dougbtv/bowline
+
+  bowline:
+    container_name: bowline
+    build: ./docker/bowline
+    image: dougbtv/bowline
+    volumes:
+      - /home/doug/codebase/bowline:/bowline
+      - /var/run/docker.sock:/var/run/docker.sock:rw 
+      # - /bowline
+    links:
+      - mongo:mongo
+      - nginx-amb:dockertest.com
+    ports:
+      - "8000:8000"
+
+  # echo "Starting nginx..."
+  # docker run \
+  #     -p 80:80 -p 443:443 \
+  #     --volumes-from bowline \
+  #     --link bowline:bowline \
+  #     --link regserver:regserver \
+  #     -d -t dougbtv/bowline-nginx
+
+  bowline-nginx:
+    container_name: bowline-nginx
+    build: ./docker/nginx
+    image: dougbtv/bowline-nginx
+    volumes_from:
+      - bowline
+    links:
+      - bowline:bowline
+      - regserver:regserver
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  bowline-data-registry:
+  bowline-data-mongo:
