@@ -3,19 +3,15 @@ MAINTAINER Doug Smith <info@laboratoryb.com>
 ENV build_date 2014-10-02
 
 # Update yum packages, get deps.
-RUN yum update -y
-RUN yum install -y epel-release
-RUN yum install -y npm wget git
-RUN yum install -y docker
+RUN yum update -y && \
+  yum install -y epel-release && \
+  yum install -y npm wget git docker make gcc-c++
 
 RUN npm install -g forever
-
-RUN yum install -y make
 
 ENV version_increment 0x0000b00fd33d6
 RUN git clone https://github.com/dougbtv/bowline.git
 
-# We need make for gyp rebuilds of cpp
 WORKDIR /bowline
 RUN npm install
 RUN git checkout develop

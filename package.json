@@ -27,7 +27,7 @@
     "moment": "*",
     "mongoose": "*",
     "node-schedule": "*",
-    "node-uuid": "*",
+    "uuid": "*",
     "nodemailer": "*",
     "nomnom": "*",
     "pasteall": "*",
