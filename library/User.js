@@ -5,7 +5,7 @@ module.exports = function(bowline, log, opts, mongoose) {
 	var bcrypt = require('bcrypt');
 	var SALT_WORK_FACTOR = 10;
 
-	var uuid = require('node-uuid');
+	var uuid = require('uuid');
 	var md5 = require('md5');
 
 	// We use moment to figure out when their session expires.
