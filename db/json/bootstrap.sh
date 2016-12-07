@@ -7,11 +7,6 @@
 # Overall descriptions
 SEMAPHOR_FILE=/data/db/.bowline_bootstrapped
 
-# How long does this container stay up?
-# It doesn't need to stay up forever, but, it needs to stay up for a while to let other things go
-# Let's choose 5 mintues
-CONTAINER_UP_SECONDS=300
-
 # First thing's first... see if we've marked the semaphor that says everything's good to go
 # (e.g. that the data's already bootstrapped.)
 if [ -f $SEMAPHOR_FILE]; then
@@ -67,7 +62,7 @@ if [ $mongo_up -eq 1 ]; then
     echo "Bowline bootstrapped" > $SEMAPHOR_FILE && date >> $SEMAPHOR_FILE
 
     # Say that we're done.
-    echo "Mongo data imported. Semaphor created. Staying up for $CONTAINER_UP_SECONDS"
+    echo "Mongo data imported. Semaphor created."
     exit 0
 
   else
