@@ -96,6 +96,26 @@ services:
     ports:
       - "8000:8000"
 
+  # echo "Starting nginx..."
+  # docker run \
+  #     -p 80:80 -p 443:443 \
+  #     --volumes-from bowline \
+  #     --link bowline:bowline \
+  #     --link regserver:regserver \
+  #     -d -t dougbtv/bowline-nginx
+
+  bowline-nginx:
+    container_name: bowline-nginx
+    build: ./docker/nginx
+    image: dougbtv/bowline-nginx
+    volumes_from:
+      - bowline
+    links:
+      - bowline:bowline
+      - regserver:regserver
+    ports:
+      - "80:80"
+      - "443:443"
 
 volumes:
   bowline-data-registry:
