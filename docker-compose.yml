@@ -1,0 +1,72 @@
+version: '2'
+services:
+  # --------------------------------------------- Web app container
+#   echo "Starting registry server..."
+# # docker run -p 5000:5000 --name regserver -d -t registry
+# docker run -d -e GUNICORN_OPTS=[--preload] -v $REGISTRY_DIR:/registry:rw -e SETTINGS_FLAVOR=local -e STORAGE_PATH=/registry -e SEARCH_BACKEND=sqlalchemy -p 5000:5000  --name regserver registry:latest
+
+  regserver:
+    container_name: regserver
+    image: registry:latest
+    volumes:
+      - bowline-data-registry:/registry
+    ports:
+      - "5000:5000"
+    environment:
+      - "SETTINGS_FLAVOR=local"
+      - "STORAGE_PATH=/registry"
+      - "SEARCH_BACKEND=sqlalchemy"
+      - "GUNICORN_OPTS=[--preload]"
+
+  # we need to bootstrap.
+
+  # and we need a bootstrap semaphor
+  #   echo "Running mongo for preload..."
+  # rm -Rf $MONGO_DIR
+  # mkdir $MONGO_DIR
+  # docker run -d -v $MONGO_DIR:/data/db:rw --name temp_mongo library/mongo
+
+  # CMD_RELEASE_IMPORT=""
+  # CMD_USER_IMPORT=""
+
+  # echo "Starting mongo client"
+  # docker run -it --rm --link temp_mongo:mongo -v $EXAMPLE_DATA:/exampledata/:rw library/mongo \
+  #     bash -c 'mongoimport --host mongo --db bowline --collection releases --file /exampledata/json/releases.json; mongoimport --host mongo --db bowline --collection users --file /exampledata/json/users.json'
+
+  mongo-bootstrap-semaphor:
+    container_name: mongo-bootstrap-semaphor
+    image: library/mongo:latest
+    volumes:
+      - ./db/json/:/exampledata/
+      - bowline-data-mongo:/data/db
+    command: /exampledata/bootstrap.sh
+    
+  # docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db:rw --name mongo library/mongo
+  mongo:
+    container_name: mongo
+    image: library/mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - bowline-data-mongo:/data/db
+    entrypoint: |
+      /bin/bash -c '
+        MAX_TRIES=30;
+        tries=0;
+        while [ ! -f /data/db/.bowline_bootstrapped ]; do
+          let tries=tries+1;
+          echo "Waiting for bootstrap semaphor, attempt $$tries";
+          if [ $$tries -gt $$MAX_TRIES ]; then
+            echo "Never found bootstrap in $$MAX_TRIES";
+            exit 1;
+          fi
+          sleep 1;
+        done
+        ./entrypoint.sh mongod
+      '
+
+  
+
+volumes:
+  bowline-data-registry:
+  bowline-data-mongo:

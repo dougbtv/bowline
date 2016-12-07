@@ -13,9 +13,31 @@ We really only require two things, docker and git. Install them with your favori
 Let's clone Bowline, and move to our Docker directory.
 
     git clone https://github.com/dougbtv/bowline.git
-    cd bowline/docker/utils/
+    cd bowline/
 
-Now we can build the containers we're going to need. You'll need to run this with a user who has privileges to build Docker images & run Docker containers. 
+## Using Docker-compose
+
+Go ahead and install [docker-compose](https://docs.docker.com/compose/install/), this will require Docker 1.10 or later and docker-compose 1.7 or later.
+
+And from the root of the clone issue:
+
+```
+[doug@localhost bowline]$ docker-compose up
+```
+
+*Dealing with volumes*
+
+```
+[doug@localhost bowline]$ docker volume ls | grep -i bowline
+local               bowline_bowline-data-registry
+[doug@localhost bowline]$ docker volume rm $(docker volume ls | grep -i bowline | awk '{print $2}')
+```
+
+## Old skool way / not-docker-compose-way
+
+I highly suggest the docker-compose way above, if you've done that skip ahead to the the "understanding the setup" section below.
+
+We can use some utility scripts to build the containers we're going to need. You'll need to run this with a user who has privileges to build Docker images & run Docker containers. 
 
 *Word to the wise*: This script will stop other running docker containers.
 
