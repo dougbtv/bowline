@@ -7,6 +7,7 @@ services:
 
   regserver:
     container_name: regserver
+    hostname: regserver
     image: registry:latest
     volumes:
       - bowline-data-registry:/registry
@@ -35,6 +36,7 @@ services:
 
   mongo-bootstrap-semaphore:
     container_name: mongo-bootstrap-semaphore
+    hostname: mongo-bootstrap-semaphore
     image: library/mongo:latest
     volumes:
       - ./db/json/:/exampledata/
@@ -44,6 +46,7 @@ services:
   # docker run -d -p 27017:27017 -v $MONGO_DIR:/data/db:rw --name mongo library/mongo
   mongo:
     container_name: mongo
+    hostname: mongo
     image: library/mongo:latest
     ports:
       - "27017:27017"
@@ -69,6 +72,7 @@ services:
   # docker run -d --name nginx-amb --expose 443 -e NGINX_PORT_443_TCP=tcp://$HOST_IP_ADDRESS:443 svendowideit/ambassador
   nginx-amb:
     container_name: nginx-amb
+    hostname: nginx-amb
     image: svendowideit/ambassador
     expose:
       - "443"
@@ -86,6 +90,7 @@ services:
 
   bowline:
     container_name: bowline
+    hostname: bowline
     build: ./docker/bowline
     image: dougbtv/bowline
     volumes:
@@ -107,6 +112,7 @@ services:
 
   bowline-nginx:
     container_name: bowline-nginx
+    hostname: bowline-nginx
     build: ./docker/nginx
     image: dougbtv/bowline-nginx
     volumes_from:
