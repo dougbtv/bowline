@@ -14,6 +14,7 @@ bowlineApp.directive('dockersyntax', function(){
 				'MAINTAINER',
 				'RUN',
 				'CMD',
+				'LABEL',
 				'EXPOSE',
 				'ENV',
 				'ADD',
@@ -22,12 +23,31 @@ bowlineApp.directive('dockersyntax', function(){
 				'VOLUME',
 				'USER',
 				'WORKDIR',
+				'ARG',
 				'ONBUILD',
+				'STOPSIGNAL',
+				'HEALTHCHECK',
+				'SHELL',
 			];
+
+
+			function stringDivider(str, width, spaceReplacer) {
+		    if (str.length>width) {
+	        var p=width;
+	        for (;p>0 && str[p]!=' ';p--) {
+	        }
+	        if (p>0) {
+	            var left = str.substring(0, p);
+	            var right = str.substring(p+1);
+	            return left + spaceReplacer + stringDivider(right, width, spaceReplacer);
+	        }
+		    }
+		    return str;
+			}
 
 			$scope.init = function() {
 
-				console.log("!trace dockersyntax.... init");
+				// console.log("!trace dockersyntax.... init");
 
 				$scope.syntax = [];
 
@@ -57,6 +77,7 @@ bowlineApp.directive('dockersyntax', function(){
 				} else {
 
 					var collection = [];
+					var is_raw = true;
 
 					for (var i = 0; i < dockercmds.length; i++) {
 						if (dockerline.indexOf(dockercmds[i]) > -1) {
@@ -64,7 +85,8 @@ bowlineApp.directive('dockersyntax', function(){
 							// we need to put that part
 							var dockerline_eachtext = dockerline.replace(new RegExp(dockercmds[i], 'g'),'');
 							collection.push({ text: dockercmds[i], style: "coded-highlight"});
-							collection.push({ text: dockerline_eachtext, style: "coded"});
+							collection.push({ text: stringDivider(dockerline_eachtext,80,"\n"), style: "coded"});
+							is_raw = false;
 						}
 					}
 
@@ -79,7 +101,11 @@ bowlineApp.directive('dockersyntax', function(){
 
 						collection.push({ text: ' AUTOBUILD_UNIXTIME' + " ", style: "coded-autobuild"});
 						collection.push({ text: eachtext, style: "coded"});
-						
+						is_raw = false;
+					}
+
+					if (is_raw) {
+						collection.push({ text: stringDivider(dockerline,80,"\n"), style: "coded"});
 					}
 
 					return collection;
