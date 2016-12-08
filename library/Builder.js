@@ -829,56 +829,79 @@ module.exports = function(bowline,opts,log) {
 
 	this.pollHTTPForUpdate = function(callback) {
 
+
+		var cmd_curl = "curl -s -I -X HEAD http://" + this.release.host + this.release.url_path;
+
+		exec(cmd_curl, {}, function(err,stdout,stderr){
+
+			if (!err) {
+
+				log.it("builder_curl_output",{stdout: stdout, cmd_curl: cmd_curl});
+
+				var raw_modified = false;
+				stdout.split('\r\n').forEach(function(line){
+					if (line.match(/^last\-modified/i)) {
+						raw_modified = line.replace(/^.+?: (.+)$/,"$1");
+					}
+				});
+			
+				// console.log(JSON.stringify(res.headers));
+
+				if (raw_modified) {
+					// log.it("!trace raw_modified",{raw_modified: raw_modified});
+
+					// Ok, let's parse that date.
+					// Thu, 18 Sep 2014 18:40:20
+					var pts = raw_modified.split(" ");
+					// console.log("!trace pts: ",pts);
+
+					var day = pts[1];
+					var mon = pts[2];
+					var year = pts[3];
+
+					var tpts = pts[4].split(":");
+					var hour = tpts[0];
+					var minute = tpts[1];
+					var second = tpts[2];
+
+					var last_modified = new moment().year(year).month(mon).date(day).hour(hour).minute(minute).second(second).add(4,"hours");
+					// log.it("!trace_last-modified: ",{last_modified: last_modified.toDate()});
+
+					// Do we have an update?
+					var is_update = false;
+
+					// Is it different from the last date?
+					if (last_modified.unix() > this.last_modified.unix()) {
+						console.log("!trace IT'S GREATER.");
+						is_update = true;
+					}
+
+					// Set the update.
+					this.last_modified = last_modified;
+
+					
+					callback(null,is_update);
+
+				} else {
+
+					callback("There is no 'last-modified' header on your URL to check.");
+					
+				}
+
+			} else {
+				log.error("builder_error_curlfail",{cmd_curl: cmd_curl, err: err, stderr: stderr});
+				callback("Curl command '" + cmd_curl + "' failed.");
+			}
+
+		}.bind(this));
+
+		/*
 		var options = {method: 'HEAD', host: this.release.host, port: 80, path: this.release.url_path};
 		var req = http.request(options, function(res) {
 
-			// console.log(JSON.stringify(res.headers));
-			var raw_modified = res.headers['last-modified'];
-			// console.log("!trace raw_modified: ",raw_modified);
-
-			if (raw_modified) {
-
-				// Ok, let's parse that date.
-				// Thu, 18 Sep 2014 18:40:20
-				var pts = raw_modified.split(" ");
-				// console.log("!trace pts: ",pts);
-
-				var day = pts[1];
-				var mon = pts[2];
-				var year = pts[3];
-
-				var tpts = pts[4].split(":");
-				var hour = tpts[0];
-				var minute = tpts[1];
-				var second = tpts[2];
-
-				var last_modified = new moment().year(year).month(mon).date(day).hour(hour).minute(minute).second(second).add(4,"hours");
-				// console.log("!trace last-modified: ",last_modified.toDate());
-
-				// Do we have an update?
-				var is_update = false;
-
-				// Is it different from the last date?
-				if (last_modified.unix() > this.last_modified.unix()) {
-					// console.log("!trace IT'S GREATER.");
-					is_update = true;
-				}
-
-				// Set the update.
-				this.last_modified = last_modified;
-
-				
-				callback(null,is_update);
-
-			} else {
-
-				callback("There is no 'last-modified' header on your URL to check.");
-				
-			}
-
-
 		}.bind(this));
 		req.end();
+		*/
 
 	}.bind(this);
 
