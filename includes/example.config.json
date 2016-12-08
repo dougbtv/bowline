@@ -12,7 +12,7 @@
 	"docker_localuser": "bowlineadmin",
 	"docker_localpassword": "bowline",
 	"docker_localhost": "dockertest.com",
-	"docker_registryurl": "regserver:5000",
+	"docker_registryurl": "localhost:5000",
 	"docker_user": "REPLACE_THIS_USER",
 	"docker_email": "REPLACE_d00d@d00d.com",
 	"docker_password": "REPLACE_THIS_PASSWORD",
