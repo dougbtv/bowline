@@ -1,4 +1,4 @@
-/* global bowlineApp, moment, Spinner, Flatdoc, io, $, lil */
+/* global bowlineApp, moment, Spinner, Remarkable, io, $, lil */
 
 bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http', 'loginModule', 'releaseModule', '$timeout', 'ENV', function($scope,$sce,$location,$http,login,release,$timeout,ENV) {
 
@@ -330,9 +330,25 @@ bowlineApp.controller('knotsController', ['$scope', '$sce', '$location', '$http'
 						case "github": 
 							$timeout(function(){
 								var path_readme = $scope.single.git_path.replace(/Dockerfile/,'README.md');
-								Flatdoc.run({
-									fetcher: Flatdoc.github($scope.single.git_repo, path_readme),
-								});
+								console.log($scope.single);
+								var readme_full_url = "https://raw.githubusercontent.com/" + $scope.single.git_repo + "/master/" + path_readme;
+								
+								$http.get(readme_full_url)	
+									.success(function(data) {
+										
+										// console.log("!trace readme ajax data: ",data);
+										var md = new Remarkable();
+										$scope.single.readme_rendered = md.render(data);
+
+									}.bind(this))
+									.error(function(data) {
+									
+										// Couldn't reach the readme, seems.
+										
+
+									}.bind(this));	
+
+
 							},300);
 							break;
 							

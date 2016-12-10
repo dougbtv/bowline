@@ -1,4 +1,4 @@
 #!/bin/bash
-mongoexport --db bowline --collection releases --out json/releases.json
-mongoexport --db bowline --collection users --out json/users.json
+docker exec -it mongo mongoexport --quiet --db bowline --collection releases > json/releases.json
+docker exec -it mongo mongoexport --quiet --db bowline --collection users > json/users.json
 

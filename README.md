@@ -22,6 +22,23 @@ It's very compatible with Github, and you can also update your images on Dockerh
 
 You can also interact with it programatically through a REST API, too.
 
+## Ultra-quick start
+
+Requirements:
+
+* Docker v1.10 or greater
+* Docker-compose v.1.7 or greater
+
+Steps:
+
+1. [Install docker compose](https://docs.docker.com/compose/install/) via any method.
+2. Clone this repository and enter it's root directory.
+3. Run `docker-compose up`
+4. [optional] Modify the `compose.env` and copy the `includes/example.config.json` to `includes/config.json` to customize the running environment.
+
+For more advanced installation options [check out the guide for running it locally](https://bowline.io/#/docs/runninglocal).
+
+
 ## Bowline is way beta right now
 
 We'd encourage you to check it out, and see if it provides a useful way to host a private local Docker registry and build server. Or, if the product in the cloud helps you out at all. It's free to use in the cloud, but, all images are currently public on bowline.io.

@@ -14,7 +14,7 @@ RUN git clone https://github.com/dougbtv/bowline.git
 
 WORKDIR /bowline
 RUN npm install
-RUN git checkout develop
+# RUN git checkout develop
 WORKDIR /
 
 ADD example.config.json /bowline/includes/config.json

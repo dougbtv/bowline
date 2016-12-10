@@ -25,9 +25,28 @@ bowlineApp.controller('docsController', ['$scope', '$location', '$http', '$route
 		$scope.mode = $routeParams.specificdoc;
 	}
 
+	var readme_full_url = "https://raw.githubusercontent.com/dougbtv/bowline/master/" + markdown[$scope.mode];
+								
+	$http.get(readme_full_url)	
+		.success(function(data) {
+			
+			// console.log("!trace readme ajax data: ",data);
+			var md = new Remarkable();
+			$scope.rendered_markdown = md.render(data);
+
+		}.bind(this))
+		.error(function(data) {
+		
+			// Couldn't reach the readme, seems.
+			
+
+		}.bind(this));	
+
+	/*
 	Flatdoc.run({
 		fetcher: Flatdoc.github(REPO, markdown[$scope.mode])
 	});
+	*/
 
 	// This just sets the location, and we let that do the magic, since it will re-instantiate this mother.
 	$scope.clickDocs = function(mode) {

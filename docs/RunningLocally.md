@@ -33,9 +33,32 @@ local               bowline_bowline-data-registry
 [doug@localhost bowline]$ docker volume rm $(docker volume ls | grep -i bowline | awk '{print $2}')
 ```
 
-## Old skool way / not-docker-compose-way
+## Customize the running environment
 
-I highly suggest the docker-compose way above, if you've done that skip ahead to the the "understanding the setup" section below.
+There's two places to modify the running environment:
+
+1. The `compose.env` file in the root directory of this clone. 
+2. The `includes/example.config.json` which can be copied to `includes/config.json`
+
+### The `compose.env` file
+
+This includes all environment variables that will be passed into containers, outside of a single environment variable that will generally be static and is set for the nginx ambassador container. 
+
+The primary use-case for modifying the compose.env file will be to set parameters for your registry and to hook it to the back-end of your choice.
+
+You'll also likely be setting some things that are in the `config.json`. Any parameter available in the config.json file can be overridden as an environment variable in this file.
+
+### The `includes/config.json`
+
+The config.json file modifies parameters that are used by the Bowline node.js API itself. 
+
+Some things you'll likely want to customize are API keys for GitHub, as well as a Dockerhub login if you'd like to publish images on Dockerhub.
+
+By default the example.config.json is built into the docker image, and you can either make a new copy as `includes/config.json` to customize the running environment, you can either build it into the image, or mount a custom config, it's up to you and your use case.
+
+## Old skool way / not-docker-compose-way [deprecated]
+
+I highly suggest the docker-compose way above, if you've done that skip ahead to the the "understanding the setup" section below. This method will be removed in upcoming versions.
 
 We can use some utility scripts to build the containers we're going to need. You'll need to run this with a user who has privileges to build Docker images & run Docker containers. 
 

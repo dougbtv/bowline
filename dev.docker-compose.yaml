@@ -67,8 +67,8 @@ services:
     build: ./docker/bowline
     image: dougbtv/bowline
     volumes:
-      - /bowline
-      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /home/doug/codebase/bowline:/bowline
+      - /var/run/docker.sock:/var/run/docker.sock:rw 
     links:
       - regserver:regserver
       - mongo:mongo
