@@ -159,6 +159,34 @@ module.exports = function() {
 				}
 			});
 
+			// Lastly, we override anything that's found in the environment as an option
+			// ...with those.
+			console.log(configs,"%j");
+			Object.keys(configs).forEach(function (key) {
+
+				// Skip anything that begins with an underscore
+				if (!key.match(/^_/)) {
+					if (typeof process.env[key] !== 'undefined') {
+						// Ok, it has been defined in the environment
+						var thevalue = process.env[key];
+						
+						// replace booleans.
+						if (thevalue === 'true' || thevalue === 'false') {
+							// Ok, replace those bools.
+							if (thevalue === 'true') {
+								thevalue = true;
+							} else {
+								thevalue = false;
+							}
+						}
+						
+						console.log('environmental override, ' + key + ' has been overridden as "' + thevalue + '"');
+						configs[key] = thevalue;
+					}
+				}
+
+			});
+
 			callback(err,configs);
 
 		});
